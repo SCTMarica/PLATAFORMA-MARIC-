@@ -4,7 +4,7 @@ from .models import SiteSettings, SocialLink
 
 
 DEFAULT_SITE_SETTINGS = {
-    "site_name": "Plataforma Maric",
+    "site_name": "Nome do Site",
     "tagline": "Base white-label institucional com portal preparado para evolucao.",
     "hero_title": "Transforme sua presença institucional em uma plataforma pronta para evoluir.",
     "hero_subtitle": "Frontend público, CMS simples no admin e estrutura preparada para login, cadastro e portal restrito.",

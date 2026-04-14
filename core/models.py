@@ -30,7 +30,7 @@ class User(AbstractUser):
 
 
 class SiteSettings(TimeStampedModel):
-    site_name = models.CharField(max_length=150, default="Plataforma Maric")
+    site_name = models.CharField(max_length=150, default="Plataforma Maricá")
     tagline = models.CharField(max_length=200, blank=True)
     hero_title = models.CharField(max_length=200)
     hero_subtitle = models.TextField(blank=True)
