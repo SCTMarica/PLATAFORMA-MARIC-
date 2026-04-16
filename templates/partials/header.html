@@ -11,12 +11,28 @@
     </button>
     <div class="collapse navbar-collapse" id="siteNav">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-2">
-        <li class="nav-item"><a class="nav-link" href="{% url 'core:about' %}">Sobre</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'core:news-list' %}">Notícias</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'core:event-list' %}">Eventos</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'core:media' %}">Mídia</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'core:links' %}">Links</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'core:contact' %}">Contato</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Quem Somos</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'core:about' %}">Quem Somos</a></li>
+            <li><a class="dropdown-item" href="{% url 'core:contact' %}">Contato</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Notícias</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'core:news-list' %}">Notícias</a></li>
+            <li><a class="dropdown-item" href="{% url 'core:event-list' %}">Eventos</a></li>
+            <li><a class="dropdown-item" href="{% url 'core:media' %}">Mídia</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Transparência</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'core:links' %}">Links Úteis</a></li>
+            <li><a class="dropdown-item" href="#">Opção 2</a></li>
+          </ul>
+        </li>
         <li class="nav-item"><a class="btn btn-outline-primary btn-sm" href="{% url 'core:login' %}">Login</a></li>
         <li class="nav-item"><a class="btn btn-primary btn-sm" href="{% url 'core:register' %}">Cadastro</a></li>
       </ul>

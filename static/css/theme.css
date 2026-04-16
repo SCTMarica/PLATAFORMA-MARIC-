@@ -74,3 +74,11 @@ body {
     height: 200px;
   }
 }
+
+/* Hover-triggered dropdowns for Desktop */
+@media (min-width: 992px) {
+  .navbar-nav .nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+  }
+}
