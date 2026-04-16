@@ -1,0 +1,76 @@
+:root {
+  --brand-primary: #0d6efd;
+  --brand-secondary: #0b132b;
+  --brand-accent: #f59e0b;
+  --brand-surface: #f6f8fb;
+}
+
+body {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  color: #1f2937;
+}
+
+.navbar-brand,
+.section-eyebrow,
+.page-header h1,
+.hero-section h1 {
+  color: var(--brand-secondary);
+}
+
+.section-eyebrow {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.hero-section {
+  background:
+    radial-gradient(circle at top right, rgba(13, 110, 253, 0.10), transparent 32%),
+    radial-gradient(circle at left center, rgba(245, 158, 11, 0.10), transparent 28%);
+}
+
+.hero-panel,
+.content-card,
+.empty-state {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 1rem 3rem rgba(15, 23, 42, 0.08);
+}
+
+.site-footer {
+  background: #fff;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.brand-logo {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 0.75rem;
+}
+
+.media-cover {
+  height: 220px;
+}
+
+.whitespace-pre-line {
+  white-space: pre-line;
+}
+
+.btn-primary {
+  background-color: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+
+.btn-outline-primary {
+  color: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+
+@media (max-width: 991.98px) {
+  .media-cover {
+    height: 200px;
+  }
+}

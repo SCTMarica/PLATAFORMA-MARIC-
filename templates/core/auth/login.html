@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Login | {{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-5">
+        <div class="content-card p-4 p-lg-5">
+          <p class="section-eyebrow mb-2">Área restrita</p>
+          <h1 class="h3 mb-3">Acessar plataforma</h1>
+          <p class="text-secondary">Tela visual do MVP. A autenticação completa pode ser conectada na próxima fase sem mudar o layout.</p>
+          <form class="d-grid gap-3">
+            <div>
+              <label class="form-label">Email ou usuário</label>
+              <input type="text" class="form-control" placeholder="Seu acesso">
+            </div>
+            <div>
+              <label class="form-label">Senha</label>
+              <input type="password" class="form-control" placeholder="••••••••">
+            </div>
+            <button type="button" class="btn btn-primary">Entrar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

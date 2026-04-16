@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}{{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
+
+{% block content %}
+<section class="hero-section py-5 py-lg-6">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <span class="badge text-bg-light border mb-3">Base white-label em Django</span>
+        <h1 class="display-4 fw-bold mb-3">{{ site_settings.hero_title }}</h1>
+        <p class="lead text-secondary mb-4">{{ site_settings.hero_subtitle }}</p>
+        <div class="d-flex flex-wrap gap-3">
+          <a href="{% url 'core:register' %}" class="btn btn-primary btn-lg">Criar conta</a>
+          <a href="{% url 'core:about' %}" class="btn btn-outline-primary btn-lg">Conhecer a instituição</a>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="hero-panel p-4 p-lg-5">
+          <h2 class="h4 mb-3">Pronto para personalização</h2>
+          <ul class="list-unstyled mb-0 d-grid gap-3">
+            <li>Site institucional com notícias, eventos e mídia.</li>
+            <li>Admin Django para alimentar conteúdo sem editar código.</li>
+            <li>Entradas de login e cadastro prontas para futura área restrita.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4">
+      {% for banner in hero_banners %}
+        <div class="col-md-6 col-xl-4">
+          <div class="card h-100 border-0 shadow-sm">
+            {% if banner.image_url %}
+              <img src="{{ banner.image_url }}" class="card-img-top object-fit-cover media-cover" alt="{{ banner.title }}">
+            {% endif %}
+            <div class="card-body">
+              <h3 class="h5">{{ banner.title }}</h3>
+              <p class="text-secondary mb-0">{{ banner.description }}</p>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-12">
+          <div class="empty-state p-4 rounded-4">
+            Cadastre banners no admin para destacar ações, campanhas e chamadas da instalação.
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="py-5 bg-light-subtle">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+      <div>
+        <p class="section-eyebrow mb-2">Conteúdo institucional</p>
+        <h2 class="mb-0">Últimas notícias</h2>
+      </div>
+      <a href="{% url 'core:news-list' %}" class="btn btn-outline-primary">Ver todas</a>
+    </div>
+    <div class="row g-4">
+      {% for article in featured_news %}
+        <div class="col-md-6 col-xl-4">
+          <article class="card h-100 border-0 shadow-sm">
+            {% if article.cover_image_url %}
+              <img src="{{ article.cover_image_url }}" class="card-img-top object-fit-cover media-cover" alt="{{ article.title }}">
+            {% endif %}
+            <div class="card-body">
+              <span class="badge text-bg-light border mb-2">Notícia</span>
+              <h3 class="h5"><a class="stretched-link text-decoration-none" href="{{ article.get_absolute_url }}">{{ article.title }}</a></h3>
+              <p class="text-secondary mb-0">{{ article.summary }}</p>
+            </div>
+          </article>
+        </div>
+      {% empty %}
+        <div class="col-12">
+          <div class="empty-state p-4 rounded-4">Nenhuma notícia publicada ainda.</div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+      <div>
+        <p class="section-eyebrow mb-2">Agenda</p>
+        <h2 class="mb-0">Próximos eventos</h2>
+      </div>
+      <a href="{% url 'core:event-list' %}" class="btn btn-outline-primary">Agenda completa</a>
+    </div>
+    <div class="row g-4">
+      {% for event in upcoming_events %}
+        <div class="col-md-6 col-xl-4">
+          <article class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+              <span class="badge text-bg-warning mb-2">{{ event.start_at|date:"d/m/Y H:i" }}</span>
+              <h3 class="h5"><a class="stretched-link text-decoration-none" href="{{ event.get_absolute_url }}">{{ event.title }}</a></h3>
+              <p class="text-secondary mb-2">{{ event.summary }}</p>
+              <p class="small text-muted mb-0">{{ event.location|default:"Local a definir" }}</p>
+            </div>
+          </article>
+        </div>
+      {% empty %}
+        <div class="col-12">
+          <div class="empty-state p-4 rounded-4">Nenhum evento disponível no momento.</div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
