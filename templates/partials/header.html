@@ -19,6 +19,9 @@
         <li class="nav-item"><a class="nav-link" href="{% url 'core:links' %}">{% tr 'menu.links' %}</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'core:contact' %}">{% tr 'menu.contact' %}</a></li>
         <li class="nav-item">
+          <button type="button" class="theme-toggle" data-theme-toggle aria-label="Alternar tema" title="Alternar tema">Escuro</button>
+        </li>
+        <li class="nav-item">
           <form method="post" action="{% url 'core:set-language' %}" class="language-switcher">
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ request.get_full_path }}">

@@ -8,6 +8,11 @@
   <link rel="stylesheet" href="{% static 'admin/css/custom_admin.css' %}">
 {% endblock %}
 
+{% block extrahead %}
+  {{ block.super }}
+  <script src="{% static 'js/theme-toggle.js' %}"></script>
+{% endblock %}
+
 {% block branding %}
   <div class="pm-admin-brand">
     <div class="pm-admin-brand__mark">PM</div>
@@ -24,6 +29,7 @@
     {% if site_url %}
       <a href="{{ site_url }}" class="pm-admin-pill">Ver site</a> /
     {% endif %}
+    <button type="button" class="pm-admin-theme-toggle" data-theme-toggle aria-label="Alternar tema" title="Alternar tema">Escuro</button> /
     {{ block.super }}
   </div>
 {% endblock %}
