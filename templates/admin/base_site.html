@@ -1,0 +1,31 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | Plataforma Maric Admin{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'admin/css/custom_admin.css' %}">
+{% endblock %}
+
+{% block branding %}
+  <div class="pm-admin-brand">
+    <div class="pm-admin-brand__mark">PM</div>
+    <div class="pm-admin-brand__text">
+      <span class="pm-admin-brand__eyebrow">Gestao inteligente</span>
+      <h1 id="site-name"><a href="{% url 'admin:index' %}">Painel Plataforma Maric</a></h1>
+      <p class="pm-admin-brand__subtitle">Configure textos, carrossel, noticias, eventos e links do portal.</p>
+    </div>
+  </div>
+{% endblock %}
+
+{% block usertools %}
+  <div id="user-tools">
+    {% if site_url %}
+      <a href="{{ site_url }}" class="pm-admin-pill">Ver site</a> /
+    {% endif %}
+    {{ block.super }}
+  </div>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

@@ -5,6 +5,7 @@
 
 {% block content %}
 {% tr 'common.local_to_define' as local_to_define %}
+{% tr 'common.learn_more' as learn_more_label %}
 <section class="hero-section py-5 py-lg-6">
   <div class="container">
     <div class="row align-items-center g-5">
@@ -33,27 +34,53 @@
 
 <section class="py-5">
   <div class="container">
-    <div class="row g-4">
-      {% for banner in hero_banners %}
-        <div class="col-md-6 col-xl-4">
-          <div class="card h-100 border-0 shadow-sm">
-            {% if banner.image_url %}
-              <img src="{{ banner.image_url }}" class="card-img-top object-fit-cover media-cover" alt="{{ banner.title }}">
-            {% endif %}
-            <div class="card-body">
-              <h3 class="h5">{{ banner.title }}</h3>
-              <p class="text-secondary mb-0">{{ banner.description }}</p>
+    {% if hero_banners %}
+      <div id="homeCarousel" class="carousel slide home-carousel shadow-sm" data-bs-ride="carousel">
+        {% if hero_banners|length > 1 %}
+          <div class="carousel-indicators">
+            {% for banner in hero_banners %}
+              <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" {% if forloop.first %}aria-current="true"{% endif %} aria-label="Slide {{ forloop.counter }}"></button>
+            {% endfor %}
+          </div>
+        {% endif %}
+        <div class="carousel-inner">
+          {% for banner in hero_banners %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+              {% if banner.image_url %}
+                <img src="{{ banner.image_url }}" class="d-block w-100 home-carousel__image" alt="{{ banner.title }}">
+              {% else %}
+                <div class="home-carousel__placeholder"></div>
+              {% endif %}
+              <div class="carousel-caption home-carousel__caption text-start">
+                <div class="home-carousel__content">
+                  <h3 class="h2 mb-3">{{ banner.title }}</h3>
+                  {% if banner.description %}
+                    <p class="{% if banner.external_url %}mb-3{% else %}mb-0{% endif %}">{{ banner.description }}</p>
+                  {% endif %}
+                  {% if banner.external_url %}
+                    <a href="{{ banner.external_url }}" class="btn btn-light btn-sm" target="_blank" rel="noreferrer">{{ learn_more_label }}</a>
+                  {% endif %}
+                </div>
+              </div>
             </div>
-          </div>
+          {% endfor %}
         </div>
-      {% empty %}
-        <div class="col-12">
-          <div class="empty-state p-4 rounded-4">
-            {% tr 'home.banner_empty' %}
-          </div>
-        </div>
-      {% endfor %}
-    </div>
+        {% if hero_banners|length > 1 %}
+          <button class="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#homeCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        {% endif %}
+      </div>
+    {% else %}
+      <div class="empty-state p-4 rounded-4">
+        {% tr 'home.banner_empty' %}
+      </div>
+    {% endif %}
   </div>
 </section>
 

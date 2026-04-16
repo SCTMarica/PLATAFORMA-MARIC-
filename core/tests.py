@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from .models import Event, NewsArticle, SiteSettings
+from .models import Event, MediaItem, NewsArticle, SiteSettings
 
 
 class PublicPagesTests(TestCase):
@@ -25,11 +25,22 @@ class PublicPagesTests(TestCase):
             description="Descricao do evento",
             start_at=timezone.now() + timezone.timedelta(days=7),
         )
+        MediaItem.objects.create(
+            title="Banner principal",
+            media_type=MediaItem.MediaType.BANNER,
+            description="Texto configuravel do banner",
+            image_url="https://example.com/banner.jpg",
+            external_url="https://example.com/detalhes",
+            sort_order=1,
+            is_active=True,
+        )
 
     def test_home_page_loads(self):
         response = self.client.get(reverse("core:home"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Transformando atendimento")
+        self.assertContains(response, "homeCarousel")
+        self.assertContains(response, "Banner principal")
 
     def test_news_detail_loads(self):
         response = self.client.get(reverse("core:news-detail", args=["noticia-de-teste"]))

@@ -39,6 +39,50 @@ body {
   box-shadow: 0 1rem 3rem rgba(15, 23, 42, 0.08);
 }
 
+.home-carousel {
+  overflow: hidden;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.home-carousel__image,
+.home-carousel__placeholder {
+  height: 480px;
+  object-fit: cover;
+  background:
+    linear-gradient(135deg, rgba(11, 19, 43, 0.88), rgba(13, 110, 253, 0.5)),
+    linear-gradient(45deg, #dbeafe, #eff6ff);
+}
+
+.home-carousel__caption {
+  right: 8%;
+  left: 8%;
+  bottom: 3rem;
+}
+
+.home-carousel__content {
+  max-width: 36rem;
+  padding: 1.5rem;
+  border-radius: 1.25rem;
+  background: rgba(15, 23, 42, 0.56);
+  backdrop-filter: blur(10px);
+}
+
+.home-carousel .carousel-indicators {
+  margin-bottom: 1rem;
+}
+
+.home-carousel .carousel-indicators button {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+}
+
+.home-carousel .carousel-control-prev,
+.home-carousel .carousel-control-next {
+  width: 8%;
+}
+
 .site-footer {
   background: #fff;
   border-top: 1px solid rgba(15, 23, 42, 0.08);
@@ -108,6 +152,22 @@ body {
 @media (max-width: 991.98px) {
   .media-cover {
     height: 200px;
+  }
+
+  .home-carousel__image,
+  .home-carousel__placeholder {
+    height: 360px;
+  }
+
+  .home-carousel__caption {
+    right: 1.25rem;
+    left: 1.25rem;
+    bottom: 1.25rem;
+  }
+
+  .home-carousel__content {
+    max-width: none;
+    padding: 1rem;
   }
 
   .language-switcher {
