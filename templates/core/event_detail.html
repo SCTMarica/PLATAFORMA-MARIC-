@@ -1,14 +1,17 @@
 {% extends "base.html" %}
+{% load site_i18n %}
 
 {% block title %}{{ event.title }} | {{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
 
 {% block content %}
+{% tr 'common.local_to_define' as local_to_define %}
+{% tr 'common.not_informed' as not_informed %}
 <section class="page-header py-5">
   <div class="container">
     <span class="badge text-bg-warning mb-2">{{ event.start_at|date:"d/m/Y H:i" }}</span>
     <h1 class="display-6 fw-bold">{{ event.title }}</h1>
     <p class="lead text-secondary mb-2">{{ event.summary }}</p>
-    <p class="small text-muted mb-0">{{ event.location|default:"Local a definir" }}</p>
+    <p class="small text-muted mb-0">{{ event.location|default:local_to_define }}</p>
   </div>
 </section>
 
@@ -25,17 +28,17 @@
       </div>
       <div class="col-lg-4">
         <div class="hero-panel p-4">
-          <h2 class="h5">Informações do evento</h2>
+          <h2 class="h5">{% tr 'event.info_title' %}</h2>
           <dl class="mb-0">
-            <dt>Início</dt>
+            <dt>{% tr 'event.start' %}</dt>
             <dd>{{ event.start_at|date:"d/m/Y H:i" }}</dd>
-            <dt>Término</dt>
-            <dd>{{ event.end_at|date:"d/m/Y H:i"|default:"Não informado" }}</dd>
-            <dt>Local</dt>
-            <dd>{{ event.location|default:"Não informado" }}</dd>
+            <dt>{% tr 'event.end' %}</dt>
+            <dd>{{ event.end_at|date:"d/m/Y H:i"|default:not_informed }}</dd>
+            <dt>{% tr 'event.location' %}</dt>
+            <dd>{{ event.location|default:not_informed }}</dd>
           </dl>
           {% if event.registration_url %}
-            <a href="{{ event.registration_url }}" class="btn btn-primary w-100 mt-3" target="_blank" rel="noreferrer">Inscrever-se</a>
+            <a href="{{ event.registration_url }}" class="btn btn-primary w-100 mt-3" target="_blank" rel="noreferrer">{% tr 'common.register_now' %}</a>
           {% endif %}
         </div>
       </div>

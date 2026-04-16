@@ -115,8 +115,24 @@
             <li><a class="dropdown-item" href="#">Opção 2</a></li>
           </ul>
         </li>
-        <li class="nav-item"><a class="btn btn-outline-primary btn-sm" href="{% url 'core:login' %}">Login</a></li>
-        <li class="nav-item"><a class="btn btn-primary btn-sm" href="{% url 'core:register' %}">Cadastro</a></li>
+          <button type="button" class="theme-toggle" data-theme-toggle aria-label="Alternar tema" title="Alternar tema">Escuro</button>
+        </li>
+        <li class="nav-item">
+          <form method="post" action="{% url 'core:set-language' %}" class="language-switcher">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <span class="language-label">{% tr 'menu.language' %}</span>
+            <div class="language-switcher__options">
+              {% for language in available_languages %}
+                <button type="submit" name="language" value="{{ language.code }}" class="language-switcher__button{% if language.code == current_language %} is-active{% endif %}">
+                  {{ language.label }}
+                </button>
+              {% endfor %}
+            </div>
+          </form>
+        </li>
+        <li class="nav-item"><a class="btn btn-outline-primary btn-sm" href="{% url 'core:login' %}">{% tr 'menu.login' %}</a></li>
+        <li class="nav-item"><a class="btn btn-primary btn-sm" href="{% url 'core:register' %}">{% tr 'menu.register' %}</a></li>
       </ul>
     </div>
   </div>

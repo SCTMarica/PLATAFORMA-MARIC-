@@ -1,13 +1,14 @@
 {% extends "base.html" %}
+{% load site_i18n %}
 
-{% block title %}Mídia | {{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
+{% block title %}{% tr 'titles.media' %} | {{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
 
 {% block content %}
 <section class="page-header py-5">
   <div class="container">
-    <p class="section-eyebrow mb-2">Galeria institucional</p>
-    <h1 class="display-6 fw-bold">Mídia</h1>
-    <p class="text-secondary mb-0">Espaço para vídeos, registros de eventos e materiais de apoio visual.</p>
+    <p class="section-eyebrow mb-2">{% tr 'media.eyebrow' %}</p>
+    <h1 class="display-6 fw-bold">{% tr 'media.title' %}</h1>
+    <p class="text-secondary mb-0">{% tr 'media.subtitle' %}</p>
   </div>
 </section>
 
@@ -28,7 +29,7 @@
         </div>
       {% empty %}
         <div class="col-12">
-          <div class="empty-state p-4 rounded-4">Cadastre vídeos no admin para alimentar esta página.</div>
+          <div class="empty-state p-4 rounded-4">{% tr 'media.empty_videos' %}</div>
         </div>
       {% endfor %}
     </div>
