@@ -1,3 +1,4 @@
+{% load site_i18n %}
 <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top shadow-sm">
   <div class="container py-2">
     <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="{% url 'core:home' %}">
@@ -6,19 +7,33 @@
       {% endif %}
       <span>{{ site_settings.site_name|default:"Plataforma Maric" }}</span>
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav" aria-controls="siteNav" aria-expanded="false" aria-label="Alternar navegação">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav" aria-controls="siteNav" aria-expanded="false" aria-label="{% tr 'menu.language' %}">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="siteNav">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-2">
-        <li class="nav-item"><a class="nav-link" href="{% url 'core:about' %}">Sobre</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'core:news-list' %}">Notícias</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'core:event-list' %}">Eventos</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'core:media' %}">Mídia</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'core:links' %}">Links</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'core:contact' %}">Contato</a></li>
-        <li class="nav-item"><a class="btn btn-outline-primary btn-sm" href="{% url 'core:login' %}">Login</a></li>
-        <li class="nav-item"><a class="btn btn-primary btn-sm" href="{% url 'core:register' %}">Cadastro</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'core:about' %}">{% tr 'menu.about' %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'core:news-list' %}">{% tr 'menu.news' %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'core:event-list' %}">{% tr 'menu.events' %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'core:media' %}">{% tr 'menu.media' %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'core:links' %}">{% tr 'menu.links' %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'core:contact' %}">{% tr 'menu.contact' %}</a></li>
+        <li class="nav-item">
+          <form method="post" action="{% url 'core:set-language' %}" class="language-switcher">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <span class="language-label">{% tr 'menu.language' %}</span>
+            <div class="language-switcher__options">
+              {% for language in available_languages %}
+                <button type="submit" name="language" value="{{ language.code }}" class="language-switcher__button{% if language.code == current_language %} is-active{% endif %}">
+                  {{ language.label }}
+                </button>
+              {% endfor %}
+            </div>
+          </form>
+        </li>
+        <li class="nav-item"><a class="btn btn-outline-primary btn-sm" href="{% url 'core:login' %}">{% tr 'menu.login' %}</a></li>
+        <li class="nav-item"><a class="btn btn-primary btn-sm" href="{% url 'core:register' %}">{% tr 'menu.register' %}</a></li>
       </ul>
     </div>
   </div>

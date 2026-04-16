@@ -13,6 +13,7 @@ from .views import (
     NewsListView,
     PortalPlaceholderView,
     RegisterPlaceholderView,
+    set_language,
 )
 
 app_name = "core"
@@ -30,4 +31,5 @@ urlpatterns = [
     path("login/", LoginPlaceholderView.as_view(), name="login"),
     path("cadastro/", RegisterPlaceholderView.as_view(), name="register"),
     path("portal/", PortalPlaceholderView.as_view(), name="portal"),
+    path("idioma/", set_language, name="set-language"),
 ]

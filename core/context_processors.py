@@ -1,5 +1,6 @@
 from types import SimpleNamespace
 
+from .i18n import SUPPORTED_LANGUAGES, get_language_from_request
 from .models import SiteSettings, SocialLink
 
 
@@ -34,4 +35,12 @@ def site_branding(request):
     return {
         "site_settings": site_settings,
         "social_links": social_links,
+    }
+
+
+def translation_context(request):
+    current_language = get_language_from_request(request)
+    return {
+        "current_language": current_language,
+        "available_languages": SUPPORTED_LANGUAGES.values(),
     }

@@ -69,8 +69,49 @@ body {
   border-color: var(--brand-primary);
 }
 
+.language-switcher {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.language-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6b7280;
+}
+
+.language-switcher__options {
+  display: inline-flex;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.language-switcher__button {
+  border: 0;
+  background: transparent;
+  color: #475569;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.35rem 0.7rem;
+}
+
+.language-switcher__button.is-active {
+  background: var(--brand-primary);
+  color: #fff;
+}
+
 @media (max-width: 991.98px) {
   .media-cover {
     height: 200px;
+  }
+
+  .language-switcher {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

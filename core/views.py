@@ -1,5 +1,10 @@
+from django.shortcuts import redirect
+from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, ListView, TemplateView
 
+from .i18n import LANGUAGE_SESSION_KEY, normalize_language
 from .models import Event, MediaItem, NewsArticle
 
 
@@ -95,3 +100,18 @@ class RegisterPlaceholderView(TemplateView):
 
 class PortalPlaceholderView(TemplateView):
     template_name = "core/portal/index.html"
+
+
+@require_POST
+def set_language(request):
+    language_code = normalize_language(request.POST.get("language"))
+    request.session[LANGUAGE_SESSION_KEY] = language_code
+
+    next_url = request.POST.get("next") or request.META.get("HTTP_REFERER") or reverse("core:home")
+    if not url_has_allowed_host_and_scheme(
+        url=next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        next_url = reverse("core:home")
+    return redirect(next_url)

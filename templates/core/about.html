@@ -1,52 +1,46 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static site_i18n %}
 
-{% block title %}Quem Somos - {{ site_settings.site_name|default:"Plataforma Maricá" }}{% endblock %}
+{% block title %}{% tr 'titles.about' %} - {{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
 {% block extra_head %}
-
 <link rel="stylesheet" href="{% static 'css/about.css' %}">
 {% endblock %}
 
 {% block content %}
 <section class="about">
-    <div class="about-container">
-        <div class="about-text">
-            <h1>Quem somos</h1>
+  <div class="about-container">
+    <div class="about-text">
+      <h1>{% tr 'about.heading' %}</h1>
 
-            <h3>Resumo</h3>
-            <p class="highlight">
-                A Plataforma Maricá é uma iniciativa dedicada a conectar cidadãos, promover a cultura local e facilitar o acesso a informações relevantes sobre a nossa cidade.
-            </p>
-            <div class="content">
-                <p>
-                    Nascemos com o propósito de ser um hub de inovação e engajamento social, integrando diferentes setores da sociedade maricaense.
-                </p>
-                <p>
-                    Trabalhamos continuamente para evoluir nossas funcionalidades, garantindo que cada usuário encontre aqui um espaço acolhedor e informativo.
-                </p>
-            </div>
-        </div>
-
-        <div class="about-carousel">
-            <div class="carousel">
-                <div class="carousel-track">
-
-                    <div class="slide active">
-                        <img src="{% static 'img/marica1.jpg' %}">
-                        <span>Patrimônio Histórico</span>
-                    </div>
-
-                    <div class="slide">
-                        <img src="{% static 'img/marica2.jpg' %}">
-                        <span>Belezas Naturais</span>
-                    </div>
-                    <div class="slide">
-                        <img src="{% static 'img/marica3.jpg' %}">
-                        <span>Nossa Orla</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <h3>{% tr 'about.summary_title' %}</h3>
+      <p class="highlight">
+        {% tr 'about.highlight' %}
+      </p>
+      <div class="content">
+        <p>{% tr 'about.paragraph_1' %}</p>
+        <p>{% tr 'about.paragraph_2' %}</p>
+      </div>
     </div>
+
+    <div class="about-carousel">
+      <div class="carousel">
+        <div class="carousel-track">
+          <div class="slide active">
+            <img src="{% static 'img/marica1.jpg' %}" alt="{% tr 'about.slide_1' %}">
+            <span>{% tr 'about.slide_1' %}</span>
+          </div>
+
+          <div class="slide">
+            <img src="{% static 'img/marica2.jpg' %}" alt="{% tr 'about.slide_2' %}">
+            <span>{% tr 'about.slide_2' %}</span>
+          </div>
+          <div class="slide">
+            <img src="{% static 'img/marica3.jpg' %}" alt="{% tr 'about.slide_3' %}">
+            <span>{% tr 'about.slide_3' %}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 {% endblock %}
