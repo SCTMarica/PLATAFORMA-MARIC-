@@ -6,6 +6,8 @@
   <link rel="stylesheet" href="{% static 'admin/css/custom_admin.css' %}">
 {% endblock %}
 
+{% block bodyclass %}{{ block.super }} pm-admin-dashboard{% endblock %}
+
 {% block content %}
   <section class="pm-admin-hero">
     <div class="pm-admin-hero__content">

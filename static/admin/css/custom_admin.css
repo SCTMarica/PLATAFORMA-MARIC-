@@ -832,6 +832,65 @@ p.help,
   line-height: 1.6;
 }
 
+.pm-admin-dashboard #content.colMS {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 22rem);
+  grid-template-areas:
+    "title title"
+    "hero hero"
+    "apps sidebar";
+  align-items: start;
+  gap: 1.5rem;
+  flex-direction: column;
+  text-align: center;
+  width: auto;
+  max-width: none;
+  height: auto;
+  margin: 0;
+  float: none;
+}
+
+.pm-admin-dashboard #content.colMS > h1 {
+  grid-area: title;
+  margin: 0;
+  text-align: center;
+}
+
+.pm-admin-dashboard #content.colMS > .pm-admin-hero {
+  grid-area: hero;
+  text-align: left;
+}
+
+.pm-admin-dashboard #content.colMS > .pm-admin-apps {
+  grid-area: apps;
+  text-align: left;
+}
+
+.pm-admin-dashboard #content.colMS > #content-related {
+  grid-area: sidebar;
+  width: auto;
+  margin: 0;
+  float: none;
+  align-self: start;
+  position: sticky;
+  top: 1rem;
+}
+
+.pm-admin-dashboard #content.colMS > #content-related .module,
+.pm-admin-dashboard #content.colMS > #content-related .module h3,
+.pm-admin-dashboard #content.colMS > #content-related .module p {
+  text-align: left;
+}
+
+.pm-admin-dashboard #content.colMS > br.clear {
+  display: none;
+}
+
+.pm-admin-dashboard .pm-admin-app-grid {
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  align-items: start;
+}
+
 @media (max-width: 1024px) {
   .pm-admin-hero,
   .pm-admin-hero__actions,
@@ -871,6 +930,19 @@ p.help,
   #changelist .actions button,
   #changelist .actions .button {
     width: 100%;
+  }
+
+  .pm-admin-dashboard #content.colMS {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "title"
+      "hero"
+      "apps"
+      "sidebar";
+  }
+
+  .pm-admin-dashboard #content.colMS > #content-related {
+    position: static;
   }
 }
 
