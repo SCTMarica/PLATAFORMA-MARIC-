@@ -674,23 +674,48 @@ p.help,
   border: 1px solid rgba(239, 68, 68, 0.18);
 }
 
-.login #container {
+.login {
   min-height: 100vh;
 }
 
-.login #content {
-  padding-top: 2rem;
+.login #container {
+  width: min(72rem, calc(100vw - 2rem));
+  min-width: 0;
+  min-height: auto;
+  margin: clamp(1rem, 6vh, 4rem) auto;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
-.login #content-main {
-  max-width: 72rem;
-  margin: 0 auto;
+.login #header {
+  justify-content: flex-start;
+  margin-bottom: 1rem;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.login #main {
+  padding: 0;
+}
+
+.login #content {
+  padding: 0;
+}
+
+.login #content-main,
+.login #content {
+  max-width: none;
+  width: 100%;
 }
 
 .pm-admin-login-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 24rem);
+  gap: 1.25rem;
   align-items: start;
 }
 
@@ -701,14 +726,72 @@ p.help,
 
 .pm-admin-login-card {
   overflow: hidden;
+  padding: 1.5rem;
 }
 
 .pm-admin-login-card form {
   margin: 0;
 }
 
+.pm-admin-login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.pm-admin-login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0;
+}
+
+.pm-admin-login-field label {
+  margin: 0;
+  color: var(--pm-secondary);
+  font-weight: 700;
+}
+
+.pm-admin-login-field input[type="text"],
+.pm-admin-login-field input[type="password"],
+.pm-admin-login-field input[type="email"] {
+  width: 100%;
+  min-height: 3rem;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+.pm-admin-login-field .errorlist {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: #b42318;
+}
+
+.pm-admin-login-error {
+  max-width: 72rem;
+  margin: 0 auto 1rem;
+}
+
+.pm-admin-login-reset {
+  padding: 0.25rem 0 1rem;
+}
+
+.pm-admin-login-actions {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.pm-admin-login-actions input[type="submit"] {
+  width: 100%;
+  min-height: 3rem;
+  cursor: pointer;
+}
+
 .pm-admin-login-sidecard {
   padding: 1.25rem;
+  min-height: 100%;
 }
 
 .pm-admin-login-sidecard h2 {
@@ -728,20 +811,25 @@ p.help,
 }
 
 .pm-admin-login__header {
-  margin-bottom: 1rem;
+  max-width: 72rem;
+  margin: 0 auto 1.25rem;
   text-align: left;
 }
 
 .pm-admin-login__title {
   margin: 0 0 0.4rem;
   color: var(--pm-secondary);
-  font-size: 2rem;
-  line-height: 1.1;
+  font-size: clamp(2rem, 3vw, 3.25rem);
+  line-height: 1.05;
+  max-width: 16ch;
 }
 
 .pm-admin-login__text {
   margin: 0;
   color: var(--pm-muted);
+  max-width: 48rem;
+  font-size: 1.05rem;
+  line-height: 1.6;
 }
 
 @media (max-width: 1024px) {
