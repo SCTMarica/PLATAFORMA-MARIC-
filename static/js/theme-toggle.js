@@ -23,12 +23,16 @@
 
     toggles.forEach(function (toggle) {
       var label = theme === "dark" ? "Ativar modo claro" : "Ativar modo escuro";
-      var text = theme === "dark" ? "Claro" : "Escuro";
 
       toggle.setAttribute("aria-label", label);
       toggle.setAttribute("title", label);
       toggle.setAttribute("data-theme-current", theme);
-      toggle.textContent = text;
+      toggle.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+
+      var labelTarget = toggle.querySelector("[data-theme-toggle-label]");
+      if (labelTarget) {
+        labelTarget.textContent = label;
+      }
     });
   }
 

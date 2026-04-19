@@ -1,150 +1,73 @@
 {% load site_i18n %}
 
-
-{% tr 'common.local_to_define' as local_to_define %}
-{% tr 'common.learn_more' as learn_more_label %}
-<style>
-  .topbar-marica {
-    background: linear-gradient(90deg, #7c7a71 0%, #5a604d 100%);
-    font-size: 0.8rem;
-  }
-
-  .topbar-marica a {
-    color: white;
-    text-decoration: none;
-  }
-
-  .topbar-marica a:hover {
-    color: #e0e0e0;
-  }
-
-  .pill-borda {
-    border: 1px solid rgba(255, 255, 255, 0.4);
-  }
-
-  .lang-pt {
-    background-color: white;
-    color: #5a604d;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 0.65rem;
-  }
-
-  .lang-en {
-    color: white;
-    font-size: 0.65rem;
-    font-weight: bold;
-    padding-left: 4px;
-    padding-right: 6px;
-  }
-
-  .lang-es {
-    color: white;
-    font-size: 0.65rem;
-    font-weight: bold;
-    padding-left: 4px;
-    padding-right: 6px;
-  }
-</style>
-
-<div class="topbar-marica text-white py-1">
-  <div class="container d-flex justify-content-between align-items-center">
-
-    <div class="d-none d-md-block">
-      Você está em: SITE ( Nome do Site )
-    </div>
-
-    <div class="d-flex align-items-center gap-3 ms-auto">
-
-      <div class="d-flex align-items-center px-3 py-1 rounded-pill pill-borda gap-2">
-        <a href="#" class="fw-bold">A-</a>
-        <span class="text-white-50">|</span>
-        <a href="#" class="fw-bold">100%</a>
-        <span class="text-white-50">|</span>
-        <a href="#" class="fw-bold">A+</a>
-      </div>
-
-      <a href="#" title="Alto Contraste" class="d-flex align-items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z" />
-        </svg>
-      </a>
-
-      <div class="d-flex align-items-center rounded-pill pill-borda p-1"
-        style="background-color: rgba(255,255,255,0.1);">
-        <span class="lang-pt">PT</span>
-        <span class="lang-en">EN</span>
-        <span class="lang-es">ES</span>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top shadow-sm">
-  <div class="container py-2">
-    <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="{% url 'core:home' %}">
+<nav class="navbar navbar-expand-xl site-header sticky-top shadow-sm">
+  <div class="container-xl py-2">
+    <a class="navbar-brand site-header__brand fw-bold d-flex align-items-center gap-2" href="{% url 'core:home' %}">
       <span>{{ site_settings.site_name|default:"Nome do Site" }}</span>
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav"
-      aria-controls="siteNav" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler site-header__toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav"
+      aria-controls="siteNav" aria-expanded="false" aria-label="Alternar navegacao">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="siteNav">
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-2">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Quem Somos</a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{% url 'core:about' %}">Quem Somos</a></li>
-            <li><a class="dropdown-item" href="{% url 'core:contact' %}">Contato</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Notícias</a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{% url 'core:news-list' %}">Notícias</a></li>
-            <li><a class="dropdown-item" href="{% url 'core:event-list' %}">Eventos</a></li>
-            <li><a class="dropdown-item" href="{% url 'core:media' %}">Mídia</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Transparência</a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{% url 'core:links' %}">Links Úteis</a></li>
-            <li><a class="dropdown-item" href="#">Opção 2</a></li>
-          </ul>
-        </li>
-          <button type="button" class="theme-toggle" data-theme-toggle aria-label="Alternar tema" title="Alternar tema">Escuro</button>
-        </li>
-        <li class="nav-item">
-          <form method="post" action="{% url 'core:set-language' %}" class="language-switcher">
+      <div class="site-header__content ms-xl-auto">
+        <ul class="navbar-nav site-header__menu align-items-xl-center gap-xl-2">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Quem Somos</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'core:about' %}">Quem Somos</a></li>
+              <li><a class="dropdown-item" href="{% url 'core:contact' %}">Contato</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Notícias</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'core:news-list' %}">Notícias</a></li>
+              <li><a class="dropdown-item" href="{% url 'core:event-list' %}">Eventos</a></li>
+              <li><a class="dropdown-item" href="{% url 'core:media' %}">Mídia</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Transparência</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'core:links' %}">Links Úteis</a></li>
+              <li><a class="dropdown-item" href="#">Opção 2</a></li>
+            </ul>
+          </li>
+        </ul>
+
+        <div class="site-header__actions">
+          <div class="font-controls" role="group" aria-label="Controle de tamanho da fonte">
+            <button type="button" class="font-controls__button" data-font-scale="decrease" aria-label="Diminuir fonte">A-</button>
+            <button type="button" class="font-controls__button font-controls__button--status" data-font-scale="reset" aria-label="Restaurar fonte para 100%">100%</button>
+            <button type="button" class="font-controls__button" data-font-scale="increase" aria-label="Aumentar fonte">A+</button>
+          </div>
+
+          <button type="button" class="theme-toggle" data-theme-toggle aria-label="Alternar tema" title="Alternar tema">
+            <span class="theme-toggle__icon" aria-hidden="true"></span>
+            <span class="visually-hidden" data-theme-toggle-label>Alternar tema</span>
+          </button>
+
+          <form method="post" action="{% url 'core:set-language' %}" class="language-switcher" aria-label="{% tr 'menu.language' %}">
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ request.get_full_path }}">
-            <span class="language-label">{% tr 'menu.language' %}</span>
-            <div class="language-switcher__options">
+            <span class="visually-hidden">{% tr 'menu.language' %}</span>
+            <div class="language-switcher__options" role="group" aria-label="{% tr 'menu.language' %}">
               {% for language in available_languages %}
                 <button type="submit" name="language" value="{{ language.code }}" class="language-switcher__button{% if language.code == current_language %} is-active{% endif %}">
-                  {{ language.label }}
+                  {{ language.code|upper }}
                 </button>
               {% endfor %}
             </div>
           </form>
-        </li>
-        <li class="nav-item"><a class="btn btn-outline-primary btn-sm" href="{% url 'core:login' %}">{% tr 'menu.login' %}</a></li>
-        <li class="nav-item"><a class="btn btn-primary btn-sm" href="{% url 'core:register' %}">{% tr 'menu.register' %}</a></li>
-      </ul>
+
+          <div class="site-header__auth">
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'core:login' %}">{% tr 'menu.login' %}</a>
+            <a class="btn btn-primary btn-sm" href="{% url 'core:register' %}">{% tr 'menu.register' %}</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </nav>
-<div class="bg-white border-bottom shadow-sm">
-  <div class="container pb-4 pt-2"> <a href="{% url 'core:home' %}" class="text-decoration-none text-dark">
-      <span class="fw-bold" style="font-size: 3.5rem; letter-spacing: -2px;">LOGO</span>
-    </a>
-  </div>
-</div>
