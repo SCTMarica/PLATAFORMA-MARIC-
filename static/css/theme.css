@@ -763,3 +763,27 @@ body {
     margin-top: 0;
   }
 }
+
+[vw] {
+  z-index: 1080;
+}
+
+div[vw-access-button] {
+  border-radius: 999px !important;
+  box-shadow: 0 1rem 2.5rem rgba(15, 23, 42, 0.18) !important;
+}
+
+div[vw-access-button] .access-button {
+  border-radius: 999px !important;
+}
+
+div[vw-access-button] .access-button,
+div[vw-access-button] .pop-up {
+  background: var(--brand-primary) !important;
+}
+
+div[vw-access-button]:focus-visible,
+div[vw-access-button] .access-button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--brand-accent) 75%, white) !important;
+  outline-offset: 4px !important;
+}
