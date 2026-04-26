@@ -1,0 +1,81 @@
+{% extends "admin/index.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'admin/css/custom_admin.css' %}">
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} pm-admin-dashboard{% endblock %}
+
+{% block content %}
+  <section class="pm-admin-hero">
+    <div class="pm-admin-hero__content">
+      <span class="pm-admin-hero__eyebrow">Central de configuracao</span>
+      <h2 class="pm-admin-hero__title">Tudo o que voce precisa para editar o portal em um so lugar</h2>
+      <p class="pm-admin-hero__text">Use os atalhos abaixo para atualizar os textos da home, escolher as fotos do carrossel, publicar noticias e manter os canais oficiais organizados.</p>
+    </div>
+    <div class="pm-admin-hero__actions">
+      <a href="{% url 'admin:core_sitesettings_changelist' %}" class="pm-admin-action-card">
+        <strong>Textos da home</strong>
+        <span>Edite titulo, subtitulo, rodape e dados institucionais.</span>
+      </a>
+      <a href="{% url 'admin:core_mediaitem_changelist' %}" class="pm-admin-action-card">
+        <strong>Carrossel e midias</strong>
+        <span>Escolha banners ativos, ordem, fotos, textos e links.</span>
+      </a>
+      <a href="{% url 'admin:core_newsarticle_changelist' %}" class="pm-admin-action-card">
+        <strong>Noticias</strong>
+        <span>Publique comunicados e destaque novidades do portal.</span>
+      </a>
+      <a href="{% url 'admin:core_event_changelist' %}" class="pm-admin-action-card">
+        <strong>Eventos</strong>
+        <span>Atualize agenda, locais, horarios e links de inscricao.</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="pm-admin-apps">
+    <div class="pm-admin-section-heading">
+      <div>
+        <span class="pm-admin-hero__eyebrow">Modulos</span>
+        <h2 class="pm-admin-section-title">Areas administrativas</h2>
+      </div>
+      <p class="pm-admin-section-text">Acesse cada modulo com atalhos claros para listar, criar e editar registros.</p>
+    </div>
+
+    <div class="pm-admin-app-grid">
+      {% for app in app_list %}
+        <article class="pm-admin-app-card">
+          <header class="pm-admin-app-card__header">
+            <h3>{{ app.name }}</h3>
+            {% if app.app_url %}
+              <a href="{{ app.app_url }}" class="pm-admin-link-chip">Abrir modulo</a>
+            {% endif %}
+          </header>
+          <ul class="pm-admin-model-list">
+            {% for model in app.models %}
+              <li class="pm-admin-model-list__item">
+                <div class="pm-admin-model-list__meta">
+                  <strong>{{ model.name }}</strong>
+                </div>
+                <div class="pm-admin-model-list__actions">
+                  {% if model.admin_url %}
+                    <a href="{{ model.admin_url }}" class="pm-admin-link-chip">Gerenciar</a>
+                  {% endif %}
+                  {% if model.add_url %}
+                    <a href="{{ model.add_url }}" class="pm-admin-link-chip pm-admin-link-chip--primary">Novo</a>
+                  {% endif %}
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        </article>
+      {% empty %}
+        <div class="pm-admin-empty">
+          Nenhum modulo administrativo disponivel para este usuario.
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}
