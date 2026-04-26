@@ -111,7 +111,7 @@ body {
   align-items: center;
   justify-content: flex-end;
   gap: 0.65rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   margin-left: auto;
 }
 

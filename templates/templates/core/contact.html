@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load site_i18n %}
+
+{% block title %}{% tr 'titles.contact' %} | {{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
+
+{% block content %}
+<section class="page-header py-5">
+  <div class="container">
+    <p class="section-eyebrow mb-2">{% tr 'contact.eyebrow' %}</p>
+    <h1 class="display-6 fw-bold">{% tr 'contact.title' %}</h1>
+    <p class="text-secondary mb-0">{% tr 'contact.subtitle' %}</p>
+  </div>
+</section>
+
+<section class="pb-5">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-5">
+        <div class="hero-panel p-4 h-100">
+          <h2 class="h5">{% tr 'contact.info_title' %}</h2>
+          <p class="mb-2"><strong>{% tr 'contact.email' %}:</strong> {{ site_settings.contact_email|default:"contato@exemplo.com" }}</p>
+          <p class="mb-2"><strong>{% tr 'contact.phone' %}:</strong> {{ site_settings.contact_phone|default:"(00) 0000-0000" }}</p>
+          <p class="mb-2"><strong>{% tr 'contact.whatsapp' %}:</strong> {{ site_settings.whatsapp|default:"(00) 00000-0000" }}</p>
+          <p class="mb-0"><strong>{% tr 'contact.address' %}:</strong> {{ site_settings.address|default:"Endereco institucional" }}</p>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <div class="content-card p-4 p-lg-5">
+          <h2 class="h4 mb-3">{% tr 'contact.form_title' %}</h2>
+          <p class="text-secondary">{% tr 'contact.form_subtitle' %}</p>
+          <form class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">{% tr 'contact.name' %}</label>
+              <input type="text" class="form-control" placeholder="{% tr 'contact.placeholder_name' %}">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">{% tr 'contact.email' %}</label>
+              <input type="email" class="form-control" placeholder="{% tr 'contact.placeholder_email' %}">
+            </div>
+            <div class="col-12">
+              <label class="form-label">{% tr 'contact.subject' %}</label>
+              <input type="text" class="form-control" placeholder="{% tr 'contact.placeholder_subject' %}">
+            </div>
+            <div class="col-12">
+              <label class="form-label">{% tr 'contact.message' %}</label>
+              <textarea class="form-control" rows="5" placeholder="{% tr 'contact.placeholder_message' %}"></textarea>
+            </div>
+            <div class="col-12">
+              <button type="button" class="btn btn-primary">{% tr 'contact.button' %}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
