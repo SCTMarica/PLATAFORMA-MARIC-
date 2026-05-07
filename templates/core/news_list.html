@@ -3,36 +3,217 @@
 {% block title %}Notícias | {{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
 
 {% block content %}
-<section class="page-header py-5">
+<style>
+ 
+  
+
+  .section-eyebrow {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    color: #e67e22;
+    background: #fef3e8;
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 30px;
+  }
+
+  .page-header {
+    border-bottom: 1px solid #eef2f5;
+    background-color: #fafcff;
+  }
+
+  .news-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    background: white;
+    border: none;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .news-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-img-top {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background-color: #eef2f5;
+  }
+
+  .card-title-link {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: #1e2a3a;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .card-title-link:hover {
+    color: #e67e22;
+    text-decoration: underline;
+  }
+
+  .card-text-summary {
+    color: #5a6874;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .date-meta {
+    font-size: 0.75rem;
+    color: #8f9eaa;
+    letter-spacing: 0.3px;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-state {
+    background: #f8f9fc;
+    border-radius: 1.5rem;
+    text-align: center;
+    padding: 3rem;
+    color: #7c8b9c;
+    font-weight: 500;
+  }
+
+  .info-blocks-demo {
+    background-color: #fefaf5;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #e67e22;
+    transition: all 0.2s ease;
+  }
+
+  .info-blocks-demo:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  .info-title {
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #2c3e4e;
+  }
+
+  .info-text {
+    color: #4c5a68;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 768px) {
+    .page-header h1 {
+      font-size: 2rem;
+    }
+    .info-blocks-demo {
+      padding: 1.2rem;
+    }
+  }
+</style>
+
+<!-- Cabeçalho da página com identidade NOUCAS -->
+<section class="page-header py-4 py-md-5">
   <div class="container">
-    <p class="section-eyebrow mb-2">Atualizações</p>
-    <h1 class="display-6 fw-bold">Notícias</h1>
-    <p class="text-secondary mb-0">Comunique ações, informes, resultados e novidades da instituição.</p>
+    <div class="d-flex flex-wrap justify-content-between align-items-end">
+      <div>
+        
+        <p class="section-eyebrow mb-2 mt-2">Atualizações</p>
+        <h1 class="display-6 fw-bold mt-2">Notícias</h1>
+        <p class="text-secondary mb-0">Comunique ações, informes, resultados e novidades da instituição.</p>
+      </div>
+    </div>
   </div>
 </section>
 
+<!-- Blocos informativos "Titulo 1, 2, 3" conforme a imagem -->
+<div class="container mt-3 mb-4">
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="info-blocks-demo h-100">
+        <div class="info-title">
+          <i class="fas fa-newspaper me-2" style="color: #e67e22;"></i> 
+          Titulo 1
+        </div>
+        <div class="info-text">
+          Corpo de texto para adicionar mais informações, além do subtítulo. Destaque para novidades e comunicação institucional.
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="info-blocks-demo h-100">
+        <div class="info-title">
+          <i class="fas fa-bullhorn me-2" style="color: #e67e22;"></i> 
+          Titulo 2
+        </div>
+        <div class="info-text">
+          Corpo de texto para explicar melhor o ponto principal. Reforce as principais ações e os resultados da plataforma.
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="info-blocks-demo h-100">
+        <div class="info-title">
+          <i class="fas fa-chart-line me-2" style="color: #e67e22;"></i> 
+          Titulo 3
+        </div>
+        <div class="info-text">
+          Corpo de texto para outras informações que você queira compartilhar. Informes adicionais, parcerias ou destaques.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Grade de notícias (seu código original adaptado) -->
 <section class="pb-5">
   <div class="container">
     <div class="row g-4">
       {% for article in news_list %}
         <div class="col-md-6 col-xl-4">
-          <article class="card h-100 border-0 shadow-sm">
+          <article class="card h-100 border-0 shadow-sm news-card">
             {% if article.cover_image_url %}
               <img src="{{ article.cover_image_url }}" class="card-img-top object-fit-cover media-cover" alt="{{ article.title }}">
             {% endif %}
             <div class="card-body">
-              <p class="small text-muted">{{ article.published_at|date:"d/m/Y" }}</p>
-              <h2 class="h5"><a class="text-decoration-none stretched-link" href="{{ article.get_absolute_url }}">{{ article.title }}</a></h2>
-              <p class="text-secondary mb-0">{{ article.summary }}</p>
+              <p class="date-meta">{{ article.published_at|date:"d/m/Y" }}</p>
+              <h2 class="h5">
+                <a class="text-decoration-none stretched-link card-title-link" href="{{ article.get_absolute_url }}">
+                  {{ article.title }}
+                </a>
+              </h2>
+              <p class="card-text-summary mb-0">{{ article.summary }}</p>
             </div>
           </article>
         </div>
       {% empty %}
         <div class="col-12">
-          <div class="empty-state p-4 rounded-4">Nenhuma notícia cadastrada.</div>
+          <div class="empty-state">
+            <i class="fas fa-inbox me-2"></i> Nenhuma notícia cadastrada.
+          </div>
         </div>
       {% endfor %}
     </div>
   </div>
 </section>
+
+<!-- Rodapé sutil com informações adicionais -->
+<div class="container mb-5">
+  <hr class="opacity-25">
+  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
+    <p class="small text-secondary m-0">
+      <i class="far fa-calendar-alt me-1"></i> Últimas atualizações • Feed institucional
+    </p>
+    <a href="#" class="small text-decoration-none" style="color:#e67e22;">
+      Ver todas notícias <i class="fas fa-arrow-right ms-1"></i>
+    </a>
+  </div>
+</div>
 {% endblock %}
