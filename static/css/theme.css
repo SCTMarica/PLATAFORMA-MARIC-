@@ -656,8 +656,9 @@ body {
 
 .site-header .dropdown-item:hover,
 .site-header .dropdown-item:focus {
-  background: rgba(13, 110, 253, 0.08);
+  background: color-mix(in srgb, var(--brand-primary) 10%, transparent);
 }
+
 
 .card,
 .table,
