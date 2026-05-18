@@ -38,6 +38,10 @@
         </ul>
 
         <div class="site-header__actions">
+          {% if request.user.can_access_admin %}
+            <a class="site-header__admin-link" href="{% url 'core:admin-panel' %}">Painel de admin</a>
+          {% endif %}
+
           <div class="font-controls" role="group" aria-label="Controle de tamanho da fonte">
             <button type="button" class="font-controls__button" data-font-scale="decrease" aria-label="Diminuir fonte">A-</button>
             <button type="button" class="font-controls__button font-controls__button--status" data-font-scale="reset" aria-label="Restaurar fonte para 100%">100%</button>

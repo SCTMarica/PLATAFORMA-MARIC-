@@ -5,7 +5,7 @@
       <div class="row g-4 align-items-start">
         <div class="col-lg-4">
           <div class="site-footer__brand-block">
-            <a class="site-footer__brand-mark" href="{% url 'core:home' %}" aria-label="Ir para a página inicial">
+            <a class="site-footer__brand-mark" href="{% url 'core:home' %}" aria-label="Ir para a pagina inicial">
               {% if site_settings.logo_url %}
                 <img src="{{ site_settings.logo_url }}" alt="{{ site_settings.site_name|default:'Logo do site' }}">
               {% else %}
@@ -51,38 +51,6 @@
               {% endif %}
               <li><span>{{ site_settings.address|default:"Endereco institucional" }}</span></li>
             </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="site-footer__bottom">
-      <div class="row g-4">
-        <div class="col-lg-5">
-          <div class="site-footer__site-label">{{ site_settings.site_name|default:"Nome do site" }}</div>
-        </div>
-        <div class="col-6 col-lg-2">
-          <p class="site-footer__topic-title">Institucional</p>
-          <div class="site-footer__link-group">
-            <a href="{% url 'core:about' %}">Quem somos</a>
-            <a href="{% url 'core:contact' %}">Contato</a>
-            <a href="{% url 'core:portal' %}">Portal</a>
-          </div>
-        </div>
-        <div class="col-6 col-lg-2">
-          <p class="site-footer__topic-title">Conteúdo</p>
-          <div class="site-footer__link-group">
-            <a href="{% url 'core:news-list' %}">Notícias</a>
-            <a href="{% url 'core:event-list' %}">Eventos</a>
-            <a href="{% url 'core:media' %}">Mídia</a>
-          </div>
-        </div>
-        <div class="col-6 col-lg-2">
-          <p class="site-footer__topic-title">Acesso rápido</p>
-          <div class="site-footer__link-group">
-            <a href="{% url 'core:links' %}">Links úteis</a>
-            <a href="{% url 'core:login' %}">Entrar</a>
-            <a href="{% url 'core:signup' %}">Cadastro</a>
           </div>
         </div>
       </div>

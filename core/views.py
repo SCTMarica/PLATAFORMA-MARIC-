@@ -1,21 +1,21 @@
 from django.contrib import messages
 from django.contrib.auth import login
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
-from django.views.generic import DetailView, FormView, ListView, TemplateView
+from django.views.generic import DetailView, FormView, ListView, TemplateView, UpdateView
 
-from .forms import EmailOrUsernameAuthenticationForm, UserRegistrationForm
+from .forms import EmailOrUsernameAuthenticationForm, SiteSettingsForm, UserRegistrationForm
 from .i18n import LANGUAGE_SESSION_KEY, normalize_language
-from .models import Event, MediaItem, NewsArticle, User
+from .models import Event, MediaItem, NewsArticle, SiteSettings, User
 
 
 def get_user_landing_url(user):
     if getattr(user, "can_access_admin", False):
-        return reverse("admin:index")
+        return reverse("core:admin-panel")
     return reverse("core:portal")
 
 
@@ -172,6 +172,34 @@ class PortalView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context["user_role_label"] = self.request.user.get_role_display()
         return context
+
+
+class AdminRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    login_url = "core:login"
+
+    def test_func(self):
+        return getattr(self.request.user, "can_access_admin", False)
+
+
+class AdminPanelView(AdminRequiredMixin, UpdateView):
+    template_name = "core/admin_panel.html"
+    form_class = SiteSettingsForm
+    model = SiteSettings
+
+    def get_object(self, queryset=None):
+        obj = SiteSettings.objects.order_by("id").first()
+        if obj is None:
+            obj = SiteSettings.objects.create(
+                hero_title="Transforme sua presenca institucional em uma plataforma pronta para evoluir."
+            )
+        return obj
+
+    def form_valid(self, form):
+        messages.success(self.request, "Conteudo do site atualizado com sucesso.")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("core:admin-panel")
 
 
 @require_POST

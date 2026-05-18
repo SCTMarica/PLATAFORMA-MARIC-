@@ -119,16 +119,52 @@ class AuthenticationFlowTests(TestCase):
 
         self.assertRedirects(response, reverse("core:portal"))
 
-    def test_admin_login_redirects_to_admin(self):
+    def test_admin_login_redirects_to_admin_panel(self):
         response = self.client.post(
             reverse("core:login"),
             {"username": "admin@example.com", "password": "SenhaSegura123!"},
         )
 
-        self.assertRedirects(response, reverse("admin:index"))
+        self.assertRedirects(response, reverse("core:admin-panel"))
 
     def test_portal_requires_authentication(self):
         response = self.client.get(reverse("core:portal"))
 
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("core:login"), response.url)
+
+    def test_admin_panel_requires_admin_user(self):
+        self.client.force_login(self.client_user)
+
+        response = self.client.get(reverse("core:admin-panel"))
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_admin_panel_updates_site_settings(self):
+        self.client.force_login(self.admin_user)
+
+        response = self.client.post(
+            reverse("core:admin-panel"),
+            {
+                "site_name": "Novo Portal",
+                "tagline": "Tagline atualizada",
+                "hero_title": "Titulo atualizado",
+                "hero_subtitle": "Subtitulo atualizado",
+                "about_title": "Sobre atualizado",
+                "about_content": "Conteudo atualizado",
+                "contact_email": "novo@example.com",
+                "contact_phone": "(21) 1111-2222",
+                "whatsapp": "(21) 99999-0000",
+                "address": "Rua atualizada",
+                "logo_url": "",
+                "primary_color": "#bc202e",
+                "secondary_color": "#0b132b",
+                "accent_color": "#f59e0b",
+                "footer_text": "Rodape atualizado",
+            },
+        )
+
+        self.assertRedirects(response, reverse("core:admin-panel"))
+        settings = SiteSettings.objects.order_by("id").first()
+        self.assertEqual(settings.site_name, "Novo Portal")
+        self.assertEqual(settings.hero_title, "Titulo atualizado")

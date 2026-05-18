@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 
+from .models import SiteSettings
 
 User = get_user_model()
 
@@ -90,3 +91,50 @@ class UserRegistrationForm(StyledFormMixin, forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
+    class Meta:
+        model = SiteSettings
+        fields = (
+            "site_name",
+            "tagline",
+            "hero_title",
+            "hero_subtitle",
+            "about_title",
+            "about_content",
+            "contact_email",
+            "contact_phone",
+            "whatsapp",
+            "address",
+            "logo_url",
+            "primary_color",
+            "secondary_color",
+            "accent_color",
+            "footer_text",
+        )
+        labels = {
+            "site_name": "Nome do site",
+            "tagline": "Descricao curta",
+            "hero_title": "Titulo da pagina inicial",
+            "hero_subtitle": "Subtitulo da pagina inicial",
+            "about_title": "Titulo da pagina sobre",
+            "about_content": "Conteudo da pagina sobre",
+            "contact_email": "Email de contato",
+            "contact_phone": "Telefone",
+            "whatsapp": "WhatsApp",
+            "address": "Endereco",
+            "logo_url": "URL da logo",
+            "primary_color": "Cor primaria",
+            "secondary_color": "Cor secundaria",
+            "accent_color": "Cor de destaque",
+            "footer_text": "Texto do rodape",
+        }
+        widgets = {
+            "tagline": forms.Textarea(attrs={"rows": 2}),
+            "hero_subtitle": forms.Textarea(attrs={"rows": 3}),
+            "about_content": forms.Textarea(attrs={"rows": 5}),
+            "primary_color": forms.TextInput(attrs={"type": "color"}),
+            "secondary_color": forms.TextInput(attrs={"type": "color"}),
+            "accent_color": forms.TextInput(attrs={"type": "color"}),
+        }

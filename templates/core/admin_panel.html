@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Painel de admin | {{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <div class="admin-panel">
+      <div class="admin-panel__header">
+        <div>
+          <p class="section-eyebrow mb-2">Administracao</p>
+          <h1 class="h3 mb-2">Painel de admin</h1>
+          <p class="text-secondary mb-0">Edite os textos, contatos, cores e informacoes principais exibidas no site.</p>
+        </div>
+        <a class="btn btn-outline-primary" href="{% url 'core:home' %}">Ver site</a>
+      </div>
+
+      <form method="post" class="admin-panel__form">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <div class="admin-panel__section">
+          <h2>Identidade</h2>
+          <div class="row g-3">
+            {% include "core/partials/admin_field.html" with field=form.site_name cols="col-md-6" %}
+            {% include "core/partials/admin_field.html" with field=form.logo_url cols="col-md-6" %}
+            {% include "core/partials/admin_field.html" with field=form.tagline cols="col-12" %}
+          </div>
+        </div>
+
+        <div class="admin-panel__section">
+          <h2>Pagina inicial</h2>
+          <div class="row g-3">
+            {% include "core/partials/admin_field.html" with field=form.hero_title cols="col-12" %}
+            {% include "core/partials/admin_field.html" with field=form.hero_subtitle cols="col-12" %}
+          </div>
+        </div>
+
+        <div class="admin-panel__section">
+          <h2>Sobre</h2>
+          <div class="row g-3">
+            {% include "core/partials/admin_field.html" with field=form.about_title cols="col-12" %}
+            {% include "core/partials/admin_field.html" with field=form.about_content cols="col-12" %}
+          </div>
+        </div>
+
+        <div class="admin-panel__section">
+          <h2>Contato</h2>
+          <div class="row g-3">
+            {% include "core/partials/admin_field.html" with field=form.contact_email cols="col-md-6" %}
+            {% include "core/partials/admin_field.html" with field=form.contact_phone cols="col-md-6" %}
+            {% include "core/partials/admin_field.html" with field=form.whatsapp cols="col-md-6" %}
+            {% include "core/partials/admin_field.html" with field=form.address cols="col-md-6" %}
+          </div>
+        </div>
+
+        <div class="admin-panel__section">
+          <h2>Aparencia e rodape</h2>
+          <div class="row g-3">
+            {% include "core/partials/admin_field.html" with field=form.primary_color cols="col-md-4" %}
+            {% include "core/partials/admin_field.html" with field=form.secondary_color cols="col-md-4" %}
+            {% include "core/partials/admin_field.html" with field=form.accent_color cols="col-md-4" %}
+            {% include "core/partials/admin_field.html" with field=form.footer_text cols="col-12" %}
+          </div>
+        </div>
+
+        <div class="admin-panel__actions">
+          <button type="submit" class="btn btn-primary">Salvar alteracoes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

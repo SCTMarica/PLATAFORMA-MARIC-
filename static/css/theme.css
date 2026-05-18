@@ -126,6 +126,26 @@ body {
   margin-left: auto;
 }
 
+.site-header__admin-link {
+  border: 1px solid var(--brand-primary);
+  border-radius: 999px;
+  background: var(--brand-primary);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.8rem 1rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-header__admin-link:hover,
+.site-header__admin-link:focus {
+  background: color-mix(in srgb, var(--brand-primary) 88%, black);
+  border-color: color-mix(in srgb, var(--brand-primary) 88%, black);
+  color: #fff;
+}
+
 .navbar-brand,
 .section-eyebrow,
 .page-header h1,
@@ -173,6 +193,47 @@ body {
   border-radius: 1.5rem;
   background: var(--surface-card);
   box-shadow: var(--shadow-soft);
+}
+
+.admin-panel {
+  border: 1px solid var(--border-soft);
+  border-radius: 1.5rem;
+  background: var(--surface-card);
+  box-shadow: var(--shadow-soft);
+  padding: 1.5rem;
+}
+
+.admin-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border-soft);
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.admin-panel__form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.admin-panel__section {
+  border: 1px solid var(--border-soft);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--surface-elevated) 90%, transparent);
+  padding: 1.25rem;
+}
+
+.admin-panel__section h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.admin-panel__actions {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .home-carousel {
@@ -243,12 +304,6 @@ body {
 .site-footer__top {
   padding: 3rem 2rem 2.5rem;
   background: color-mix(in srgb, var(--surface-card) 92%, white);
-}
-
-.site-footer__bottom {
-  padding: 2.5rem 2rem 2.75rem;
-  border-top: 1px solid var(--border-soft);
-  background: color-mix(in srgb, var(--surface-elevated) 98%, transparent);
 }
 
 .site-footer__brand-block,
@@ -410,40 +465,18 @@ body {
   gap: 0.8rem;
 }
 
-.site-footer__contact-list a,
-.site-footer__link-group a {
+.site-footer__contact-list a {
   color: var(--text-main);
   text-decoration: none;
 }
 
 .site-footer__contact-list a:hover,
-.site-footer__contact-list a:focus,
-.site-footer__link-group a:hover,
-.site-footer__link-group a:focus {
+.site-footer__contact-list a:focus {
   color: var(--brand-primary);
 }
 
-.site-footer__site-label {
-  font-size: clamp(1.7rem, 2.5vw, 2.4rem);
-  font-weight: 500;
-  line-height: 1.15;
-  max-width: 18rem;
-}
-
-.site-footer__topic-title {
-  font-size: 1rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-}
-
-.site-footer__link-group {
-  display: grid;
-  gap: 0.8rem;
-}
-
 @media (max-width: 991.98px) {
-  .site-footer__top,
-  .site-footer__bottom {
+  .site-footer__top {
     padding-inline: 1.35rem;
   }
 
@@ -457,13 +490,11 @@ body {
     border-radius: 1.4rem;
   }
 
-  .site-footer__top,
-  .site-footer__bottom {
+  .site-footer__top {
     padding: 1.5rem 1rem;
   }
 
-  .site-footer__brand-name,
-  .site-footer__site-label {
+  .site-footer__brand-name {
     font-size: 1.5rem;
   }
 
@@ -685,6 +716,11 @@ body {
     width: auto;
   }
 
+  .site-header__admin-link {
+    width: 100%;
+    text-align: center;
+  }
+
   .font-controls,
   .language-switcher,
   .language-switcher__options {
@@ -722,6 +758,18 @@ body {
 
   .language-switcher {
     justify-content: flex-start;
+  }
+
+  .admin-panel__header {
+    display: grid;
+  }
+
+  .admin-panel__actions {
+    justify-content: stretch;
+  }
+
+  .admin-panel__actions .btn {
+    width: 100%;
   }
 }
 

@@ -2,6 +2,7 @@ from django.urls import path
 
 from .views import (
     AboutView,
+    AdminPanelView,
     ContactView,
     EventDetailView,
     EventListView,
@@ -35,5 +36,6 @@ urlpatterns = [
     path("sair/", UserLogoutView.as_view(), name="logout"),
     path("cadastro/", UserRegisterView.as_view(), name="register"),
     path("portal/", PortalView.as_view(), name="portal"),
+    path("painel-admin/", AdminPanelView.as_view(), name="admin-panel"),
     path("idioma/", set_language, name="set-language"),
 ]
