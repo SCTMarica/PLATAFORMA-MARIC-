@@ -126,44 +126,6 @@ body {
   margin-left: auto;
 }
 
-.site-header__auth {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.site-header__auth .btn {
-  border-radius: 999px;
-  font-weight: 600;
-  min-width: 6.1rem;
-}
-
-.site-header__auth .btn-outline-primary {
-  border-color: var(--border-soft);
-  color: var(--text-main);
-  background: color-mix(in srgb, var(--surface-elevated) 88%, transparent);
-}
-
-.site-header__auth .btn-outline-primary:hover,
-.site-header__auth .btn-outline-primary:focus {
-  background: color-mix(in srgb, var(--brand-primary) 10%, transparent);
-  border-color: color-mix(in srgb, var(--brand-primary) 30%, var(--border-soft));
-  color: var(--brand-primary);
-}
-
-.site-header__auth .btn-primary {
-  background: var(--brand-primary);
-  border-color: var(--brand-primary);
-  color: #fff;
-}
-
-.site-header__auth .btn-primary:hover,
-.site-header__auth .btn-primary:focus {
-  background: color-mix(in srgb, var(--brand-primary) 88%, black);
-  border-color: color-mix(in srgb, var(--brand-primary) 88%, black);
-  color: #fff;
-}
-
 .navbar-brand,
 .section-eyebrow,
 .page-header h1,
@@ -554,6 +516,25 @@ body {
   line-height: 1;
 }
 
+:root:not([data-theme="dark"]) .theme-toggle,
+:root:not([data-theme="dark"]) .font-controls,
+:root:not([data-theme="dark"]) .language-switcher__options {
+  border-color: color-mix(in srgb, var(--brand-primary) 38%, var(--border-soft));
+}
+
+:root:not([data-theme="dark"]) .theme-toggle,
+:root:not([data-theme="dark"]) .font-controls__button,
+:root:not([data-theme="dark"]) .language-switcher__button {
+  color: var(--brand-primary);
+}
+
+:root:not([data-theme="dark"]) .font-controls__button:hover,
+:root:not([data-theme="dark"]) .font-controls__button:focus,
+:root:not([data-theme="dark"]) .language-switcher__button:hover,
+:root:not([data-theme="dark"]) .language-switcher__button:focus {
+  background: color-mix(in srgb, var(--brand-primary) 10%, transparent);
+}
+
 .theme-toggle__icon {
   width: 1.1rem;
   height: 1.1rem;
@@ -702,17 +683,6 @@ body {
     justify-content: flex-start;
     margin-left: 0;
     width: auto;
-  }
-
-  .site-header__auth {
-    display: grid;
-    gap: 0.65rem;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    width: 100%;
-  }
-
-  .site-header__auth .btn {
-    min-width: 0;
   }
 
   .font-controls,
