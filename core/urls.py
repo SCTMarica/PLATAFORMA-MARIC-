@@ -11,6 +11,7 @@ from .views import (
     NewsDetailView,
     NewsListView,
     PortalView,
+    SignupView,
     UserLoginView,
     UserLogoutView,
     UserRegisterView,
