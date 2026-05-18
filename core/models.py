@@ -25,6 +25,22 @@ class User(AbstractUser):
     )
     phone = models.CharField(max_length=20, blank=True)
 
+    @property
+    def can_access_admin(self):
+        return self.is_active and (
+            self.is_superuser or self.is_staff or self.role in {self.Role.SUPERVISOR, self.Role.MASTER}
+        )
+
+    def save(self, *args, **kwargs):
+        if self.role == self.Role.MASTER:
+            self.is_superuser = True
+            self.is_staff = True
+        elif self.role == self.Role.SUPERVISOR:
+            self.is_staff = True
+        elif not self.is_superuser:
+            self.is_staff = False
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.get_full_name() or self.username
 

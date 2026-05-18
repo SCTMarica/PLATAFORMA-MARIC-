@@ -62,10 +62,22 @@
             </div>
           </form>
 
-          <div class="site-header__auth">
+        <div class="site-header__auth">
+          {% if request.user.is_authenticated %}
+            {% if request.user.can_access_admin %}
+              <a class="btn btn-outline-primary btn-sm" href="{% url 'admin:index' %}">{% tr 'menu.admin' %}</a>
+            {% else %}
+              <a class="btn btn-outline-primary btn-sm" href="{% url 'core:portal' %}">{% tr 'menu.portal' %}</a>
+            {% endif %}
+            <form method="post" action="{% url 'core:logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-primary btn-sm">{% tr 'menu.logout' %}</button>
+            </form>
+          {% else %}
             <a class="btn btn-outline-primary btn-sm" href="{% url 'core:login' %}">{% tr 'menu.login' %}</a>
             <a class="btn btn-primary btn-sm" href="{% url 'core:register' %}">{% tr 'menu.register' %}</a>
-          </div>
+          {% endif %}
+        </div>
         </div>
       </div>
     </div>

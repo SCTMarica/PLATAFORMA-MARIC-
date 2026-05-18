@@ -12,16 +12,28 @@
           <p class="section-eyebrow mb-2">{% tr 'login.eyebrow' %}</p>
           <h1 class="h3 mb-3">{% tr 'login.title' %}</h1>
           <p class="text-secondary">{% tr 'login.subtitle' %}</p>
-          <form class="d-grid gap-3">
+          <p class="small text-muted">{% tr 'login.admin_hint' %}</p>
+          <form method="post" class="d-grid gap-3">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next|default:'' }}">
             <div>
-              <label class="form-label">{% tr 'login.user' %}</label>
-              <input type="text" class="form-control" placeholder="{% tr 'login.placeholder_user' %}">
+              <label class="form-label" for="{{ form.username.id_for_label }}">{% tr 'login.user' %}</label>
+              {{ form.username }}
+              {% for error in form.username.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
             </div>
             <div>
-              <label class="form-label">{% tr 'login.password' %}</label>
-              <input type="password" class="form-control" placeholder="********">
+              <label class="form-label" for="{{ form.password.id_for_label }}">{% tr 'login.password' %}</label>
+              {{ form.password }}
+              {% for error in form.password.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
             </div>
-            <button type="button" class="btn btn-primary">{% tr 'login.button' %}</button>
+            {% for error in form.non_field_errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">{% tr 'login.button' %}</button>
           </form>
         </div>
       </div>
