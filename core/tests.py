@@ -41,6 +41,8 @@ class PublicPagesTests(TestCase):
         self.assertContains(response, "Transformando atendimento")
         self.assertContains(response, "homeCarousel")
         self.assertContains(response, "Banner principal")
+        self.assertContains(response, "eventsCalendarModal")
+        self.assertContains(response, "Abrir calendario completo")
 
     def test_news_detail_loads(self):
         response = self.client.get(reverse("core:news-detail", args=["noticia-de-teste"]))
@@ -51,6 +53,17 @@ class PublicPagesTests(TestCase):
         response = self.client.get(reverse("core:event-detail", args=["evento-de-teste"]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Descricao do evento")
+
+    def test_event_calendar_loads_month_events(self):
+        event = Event.objects.get(slug="evento-de-teste")
+        response = self.client.get(
+            reverse("core:event-calendar"),
+            {"ano": event.start_at.year, "mes": event.start_at.month},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Calendario de eventos")
+        self.assertContains(response, "Evento de teste")
 
     def test_language_switcher_persists_selected_language(self):
         response = self.client.post(

@@ -1,9 +1,13 @@
+import calendar
+from datetime import date
+
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView, UpdateView
@@ -54,6 +58,22 @@ class SiteContextMixin:
 
 class HomeView(SiteContextMixin, TemplateView):
     template_name = "core/home.html"
+    month_names = [
+        "",
+        "Janeiro",
+        "Fevereiro",
+        "Marco",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+        "Dezembro",
+    ]
+    weekday_labels = ["D", "S", "T", "Q", "Q", "S", "S"]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -61,6 +81,28 @@ class HomeView(SiteContextMixin, TemplateView):
             media_type=MediaItem.MediaType.BANNER,
             is_active=True,
         )[:5]
+        today = timezone.localdate()
+        month_range = calendar.monthrange(today.year, today.month)
+        month_start = timezone.make_aware(timezone.datetime(today.year, today.month, 1, 0, 0))
+        month_end = timezone.make_aware(timezone.datetime(today.year, today.month, month_range[1], 23, 59, 59))
+        month_events = Event.objects.published().filter(start_at__gte=month_start, start_at__lte=month_end)
+        events_by_day = {}
+        for event in month_events:
+            events_by_day.setdefault(timezone.localtime(event.start_at).day, []).append(event)
+
+        context["home_calendar_label"] = f"{self.month_names[today.month]} {today.year}"
+        context["home_calendar_weekdays"] = self.weekday_labels
+        context["home_calendar_weeks"] = [
+            [
+                {
+                    "day": day,
+                    "events": events_by_day.get(day, []),
+                    "is_today": day == today.day,
+                }
+                for day in week
+            ]
+            for week in calendar.Calendar(firstweekday=6).monthdayscalendar(today.year, today.month)
+        ]
         return context
 
 
@@ -92,6 +134,75 @@ class EventListView(ListView):
 
     def get_queryset(self):
         return Event.objects.published()
+
+
+class EventCalendarView(TemplateView):
+    template_name = "core/event_calendar.html"
+    month_names = [
+        "",
+        "Janeiro",
+        "Fevereiro",
+        "Marco",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+        "Dezembro",
+    ]
+
+    def get_month_date(self):
+        today = timezone.localdate()
+        try:
+            year = int(self.request.GET.get("ano", today.year))
+            month = int(self.request.GET.get("mes", today.month))
+            return date(year, month, 1)
+        except (TypeError, ValueError):
+            return date(today.year, today.month, 1)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        current_month = self.get_month_date()
+        previous_month = date(current_month.year - 1, 12, 1) if current_month.month == 1 else date(current_month.year, current_month.month - 1, 1)
+        next_month = date(current_month.year + 1, 1, 1) if current_month.month == 12 else date(current_month.year, current_month.month + 1, 1)
+        month_range = calendar.monthrange(current_month.year, current_month.month)
+        month_start = timezone.make_aware(timezone.datetime(current_month.year, current_month.month, 1, 0, 0))
+        month_end = timezone.make_aware(
+            timezone.datetime(current_month.year, current_month.month, month_range[1], 23, 59, 59)
+        )
+        events = Event.objects.published().filter(start_at__gte=month_start, start_at__lte=month_end)
+        events_by_day = {}
+        for event in events:
+            events_by_day.setdefault(timezone.localtime(event.start_at).day, []).append(event)
+
+        weeks = []
+        for week in calendar.Calendar(firstweekday=6).monthdayscalendar(current_month.year, current_month.month):
+            weeks.append(
+                [
+                    {
+                        "day": day,
+                        "date": date(current_month.year, current_month.month, day) if day else None,
+                        "events": events_by_day.get(day, []),
+                    }
+                    for day in week
+                ]
+            )
+
+        context.update(
+            {
+                "weeks": weeks,
+                "current_month": current_month,
+                "current_month_label": f"{self.month_names[current_month.month]} {current_month.year}",
+                "previous_month": previous_month,
+                "next_month": next_month,
+                "weekday_labels": ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"],
+                "month_events": events,
+            }
+        )
+        return context
 
 
 class EventDetailView(DetailView):
