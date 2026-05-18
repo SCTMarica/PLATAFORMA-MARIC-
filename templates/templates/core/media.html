@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load site_i18n %}
+
+{% block title %}{% tr 'titles.media' %} | {{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
+
+{% block content %}
+<section class="page-header py-5">
+  <div class="container">
+    <p class="section-eyebrow mb-2">{% tr 'media.eyebrow' %}</p>
+    <h1 class="display-6 fw-bold">{% tr 'media.title' %}</h1>
+    <p class="text-secondary mb-0">{% tr 'media.subtitle' %}</p>
+  </div>
+</section>
+
+<section class="pb-5">
+  <div class="container">
+    <div class="row g-4 mb-5">
+      {% for item in videos %}
+        <div class="col-lg-6">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="ratio ratio-16x9">
+              <iframe src="{{ item.video_url }}" title="{{ item.title }}" allowfullscreen></iframe>
+            </div>
+            <div class="card-body">
+              <h2 class="h5">{{ item.title }}</h2>
+              <p class="text-secondary mb-0">{{ item.description }}</p>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-12">
+          <div class="empty-state p-4 rounded-4">{% tr 'media.empty_videos' %}</div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="row g-4">
+      {% for item in gallery_items %}
+        <div class="col-md-6 col-xl-4">
+          <div class="card h-100 border-0 shadow-sm">
+            {% if item.image_url %}
+              <img src="{{ item.image_url }}" class="card-img-top object-fit-cover media-cover" alt="{{ item.title }}">
+            {% endif %}
+            <div class="card-body">
+              <h2 class="h5">{{ item.title }}</h2>
+              <p class="text-secondary mb-0">{{ item.description }}</p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

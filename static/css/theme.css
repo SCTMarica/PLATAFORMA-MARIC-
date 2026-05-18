@@ -1,5 +1,6 @@
 :root {
-  --brand-primary: #0d6efd;
+  --brand-primary: rgb(188, 32, 46);
+
   --brand-secondary: #0b132b;
   --brand-accent: #f59e0b;
   --brand-surface: #f6f8fb;
@@ -53,6 +54,16 @@ body {
 .navbar {
   background: var(--nav-bg) !important;
   border-color: var(--border-soft) !important;
+}
+
+.site-accessibility-bar {
+  background: color-mix(in srgb, var(--surface-card) 92%, transparent);
+  border-bottom: 1px solid var(--border-soft);
+  transition: background-color 0.2s ease;
+}
+
+:root[data-theme="dark"] .site-accessibility-bar {
+  background: color-mix(in srgb, var(--brand-surface) 92%, transparent);
 }
 
 .site-header {
@@ -111,7 +122,7 @@ body {
   align-items: center;
   justify-content: flex-end;
   gap: 0.65rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   margin-left: auto;
 }
 
@@ -645,8 +656,9 @@ body {
 
 .site-header .dropdown-item:hover,
 .site-header .dropdown-item:focus {
-  background: rgba(13, 110, 253, 0.08);
+  background: color-mix(in srgb, var(--brand-primary) 10%, transparent);
 }
+
 
 .card,
 .table,
@@ -686,10 +698,10 @@ body {
   }
 
   .site-header__actions {
-    align-items: stretch;
+    align-items: center;
     justify-content: flex-start;
     margin-left: 0;
-    width: 100%;
+    width: auto;
   }
 
   .site-header__auth {

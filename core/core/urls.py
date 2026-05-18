@@ -7,13 +7,12 @@ from .views import (
     EventListView,
     HomeView,
     LinksView,
+    LoginPlaceholderView,
     MediaView,
     NewsDetailView,
     NewsListView,
-    PortalView,
-    UserLoginView,
-    UserLogoutView,
-    UserRegisterView,
+    PortalPlaceholderView,
+    SignupView,
     set_language,
 )
 
@@ -30,9 +29,7 @@ urlpatterns = [
     path("contato/", ContactView.as_view(), name="contact"),
     path("inscreva-se/", SignupView.as_view(), name="signup"),
     path("links/", LinksView.as_view(), name="links"),
-    path("login/", UserLoginView.as_view(), name="login"),
-    path("sair/", UserLogoutView.as_view(), name="logout"),
-    path("cadastro/", UserRegisterView.as_view(), name="register"),
-    path("portal/", PortalView.as_view(), name="portal"),
+    path("login/", LoginPlaceholderView.as_view(), name="login"),
+    path("portal/", PortalPlaceholderView.as_view(), name="portal"),
     path("idioma/", set_language, name="set-language"),
 ]

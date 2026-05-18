@@ -1,34 +1,5 @@
 {% load site_i18n %}
 
-<div class="site-accessibility-bar py-1">
-  <div class="container-xl d-flex justify-content-end">
-    <div class="site-header__actions">
-      <div class="font-controls" role="group" aria-label="Controle de tamanho da fonte">
-        <button type="button" class="font-controls__button" data-font-scale="decrease" aria-label="Diminuir fonte">A-</button>
-        <button type="button" class="font-controls__button font-controls__button--status" data-font-scale="reset" aria-label="Restaurar fonte para 100%">100%</button>
-        <button type="button" class="font-controls__button" data-font-scale="increase" aria-label="Aumentar fonte">A+</button>
-      </div>
-
-      <button type="button" class="theme-toggle" data-theme-toggle aria-label="Alternar tema" title="Alternar tema">
-        <span class="theme-toggle__icon" aria-hidden="true"></span>
-        <span class="visually-hidden" data-theme-toggle-label>Alternar tema</span>
-      </button>
-
-      <form method="post" action="{% url 'core:set-language' %}" class="language-switcher" aria-label="{% tr 'menu.language' %}">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ request.get_full_path }}">
-        <span class="visually-hidden">{% tr 'menu.language' %}</span>
-        <div class="language-switcher__options" role="group" aria-label="{% tr 'menu.language' %}">
-          {% for language in available_languages %}
-            <button type="submit" name="language" value="{{ language.code }}" class="language-switcher__button{% if language.code == current_language %} is-active{% endif %}">
-                {{ language.code|upper }}
-            </button>
-          {% endfor %}
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
 <nav class="navbar navbar-expand-xl site-header sticky-top shadow-sm">
   <div class="container-xl py-2">
     <a class="navbar-brand site-header__brand fw-bold d-flex align-items-center gap-2" href="{% url 'core:home' %}">
@@ -91,22 +62,10 @@
             </div>
           </form>
 
-        <div class="site-header__auth">
-          {% if request.user.is_authenticated %}
-            {% if request.user.can_access_admin %}
-              <a class="btn btn-outline-primary btn-sm" href="{% url 'admin:index' %}">{% tr 'menu.admin' %}</a>
-            {% else %}
-              <a class="btn btn-outline-primary btn-sm" href="{% url 'core:portal' %}">{% tr 'menu.portal' %}</a>
-            {% endif %}
-            <form method="post" action="{% url 'core:logout' %}">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-primary btn-sm">{% tr 'menu.logout' %}</button>
-            </form>
-          {% else %}
+          <div class="site-header__auth">
             <a class="btn btn-outline-primary btn-sm" href="{% url 'core:login' %}">{% tr 'menu.login' %}</a>
-            <a class="btn btn-primary btn-sm" href="{% url 'core:register' %}">{% tr 'menu.register' %}</a>
-          {% endif %}
-        </div>
+            <a class="btn btn-primary btn-sm" href="{% url 'core:signup' %}">{% tr 'menu.register' %}</a>
+          </div>
         </div>
       </div>
     </div>
