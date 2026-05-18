@@ -41,7 +41,7 @@ class PublicPagesTests(TestCase):
         self.assertContains(response, "Transformando atendimento")
         self.assertContains(response, "homeCarousel")
         self.assertContains(response, "Banner principal")
-        self.assertContains(response, "eventsCalendarModal")
+        self.assertContains(response, "Calendario de eventos")
         self.assertContains(response, "Abrir calendario completo")
 
     def test_news_detail_loads(self):
