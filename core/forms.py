@@ -2,8 +2,9 @@ from django import forms
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
+from django.utils.text import slugify
 
-from .models import SiteSettings
+from .models import MediaItem, NewsArticle, SignupForm, SiteSettings
 
 User = get_user_model()
 
@@ -138,3 +139,120 @@ class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
             "secondary_color": forms.TextInput(attrs={"type": "color"}),
             "accent_color": forms.TextInput(attrs={"type": "color"}),
         }
+
+
+class NewsArticleForm(StyledFormMixin, forms.ModelForm):
+    class Meta:
+        model = NewsArticle
+        fields = ("title", "slug", "summary", "content", "cover_image_url", "is_featured", "is_published", "published_at")
+        labels = {
+            "title": "Titulo",
+            "slug": "Identificador da URL",
+            "summary": "Resumo",
+            "content": "Conteudo",
+            "cover_image_url": "URL da imagem",
+            "is_featured": "Destacar na pagina inicial",
+            "is_published": "Publicado",
+            "published_at": "Data de publicacao",
+        }
+        widgets = {
+            "content": forms.Textarea(attrs={"rows": 6}),
+            "published_at": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+        }
+
+    def clean_slug(self):
+        slug = self.cleaned_data.get("slug") or slugify(self.cleaned_data.get("title", ""))
+        if not slug:
+            raise ValidationError("Informe um titulo ou identificador valido.")
+        return slug
+
+
+class BannerForm(StyledFormMixin, forms.ModelForm):
+    class Meta:
+        model = MediaItem
+        fields = ("title", "description", "image_url", "external_url", "sort_order", "is_active")
+        labels = {
+            "title": "Titulo",
+            "description": "Descricao",
+            "image_url": "URL da imagem",
+            "external_url": "Link externo",
+            "sort_order": "Ordem",
+            "is_active": "Ativo",
+        }
+
+    def save(self, commit=True):
+        obj = super().save(commit=False)
+        obj.media_type = MediaItem.MediaType.BANNER
+        if commit:
+            obj.save()
+        return obj
+
+
+class SignupFormAdminForm(StyledFormMixin, forms.ModelForm):
+    fields_text = forms.CharField(
+        label="Campos do formulario",
+        widget=forms.Textarea(attrs={"rows": 7}),
+        help_text="Use uma linha por campo: Rotulo|tipo|required. Tipos: text, email, phone, number, textarea.",
+    )
+
+    class Meta:
+        model = SignupForm
+        fields = ("title", "slug", "description", "fields_text", "is_active")
+        labels = {
+            "title": "Titulo",
+            "slug": "Identificador da URL",
+            "description": "Descricao",
+            "is_active": "Ativo",
+        }
+        widgets = {"description": forms.Textarea(attrs={"rows": 3})}
+
+    def clean_slug(self):
+        slug = self.cleaned_data.get("slug") or slugify(self.cleaned_data.get("title", ""))
+        if not slug:
+            raise ValidationError("Informe um titulo ou identificador valido.")
+        return slug
+
+    def clean_fields_text(self):
+        rows = [row.strip() for row in self.cleaned_data["fields_text"].splitlines() if row.strip()]
+        schema = []
+        allowed_types = {"text", "email", "phone", "number", "textarea"}
+        for index, row in enumerate(rows, start=1):
+            parts = [part.strip() for part in row.split("|")]
+            label = parts[0] if parts else ""
+            field_type = parts[1] if len(parts) > 1 and parts[1] else "text"
+            required = len(parts) > 2 and parts[2].lower() in {"required", "obrigatorio", "sim", "true", "1"}
+            if not label:
+                raise ValidationError(f"Linha {index}: informe o rotulo do campo.")
+            if field_type not in allowed_types:
+                raise ValidationError(f"Linha {index}: tipo '{field_type}' nao e valido.")
+            schema.append({"name": slugify(label).replace("-", "_"), "label": label, "type": field_type, "required": required})
+        if not schema:
+            raise ValidationError("Cadastre pelo menos um campo.")
+        self.cleaned_schema = schema
+        return self.cleaned_data["fields_text"]
+
+    def save(self, commit=True):
+        obj = super().save(commit=False)
+        obj.fields_schema = self.cleaned_schema
+        if commit:
+            obj.save()
+        return obj
+
+
+def build_signup_submission_form(signup_form):
+    fields = {}
+    for item in signup_form.fields_schema:
+        field_type = item.get("type", "text")
+        required = bool(item.get("required"))
+        label = item.get("label", item.get("name", "Campo"))
+        name = item.get("name") or slugify(label).replace("-", "_")
+        if field_type == "textarea":
+            fields[name] = forms.CharField(label=label, required=required, widget=forms.Textarea(attrs={"rows": 4}))
+        elif field_type == "email":
+            fields[name] = forms.EmailField(label=label, required=required)
+        elif field_type == "number":
+            fields[name] = forms.FloatField(label=label, required=required)
+        else:
+            fields[name] = forms.CharField(label=label, required=required)
+
+    return type("DynamicSignupSubmissionForm", (StyledFormMixin, forms.Form), fields)

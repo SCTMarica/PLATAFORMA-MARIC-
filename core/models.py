@@ -46,7 +46,7 @@ class User(AbstractUser):
 
 
 class SiteSettings(TimeStampedModel):
-    site_name = models.CharField(max_length=150, default="Plataforma Maricá")
+    site_name = models.CharField(max_length=150, default="Plataforma Maric")
     tagline = models.CharField(max_length=200, blank=True)
     hero_title = models.CharField(max_length=200)
     hero_subtitle = models.TextField(blank=True)
@@ -167,3 +167,35 @@ class SocialLink(TimeStampedModel):
 
     def __str__(self):
         return self.label
+
+
+class SignupForm(TimeStampedModel):
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True)
+    description = models.TextField(blank=True)
+    fields_schema = models.JSONField(default=list)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Formulario de inscricao"
+        verbose_name_plural = "Formularios de inscricao"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse("core:signup-form-detail", args=[self.slug])
+
+
+class SignupSubmission(TimeStampedModel):
+    form = models.ForeignKey(SignupForm, on_delete=models.CASCADE, related_name="submissions")
+    data = models.JSONField(default=dict)
+
+    class Meta:
+        verbose_name = "Inscricao enviada"
+        verbose_name_plural = "Inscricoes enviadas"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.form.title} - {self.created_at:%d/%m/%Y %H:%M}"

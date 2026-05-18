@@ -10,9 +10,40 @@
         <div>
           <p class="section-eyebrow mb-2">Administracao</p>
           <h1 class="h3 mb-2">Painel de admin</h1>
-          <p class="text-secondary mb-0">Edite os textos, contatos, cores e informacoes principais exibidas no site.</p>
+          <p class="text-secondary mb-0">Gerencie o conteudo publicado, os destaques da pagina inicial e os formularios de inscricao.</p>
         </div>
         <a class="btn btn-outline-primary" href="{% url 'core:home' %}">Ver site</a>
+      </div>
+
+      <div class="admin-panel__quick-actions" aria-label="Acoes do painel">
+        <a class="admin-action-card" href="{% url 'core:admin-banner-create' %}">
+          <span class="admin-action-card__icon">IMG</span>
+          <span>
+            <strong>Carrossel</strong>
+            <small>Cadastrar imagem da pagina inicial</small>
+          </span>
+        </a>
+        <a class="admin-action-card" href="{% url 'core:admin-news-create' %}">
+          <span class="admin-action-card__icon">TXT</span>
+          <span>
+            <strong>Noticias</strong>
+            <small>Publicar uma nova noticia</small>
+          </span>
+        </a>
+        <a class="admin-action-card" href="{% url 'core:admin-signup-form-create' %}">
+          <span class="admin-action-card__icon">FOR</span>
+          <span>
+            <strong>Formularios</strong>
+            <small>Criar inscricoes personalizadas</small>
+          </span>
+        </a>
+      </div>
+
+      <div class="admin-panel__tabs">
+        <a class="is-active" href="{% url 'core:admin-panel' %}">Conteudo geral</a>
+        <a href="{% url 'core:admin-banner-create' %}">Carrossel</a>
+        <a href="{% url 'core:admin-news-create' %}">Noticias</a>
+        <a href="{% url 'core:admin-signup-form-create' %}">Formularios</a>
       </div>
 
       <form method="post" class="admin-panel__form">

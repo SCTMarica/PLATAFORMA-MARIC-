@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from .models import Event, MediaItem, NewsArticle, SiteSettings, User
+from .models import Event, MediaItem, NewsArticle, SignupForm, SignupSubmission, SiteSettings, User
 
 
 class PublicPagesTests(TestCase):
@@ -168,3 +168,68 @@ class AuthenticationFlowTests(TestCase):
         settings = SiteSettings.objects.order_by("id").first()
         self.assertEqual(settings.site_name, "Novo Portal")
         self.assertEqual(settings.hero_title, "Titulo atualizado")
+
+    def test_admin_can_create_news_banner_and_signup_form(self):
+        self.client.force_login(self.admin_user)
+
+        news_response = self.client.post(
+            reverse("core:admin-news-create"),
+            {
+                "title": "Nova noticia",
+                "slug": "nova-noticia",
+                "summary": "Resumo",
+                "content": "Conteudo",
+                "cover_image_url": "",
+                "is_featured": "on",
+                "is_published": "on",
+                "published_at": timezone.now().strftime("%Y-%m-%dT%H:%M"),
+            },
+        )
+        self.assertRedirects(news_response, reverse("core:admin-panel"))
+        self.assertTrue(NewsArticle.objects.filter(slug="nova-noticia").exists())
+
+        banner_response = self.client.post(
+            reverse("core:admin-banner-create"),
+            {
+                "title": "Banner novo",
+                "description": "Descricao",
+                "image_url": "https://example.com/banner.jpg",
+                "external_url": "",
+                "sort_order": 2,
+                "is_active": "on",
+            },
+        )
+        self.assertRedirects(banner_response, reverse("core:admin-panel"))
+        self.assertTrue(MediaItem.objects.filter(title="Banner novo", media_type=MediaItem.MediaType.BANNER).exists())
+
+        form_response = self.client.post(
+            reverse("core:admin-signup-form-create"),
+            {
+                "title": "Oficina",
+                "slug": "oficina",
+                "description": "Inscricao da oficina",
+                "fields_text": "Nome completo|text|required\nEmail|email|required\nIdade|number",
+                "is_active": "on",
+            },
+        )
+        self.assertRedirects(form_response, reverse("core:admin-panel"))
+        self.assertTrue(SignupForm.objects.filter(slug="oficina").exists())
+
+    def test_signup_form_submission_is_saved(self):
+        signup_form = SignupForm.objects.create(
+            title="Curso livre",
+            slug="curso-livre",
+            fields_schema=[
+                {"name": "nome", "label": "Nome", "type": "text", "required": True},
+                {"name": "email", "label": "Email", "type": "email", "required": True},
+            ],
+        )
+
+        response = self.client.post(
+            reverse("core:signup-form-detail", args=[signup_form.slug]),
+            {"nome": "Ana", "email": "ana@example.com"},
+        )
+
+        self.assertRedirects(response, reverse("core:signup"))
+        submission = SignupSubmission.objects.get(form=signup_form)
+        self.assertEqual(submission.data["nome"], "Ana")

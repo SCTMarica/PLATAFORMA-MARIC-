@@ -2,15 +2,23 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
-from django.views.generic import DetailView, FormView, ListView, TemplateView, UpdateView
+from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView, UpdateView
 
-from .forms import EmailOrUsernameAuthenticationForm, SiteSettingsForm, UserRegistrationForm
+from .forms import (
+    BannerForm,
+    EmailOrUsernameAuthenticationForm,
+    NewsArticleForm,
+    SignupFormAdminForm,
+    SiteSettingsForm,
+    UserRegistrationForm,
+    build_signup_submission_form,
+)
 from .i18n import LANGUAGE_SESSION_KEY, normalize_language
-from .models import Event, MediaItem, NewsArticle, SiteSettings, User
+from .models import Event, MediaItem, NewsArticle, SignupForm, SignupSubmission, SiteSettings, User
 
 
 def get_user_landing_url(user):
@@ -114,8 +122,12 @@ class ContactView(TemplateView):
     template_name = "core/contact.html"
 
 
-class SignupView(SiteContextMixin, TemplateView):
+class SignupView(SiteContextMixin, ListView):
     template_name = "core/signup.html"
+    context_object_name = "signup_forms"
+
+    def get_queryset(self):
+        return SignupForm.objects.filter(is_active=True)
 
 
 class LinksView(TemplateView):
@@ -200,6 +212,90 @@ class AdminPanelView(AdminRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse("core:admin-panel")
+
+
+class AdminNewsCreateView(AdminRequiredMixin, CreateView):
+    template_name = "core/admin_form.html"
+    form_class = NewsArticleForm
+    model = NewsArticle
+
+    def form_valid(self, form):
+        messages.success(self.request, "Noticia cadastrada com sucesso.")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("core:admin-panel")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["admin_title"] = "Cadastrar noticia"
+        context["admin_description"] = "Publique uma noticia e escolha se ela aparece em destaque na pagina inicial."
+        context["submit_label"] = "Salvar noticia"
+        context["active_admin_tab"] = "news"
+        return context
+
+
+class AdminBannerCreateView(AdminRequiredMixin, CreateView):
+    template_name = "core/admin_form.html"
+    form_class = BannerForm
+    model = MediaItem
+
+    def form_valid(self, form):
+        messages.success(self.request, "Imagem do carrossel cadastrada com sucesso.")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("core:admin-panel")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["admin_title"] = "Cadastrar imagem do carrossel"
+        context["admin_description"] = "Adicione titulo, imagem e ordem de exibicao para o carrossel da pagina inicial."
+        context["submit_label"] = "Salvar imagem"
+        context["active_admin_tab"] = "banner"
+        return context
+
+
+class AdminSignupFormCreateView(AdminRequiredMixin, CreateView):
+    template_name = "core/admin_form.html"
+    form_class = SignupFormAdminForm
+    model = SignupForm
+
+    def form_valid(self, form):
+        messages.success(self.request, "Formulario de inscricao criado com sucesso.")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("core:admin-panel")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["admin_title"] = "Criar formulario de inscricao"
+        context["admin_description"] = "Defina os campos que o cliente devera preencher. Cada envio ficara salvo no banco."
+        context["submit_label"] = "Salvar formulario"
+        context["active_admin_tab"] = "forms"
+        return context
+
+
+class SignupFormDetailView(FormView):
+    template_name = "core/signup_form_detail.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        self.signup_form = get_object_or_404(SignupForm, slug=kwargs["slug"], is_active=True)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_form_class(self):
+        return build_signup_submission_form(self.signup_form)
+
+    def form_valid(self, form):
+        SignupSubmission.objects.create(form=self.signup_form, data=form.cleaned_data)
+        messages.success(self.request, "Inscricao enviada com sucesso.")
+        return redirect("core:signup")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["signup_form"] = self.signup_form
+        return context
 
 
 @require_POST
