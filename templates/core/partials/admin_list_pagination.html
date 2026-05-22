@@ -1,0 +1,22 @@
+{% if page_obj.has_other_pages %}
+<nav class="admin-list-pagination" aria-label="Paginacao">
+  <p class="admin-list-pagination__info">
+    Mostrando {{ page_obj.start_index }}–{{ page_obj.end_index }} de {{ page_obj.paginator.count }}
+  </p>
+  <div class="admin-list-pagination__links">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}{% if query_string %}&{{ query_string }}{% endif %}" class="admin-list-pagination__btn">Anterior</a>
+    {% endif %}
+    {% for num in page_obj.paginator.page_range %}
+      {% if num == page_obj.number %}
+      <span class="admin-list-pagination__btn admin-list-pagination__btn--active">{{ num }}</span>
+      {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+      <a href="?page={{ num }}{% if query_string %}&{{ query_string }}{% endif %}" class="admin-list-pagination__btn">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if query_string %}&{{ query_string }}{% endif %}" class="admin-list-pagination__btn">Proximo</a>
+    {% endif %}
+  </div>
+</nav>
+{% endif %}

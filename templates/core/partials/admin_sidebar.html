@@ -1,0 +1,95 @@
+{% load static site_i18n %}
+{% with url_name=request.resolver_match.url_name %}
+<aside id="admin-sidebar" class="admin-sidebar" aria-label="Menu administrativo">
+  <button id="admin-mobile-close" type="button" class="admin-sidebar__close d-lg-none" aria-label="Fechar menu">
+    {% include "core/partials/admin_icon.html" with icon="close" %}
+  </button>
+  <div class="admin-sidebar__brand">
+    <a href="{% url 'core:admin-dashboard' %}">
+      {% if site_settings.logo_url %}
+        <img src="{{ site_settings.logo_url }}" alt="{{ site_settings.site_name|default:'Prefeitura de Marica' }}">
+      {% else %}
+        <img src="{% static 'img/prefeitura_marica_horizontal_branco.png' %}" alt="Prefeitura de Marica">
+      {% endif %}
+    </a>
+  </div>
+
+  <nav class="admin-sidebar__nav">
+    <a href="{% url 'core:home' %}" class="admin-sidebar__item admin-sidebar__item--portal">
+      <span class="admin-sidebar__icon">{% include "core/partials/admin_icon.html" with icon="home" %}</span>
+      <span>Ver site publico</span>
+    </a>
+
+    <a href="{% url 'core:admin-dashboard' %}" class="admin-sidebar__item{% if url_name == 'admin-dashboard' %} is-active{% endif %}">
+      <span class="admin-sidebar__icon">{% include "core/partials/admin_icon.html" with icon="dashboard" %}</span>
+      <span>Dashboard</span>
+    </a>
+
+    <div class="admin-sidebar__group{% if url_name == 'admin-panel' or url_name == 'admin-banner-list' or url_name == 'admin-banner-create' %} is-open{% endif %}">
+      <button type="button" class="admin-sidebar__item admin-sidebar__item--group{% if url_name == 'admin-panel' or url_name == 'admin-banner-list' or url_name == 'admin-banner-create' %} is-active{% endif %}" onclick="toggleAdminSubmenu('admin-content-submenu')">
+        <span class="admin-sidebar__item-main">
+          <span class="admin-sidebar__icon">{% include "core/partials/admin_icon.html" with icon="settings" %}</span>
+          <span>Conteudo</span>
+        </span>
+        <span class="admin-sidebar__chevron">{% include "core/partials/admin_icon.html" with icon="chevron" %}</span>
+      </button>
+      <div id="admin-content-submenu" class="admin-sidebar__submenu{% if url_name == 'admin-panel' or url_name == 'admin-banner-list' or url_name == 'admin-banner-create' %} is-active{% endif %}">
+        <a href="{% url 'core:admin-panel' %}" class="admin-sidebar__subitem{% if url_name == 'admin-panel' %} is-active{% endif %}">Conteudo geral</a>
+        <a href="{% url 'core:admin-banner-list' %}" class="admin-sidebar__subitem{% if url_name == 'admin-banner-list' or url_name == 'admin-banner-create' %} is-active{% endif %}">Carrossel</a>
+      </div>
+    </div>
+
+    <div class="admin-sidebar__group{% if url_name == 'admin-news-list' or url_name == 'admin-news-create' %} is-open{% endif %}">
+      <button type="button" class="admin-sidebar__item admin-sidebar__item--group{% if url_name == 'admin-news-list' or url_name == 'admin-news-create' %} is-active{% endif %}" onclick="toggleAdminSubmenu('admin-news-submenu')">
+        <span class="admin-sidebar__item-main">
+          <span class="admin-sidebar__icon">{% include "core/partials/admin_icon.html" with icon="news" %}</span>
+          <span>Publicacoes</span>
+        </span>
+        <span class="admin-sidebar__chevron">{% include "core/partials/admin_icon.html" with icon="chevron" %}</span>
+      </button>
+      <div id="admin-news-submenu" class="admin-sidebar__submenu{% if url_name == 'admin-news-list' or url_name == 'admin-news-create' %} is-active{% endif %}">
+        <a href="{% url 'core:admin-news-list' %}" class="admin-sidebar__subitem{% if url_name == 'admin-news-list' or url_name == 'admin-news-create' %} is-active{% endif %}">Noticias</a>
+      </div>
+    </div>
+
+    <div class="admin-sidebar__group{% if url_name == 'admin-signup-form-list' or url_name == 'admin-signup-form-create' or url_name == 'admin-signup-submission-list' %} is-open{% endif %}">
+      <button type="button" class="admin-sidebar__item admin-sidebar__item--group{% if url_name == 'admin-signup-form-list' or url_name == 'admin-signup-form-create' or url_name == 'admin-signup-submission-list' %} is-active{% endif %}" onclick="toggleAdminSubmenu('admin-forms-submenu')">
+        <span class="admin-sidebar__item-main">
+          <span class="admin-sidebar__icon">{% include "core/partials/admin_icon.html" with icon="forms" %}</span>
+          <span>Inscricoes</span>
+        </span>
+        <span class="admin-sidebar__chevron">{% include "core/partials/admin_icon.html" with icon="chevron" %}</span>
+      </button>
+      <div id="admin-forms-submenu" class="admin-sidebar__submenu{% if url_name == 'admin-signup-form-list' or url_name == 'admin-signup-form-create' or url_name == 'admin-signup-submission-list' %} is-active{% endif %}">
+        <a href="{% url 'core:admin-signup-form-list' %}" class="admin-sidebar__subitem{% if url_name == 'admin-signup-form-list' or url_name == 'admin-signup-form-create' %} is-active{% endif %}">Formularios</a>
+        <a href="{% url 'core:admin-signup-submission-list' %}" class="admin-sidebar__subitem{% if url_name == 'admin-signup-submission-list' %} is-active{% endif %}">Inscricoes recebidas</a>
+      </div>
+    </div>
+
+    {% if request.user.is_superuser or request.user.role == 'administrador_master' %}
+    <div class="admin-sidebar__group">
+      <button type="button" class="admin-sidebar__item admin-sidebar__item--group" onclick="toggleAdminSubmenu('admin-system-submenu')">
+        <span class="admin-sidebar__item-main">
+          <span class="admin-sidebar__icon">{% include "core/partials/admin_icon.html" with icon="shield" %}</span>
+          <span>Sistema</span>
+        </span>
+        <span class="admin-sidebar__chevron">{% include "core/partials/admin_icon.html" with icon="chevron" %}</span>
+      </button>
+      <div id="admin-system-submenu" class="admin-sidebar__submenu">
+        <a href="{% url 'admin:core_user_changelist' %}" class="admin-sidebar__subitem">Usuarios</a>
+        <a href="{% url 'admin:index' %}" class="admin-sidebar__subitem">Django Admin</a>
+      </div>
+    </div>
+    {% endif %}
+
+    <a href="{% url 'core:portal' %}" class="admin-sidebar__item">
+      <span class="admin-sidebar__icon">{% include "core/partials/admin_icon.html" with icon="user" %}</span>
+      <span>Meu portal</span>
+    </a>
+  </nav>
+
+  <div class="admin-sidebar__footer">
+    {% include "partials/logout_button.html" with size_class="btn-sm w-100" %}
+  </div>
+</aside>
+{% endwith %}

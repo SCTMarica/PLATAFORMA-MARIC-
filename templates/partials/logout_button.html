@@ -1,0 +1,7 @@
+{% load site_i18n %}
+<form method="post" action="{% url 'core:logout' %}" class="site-logout-form{% if button_class %} {{ button_class }}{% endif %}">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-outline-secondary{% if size_class %} {{ size_class }}{% endif %}">
+    {% tr 'menu.logout' %}
+  </button>
+</form>

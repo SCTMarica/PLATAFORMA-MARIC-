@@ -1,0 +1,424 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxos de Usuários - Plataforma Maricá</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #0d6efd;
+            padding-bottom: 20px;
+        }
+        
+        h1 {
+            color: #0d6efd;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .data-doc {
+            text-align: right;
+            font-size: 12px;
+            color: #999;
+            margin-top: 10px;
+        }
+        
+        h2 {
+            color: #0b132b;
+            font-size: 22px;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #0d6efd;
+        }
+        
+        h3 {
+            color: #0d6efd;
+            font-size: 18px;
+            margin: 20px 0 15px 0;
+        }
+        
+        .role-section {
+            background: #f9f9f9;
+            border-left: 5px solid #0d6efd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .role-section.supervisor {
+            border-left-color: #f59e0b;
+        }
+        
+        .role-section.admin {
+            border-left-color: #ef4444;
+        }
+        
+        .role-title {
+            display: inline-block;
+            background: #0d6efd;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .role-section.supervisor .role-title {
+            background: #f59e0b;
+        }
+        
+        .role-section.admin .role-title {
+            background: #ef4444;
+        }
+        
+        .flow-box {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .flow-item {
+            margin: 8px 0;
+            padding-left: 20px;
+        }
+        
+        .flow-item:before {
+            content: "→";
+            margin-left: -15px;
+            margin-right: 8px;
+            color: #0d6efd;
+            font-weight: bold;
+        }
+        
+        .flow-item.sub {
+            padding-left: 40px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .flow-item.sub:before {
+            content: "└─";
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        
+        table thead {
+            background: #0d6efd;
+            color: white;
+        }
+        
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        table tbody tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .check {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .cross {
+            color: #dc3545;
+        }
+        
+        .warning {
+            color: #f59e0b;
+            font-weight: bold;
+        }
+        
+        .section-todo {
+            background: #fff3cd;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .section-todo h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .section-todo ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+        
+        .section-todo li {
+            margin: 5px 0;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .page-break {
+            page-break-after: always;
+            margin: 40px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ Plataforma Maricá</h1>
+            <p class="subtitle">Documento de Fluxos de Usuários e Funcionalidades</p>
+            <div class="data-doc">Gerado em: 11 de May de 2026 às 15:42</div>
+        </header>
+
+        <h2>📊 Visão Geral do Sistema</h2>
+        <p>A Plataforma Maricá é um portal institucional para a prefeitura com três papéis de usuário distintos, cada um com permissões e fluxos específicos.</p>
+        
+        <div class="page-break"></div>
+        
+        <h2>👥 Fluxos por Tipo de Usuário</h2>
+        
+        <!-- CLIENTE FINAL -->
+        <div class="role-section">
+            <span class="role-title">1️⃣ CLIENTE FINAL (Cidadão)</span>
+            <div class="flow-box">
+                <div class="flow-item">Acessa site publicamente (sem login)</div>
+                <div class="flow-item sub">HOME: vê banners, notícias destaque, eventos próximos</div>
+                <div class="flow-item sub">NOTÍCIAS: navega lista de notícias, filtra por data</div>
+                <div class="flow-item sub">EVENTOS: vê eventos, clica em "inscrição" (link externo)</div>
+                <div class="flow-item sub">MÍDIA: visualiza galeria de fotos, vídeos institucionais</div>
+                <div class="flow-item sub">SOBRE: informações sobre a prefeitura</div>
+                <div class="flow-item sub">CONTATO: formulário de contato / dados de atendimento</div>
+                <div class="flow-item sub">LINKS: links úteis e sociais</div>
+                <div class="flow-item">Se quer mais: REGISTRA/LOGA</div>
+                <div class="flow-item sub">PORTAL: acesso a setor específico (vacinas, inscrições, documentos)</div>
+            </div>
+        </div>
+        
+        <!-- SUPERVISOR -->
+        <div class="role-section supervisor">
+            <span class="role-title">2️⃣ SUPERVISOR/COORDENADOR (Gestor de Setor)</span>
+            <div class="flow-box">
+                <div class="flow-item">LOGA no sistema</div>
+                <div class="flow-item">PORTAL: dashboard do setor</div>
+                <div class="flow-item sub">Vê eventos/notícias do seu setor</div>
+                <div class="flow-item sub">Visualiza inscrições/participações</div>
+                <div class="flow-item sub">Exporta relatórios</div>
+                <div class="flow-item">ADMIN RESTRITO (provável)</div>
+                <div class="flow-item sub">Criar/editar notícias do seu setor</div>
+                <div class="flow-item sub">Criar/editar eventos do seu setor</div>
+                <div class="flow-item sub">Gerenciar mídias (fotos/vídeos)</div>
+                <div class="flow-item sub">Visualizar comentários/feedback</div>
+                <div class="flow-item">NÃO pode: gerenciar usuários, settings globais, outros setores</div>
+            </div>
+        </div>
+        
+        <!-- ADMIN MASTER -->
+        <div class="role-section admin">
+            <span class="role-title">3️⃣ ADMINISTRADOR MASTER (TI/Gestor)</span>
+            <div class="flow-box">
+                <div class="flow-item">LOGA no sistema</div>
+                <div class="flow-item">ADMIN DJANGO (acesso total)</div>
+                <div class="flow-item sub">Users: criar, editar, deletar, atribuir papéis</div>
+                <div class="flow-item sub">Site Settings: cores, logo, contatos, taglines</div>
+                <div class="flow-item sub">News: CRUD completo</div>
+                <div class="flow-item sub">Events: CRUD completo</div>
+                <div class="flow-item sub">Media: CRUD completo</div>
+                <div class="flow-item sub">Social Links: CRUD completo</div>
+                <div class="flow-item sub">Logs de auditoria</div>
+                <div class="flow-item">PORTAL ADMIN: visão de tudo</div>
+                <div class="flow-item sub">Dashboard com estatísticas globais</div>
+                <div class="flow-item">Configuração do sistema: Django settings, permissões, backups</div>
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <h2>📋 Matriz de Permissões</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Ação</th>
+                    <th>Cliente Final</th>
+                    <th>Supervisor</th>
+                    <th>Admin Master</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Ver home/notícias/eventos</td>
+                    <td><span class="check">✅</span></td>
+                    <td><span class="check">✅</span></td>
+                    <td><span class="check">✅</span></td>
+                </tr>
+                <tr>
+                    <td>Inscrever em evento</td>
+                    <td><span class="check">✅</span></td>
+                    <td><span class="check">✅</span></td>
+                    <td><span class="check">✅</span></td>
+                </tr>
+                <tr>
+                    <td>Criar notícia</td>
+                    <td><span class="cross">❌</span></td>
+                    <td><span class="warning">⚠️ seu setor</span></td>
+                    <td><span class="check">✅</span></td>
+                </tr>
+                <tr>
+                    <td>Criar evento</td>
+                    <td><span class="cross">❌</span></td>
+                    <td><span class="warning">⚠️ seu setor</span></td>
+                    <td><span class="check">✅</span></td>
+                </tr>
+                <tr>
+                    <td>Gerenciar usuários</td>
+                    <td><span class="cross">❌</span></td>
+                    <td><span class="cross">❌</span></td>
+                    <td><span class="check">✅</span></td>
+                </tr>
+                <tr>
+                    <td>Configurar site</td>
+                    <td><span class="cross">❌</span></td>
+                    <td><span class="cross">❌</span></td>
+                    <td><span class="check">✅</span></td>
+                </tr>
+                <tr>
+                    <td>Acessar portal</td>
+                    <td><span class="check">✅</span></td>
+                    <td><span class="check">✅</span></td>
+                    <td><span class="check">✅</span></td>
+                </tr>
+                <tr>
+                    <td>Ver logs/auditoria</td>
+                    <td><span class="cross">❌</span></td>
+                    <td><span class="cross">❌</span></td>
+                    <td><span class="check">✅</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="page-break"></div>
+
+        <h2>🚀 Funcionalidades Implementadas</h2>
+        <ul style="margin-left: 20px; line-height: 2;">
+            <li>✅ Sistema de usuários com 3 papéis</li>
+            <li>✅ Banco de dados com modelos de Notícia, Evento, Mídia</li>
+            <li>✅ URLs e rotas do site público</li>
+            <li>✅ Configurações globais do site</li>
+            <li>✅ Templates base HTML</li>
+            <li>✅ Containerização com Docker</li>
+        </ul>
+
+        <h2>🚨 Funcionalidades por Implementar</h2>
+        <div class="section-todo">
+            <h4>Prioridade Alta:</h4>
+            <ul>
+                <li><strong>Autenticação Real:</strong> Login e registro com validação</li>
+                <li><strong>Portal do Usuário:</strong> Views com funcionalidades distintas por papel</li>
+                <li><strong>Inscrições em Eventos:</strong> Modelo para salvar inscrições no BD</li>
+                <li><strong>Admin Restrito:</strong> Supervisores não devem acessar admin completo</li>
+            </ul>
+            <h4 style="margin-top: 15px;">Prioridade Média:</h4>
+            <ul>
+                <li>Sistema de permissões por setor</li>
+                <li>Dashboard/relatórios por setor</li>
+                <li>Formulário de contato funcional (enviar email)</li>
+                <li>Buscador de notícias/eventos</li>
+            </ul>
+            <h4 style="margin-top: 15px;">Prioridade Baixa:</h4>
+            <ul>
+                <li>Comentários em notícias/eventos</li>
+                <li>Sistema de notificações</li>
+                <li>Integração com redes sociais</li>
+                <li>Analytics/estatísticas</li>
+            </ul>
+        </div>
+
+        <div class="page-break"></div>
+
+        <h2>📁 Estrutura do Projeto</h2>
+        <pre style="background: #f5f5f5; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 12px;">
+PLATAFORMA-MARIC-/
+├── core/                    # App Django principal
+│   ├── models.py           # Modelos (User, News, Event, Media, etc)
+│   ├── views.py            # Views (ListView, DetailView)
+│   ├── urls.py             # Rotas
+│   └── migrations/         # Migrações do banco
+├── sct/                    # Configurações do Django
+│   ├── settings.py         # Settings (BD, apps, auth)
+│   ├── urls.py             # URLs globais
+│   └── wsgi.py             # WSGI para produção
+├── templates/              # Templates HTML
+│   ├── base.html           # Template base
+│   ├── core/               # Templates da app core
+│   │   ├── home.html
+│   │   ├── news_list.html
+│   │   ├── event_list.html
+│   │   └── ...
+│   └── partials/           # Componentes reutilizáveis
+├── static/                 # CSS, JS, imagens
+│   └── css/
+├── docker-compose.yml      # Configuração Docker
+├── Dockerfile              # Build da imagem
+├── requirements.txt        # Dependências Python
+└── manage.py               # CLI do Django
+        </pre>
+
+        <h2>🔧 Stack Técnico</h2>
+        <ul style="margin-left: 20px; line-height: 2;">
+            <li><strong>Backend:</strong> Django (Python)</li>
+            <li><strong>Banco de Dados:</strong> PostgreSQL</li>
+            <li><strong>Frontend:</strong> HTML5, CSS3, Bootstrap (provável)</li>
+            <li><strong>Autenticação:</strong> Django Auth com modelo customizado</li>
+            <li><strong>Containerização:</strong> Docker + Docker Compose</li>
+            <li><strong>Idioma:</strong> Português (pt-br)</li>
+        </ul>
+
+        <div class="footer">
+            <p>Plataforma Maricá - Documento de Especificação de Fluxos</p>
+            <p>Este documento descreve a arquitetura e fluxos de usuários do sistema.</p>
+        </div>
+    </div>
+</body>
+</html>

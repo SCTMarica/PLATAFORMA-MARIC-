@@ -1,0 +1,17 @@
+<header class="admin-form-page__header">
+  <div class="admin-form-page__header-main">
+    <div class="admin-page__head-icon">
+      {% include "core/partials/admin_icon.html" with icon=admin_page_icon|default:"settings" %}
+    </div>
+    <div>
+      <h1 class="admin-form-page__title">{{ admin_title }}</h1>
+      <p class="admin-form-page__subtitle">{{ admin_description }}</p>
+    </div>
+  </div>
+  {% if admin_back_url %}
+  <a href="{{ admin_back_url }}" class="admin-form-page__back btn btn-outline-secondary btn-sm">
+    {% include "core/partials/admin_icon.html" with icon="back" %}
+    <span>{{ admin_back_label|default:"Voltar para listagem" }}</span>
+  </a>
+  {% endif %}
+</header>

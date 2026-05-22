@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block site_header %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block extra_head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+<style>
+  body {
+    font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-shell">
+  {% include "core/partials/admin_sidebar.html" %}
+  <div id="admin-sidebar-backdrop" class="admin-shell__backdrop" aria-hidden="true"></div>
+
+  <div class="admin-shell__main">
+    <header class="admin-mobile-topbar d-lg-none">
+      <button id="admin-mobile-toggle" type="button" class="admin-mobile-topbar__toggle" aria-label="Abrir menu">
+        {% include "core/partials/admin_icon.html" with icon="menu" %}
+      </button>
+      <a href="{% url 'core:admin-dashboard' %}" class="admin-mobile-topbar__logo">
+        {% if site_settings.logo_url %}
+          <img src="{{ site_settings.logo_url }}" alt="{{ site_settings.site_name|default:'Prefeitura de Marica' }}">
+        {% else %}
+          <img src="{% static 'img/prefeitura_marica_horizontal_branco.png' %}" alt="Prefeitura de Marica">
+        {% endif %}
+      </a>
+    </header>
+
+    <div class="admin-shell__accent" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="admin-shell__content admin-panel">
+      {% block admin_head %}
+      <header class="admin-page__head">
+        <div class="admin-page__head-icon">{% include "core/partials/admin_icon.html" with icon="dashboard" %}</div>
+        <div>
+          <p class="admin-page__head-eyebrow">{% block admin_eyebrow %}Gestao{% endblock %}</p>
+          <h1 class="admin-page__head-title">{% block admin_title %}Painel de admin{% endblock %}</h1>
+          <p class="admin-page__head-text">{% block admin_description %}Gerencie o conteudo publicado no portal institucional.{% endblock %}</p>
+        </div>
+      </header>
+      {% endblock %}
+      {% block admin_content %}{% endblock %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/admin-sidebar.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,207 @@
+{% extends "core/admin_base.html" %}
+{% load static %}
+
+{% block title %}Dashboard | {{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
+
+{% block admin_head %}{% endblock %}
+
+{% block admin_content %}
+<header class="admin-dashboard__header">
+  <div class="admin-page__head-icon admin-page__head-icon--dashboard">
+    {% include "core/partials/admin_icon.html" with icon="dashboard" %}
+  </div>
+  <div>
+    <h1 class="admin-dashboard__title">Painel Administrativo</h1>
+    <p class="admin-dashboard__subtitle">Visao geral do portal institucional da Prefeitura de Marica</p>
+  </div>
+</header>
+
+<div class="admin-kpi-grid">
+  <article class="admin-stat-card admin-stat-card--news">
+    <div>
+      <p class="admin-stat-card__label">Noticias publicadas</p>
+      <p class="admin-stat-card__value">{{ stats.news_published }}</p>
+      <p class="admin-stat-card__meta">{{ stats.news_total }} no total</p>
+    </div>
+    <span class="admin-stat-card__icon">{% include "core/partials/admin_icon.html" with icon="news" %}</span>
+  </article>
+
+  <article class="admin-stat-card admin-stat-card--events">
+    <div>
+      <p class="admin-stat-card__label">Eventos futuros</p>
+      <p class="admin-stat-card__value">{{ stats.events_upcoming }}</p>
+      <p class="admin-stat-card__meta">{{ stats.events_total }} cadastrados</p>
+    </div>
+    <span class="admin-stat-card__icon">{% include "core/partials/admin_icon.html" with icon="calendar" %}</span>
+  </article>
+
+  <article class="admin-stat-card admin-stat-card--users">
+    <div>
+      <p class="admin-stat-card__label">Usuarios ativos</p>
+      <p class="admin-stat-card__value">{{ stats.users_total }}</p>
+      <p class="admin-stat-card__meta">Com acesso ao portal</p>
+    </div>
+    <span class="admin-stat-card__icon">{% include "core/partials/admin_icon.html" with icon="users" %}</span>
+  </article>
+
+  <article class="admin-stat-card admin-stat-card--forms">
+    <div>
+      <p class="admin-stat-card__label">Inscricoes recebidas</p>
+      <p class="admin-stat-card__value">{{ stats.signup_submissions }}</p>
+      <p class="admin-stat-card__meta">{{ stats.signup_forms_active }} formularios ativos</p>
+    </div>
+    <span class="admin-stat-card__icon">{% include "core/partials/admin_icon.html" with icon="forms" %}</span>
+  </article>
+</div>
+
+<div class="admin-dashboard__grid">
+  <section class="admin-panel-card admin-panel-card--wide">
+    <div class="admin-panel-card__head">
+      <h2 class="admin-panel-card__title">Noticias por mes</h2>
+    </div>
+    <div class="admin-chart-wrap">
+      <canvas id="newsChart" aria-label="Grafico de noticias por mes"></canvas>
+    </div>
+  </section>
+
+  <section class="admin-panel-card">
+    <div class="admin-panel-card__head">
+      <h2 class="admin-panel-card__title">Resumo rapido</h2>
+    </div>
+    <ul class="admin-summary-list">
+      <li>
+        <span>Banners ativos no carrossel</span>
+        <strong>{{ stats.banners_active }}</strong>
+      </li>
+      <li>
+        <span>Formularios de inscricao</span>
+        <strong>{{ stats.signup_forms_active }}</strong>
+      </li>
+      <li>
+        <span>Noticias em rascunho</span>
+        <strong>{{ stats.news_draft }}</strong>
+      </li>
+    </ul>
+    <div class="admin-quick-actions">
+      <a href="{% url 'core:admin-news-list' %}" class="btn btn-primary btn-sm">Noticias</a>
+      <a href="{% url 'core:admin-banner-list' %}" class="btn btn-outline-primary btn-sm">Carrossel</a>
+      <a href="{% url 'core:admin-signup-form-list' %}" class="btn btn-outline-primary btn-sm">Formularios</a>
+    </div>
+  </section>
+</div>
+
+<div class="admin-dashboard__lists">
+  <section class="admin-panel-card">
+    <div class="admin-panel-card__head">
+      <h2 class="admin-panel-card__title">Noticias recentes</h2>
+      <a href="{% url 'core:admin-news-list' %}" class="admin-panel-card__link">Ver todas</a>
+    </div>
+    {% if recent_news %}
+    <ul class="admin-activity-list">
+      {% for article in recent_news %}
+      <li class="admin-activity-item">
+        <div>
+          <strong>{{ article.title }}</strong>
+          <span>{{ article.created_at|date:"d/m/Y H:i" }}</span>
+        </div>
+        {% if article.is_published %}
+        <span class="admin-badge admin-badge--success">Publicada</span>
+        {% else %}
+        <span class="admin-badge admin-badge--muted">Rascunho</span>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="admin-empty">Nenhuma noticia cadastrada ainda.</p>
+    {% endif %}
+  </section>
+
+  <section class="admin-panel-card">
+    <div class="admin-panel-card__head">
+      <h2 class="admin-panel-card__title">Proximos eventos</h2>
+    </div>
+    {% if upcoming_events %}
+    <ul class="admin-activity-list">
+      {% for event in upcoming_events %}
+      <li class="admin-activity-item admin-activity-item--events">
+        <div>
+          <strong>{{ event.title }}</strong>
+          <span>{{ event.start_at|date:"d/m/Y H:i" }}</span>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="admin-empty">Nenhum evento futuro cadastrado.</p>
+    {% endif %}
+  </section>
+
+  <section class="admin-panel-card">
+    <div class="admin-panel-card__head">
+      <h2 class="admin-panel-card__title">Inscricoes recentes</h2>
+      <a href="{% url 'core:admin-signup-submission-list' %}" class="admin-panel-card__link">Ver todas</a>
+    </div>
+    {% if recent_submissions %}
+    <ul class="admin-activity-list">
+      {% for submission in recent_submissions %}
+      <li class="admin-activity-item admin-activity-item--forms">
+        <div>
+          <strong>{{ submission.form.title }}</strong>
+          <span>{{ submission.created_at|date:"d/m/Y H:i" }}</span>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="admin-empty">Nenhuma inscricao recebida ainda.</p>
+    {% endif %}
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  (function () {
+    var canvas = document.getElementById("newsChart");
+    if (!canvas) {
+      return;
+    }
+    var data = {{ news_by_month_json|safe }};
+    new Chart(canvas.getContext("2d"), {
+      type: "line",
+      data: {
+        labels: data.map(function (item) { return item.month; }),
+        datasets: [{
+          label: "Noticias",
+          data: data.map(function (item) { return item.count; }),
+          borderColor: "#00adef",
+          backgroundColor: "#00adef",
+          borderWidth: 3,
+          fill: false,
+          tension: 0,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBackgroundColor: "#c4122e",
+          pointBorderColor: "#c4122e"
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { stepSize: 1, color: "#5a7f94" },
+            grid: { color: "rgba(0, 173, 239, 0.08)" }
+          },
+          x: {
+            ticks: { color: "#5a7f94" },
+            grid: { display: false }
+          }
+        }
+      }
+    });
+  })();
+</script>
+{% endblock %}

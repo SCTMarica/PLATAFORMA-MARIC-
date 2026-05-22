@@ -1,10 +1,29 @@
+{% if field.field.widget.input_type == "checkbox" %}
 <div class="{{ cols|default:'col-12' }}">
-  <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-  {{ field }}
-  {% if field.help_text %}
-    <div class="form-text">{{ field.help_text }}</div>
-  {% endif %}
+  <label class="admin-form-checkbox-card" for="{{ field.id_for_label }}">
+    {{ field }}
+    <span class="admin-form-checkbox-card__body">
+      <span class="admin-form-checkbox-card__label">{{ field.label }}</span>
+      {% if field.help_text %}
+      <span class="admin-form-checkbox-card__hint">{{ field.help_text }}</span>
+      {% endif %}
+    </span>
+  </label>
   {% for error in field.errors %}
-    <div class="invalid-feedback d-block">{{ error }}</div>
+  <div class="admin-form-field-error">{{ error }}</div>
   {% endfor %}
 </div>
+{% else %}
+<div class="{{ cols|default:'col-12' }} admin-form-group">
+  <label class="admin-form-label" for="{{ field.id_for_label }}">
+    {{ field.label }}{% if field.field.required %}<span class="admin-form-required">*</span>{% endif %}
+  </label>
+  {{ field }}
+  {% if field.help_text %}
+  <div class="admin-form-help">{{ field.help_text }}</div>
+  {% endif %}
+  {% for error in field.errors %}
+  <div class="admin-form-field-error">{{ error }}</div>
+  {% endfor %}
+</div>
+{% endif %}

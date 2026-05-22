@@ -1,0 +1,13 @@
+<div class="admin-form-section{% if not forloop.first %} admin-form-section--spaced{% endif %}">
+  <div class="admin-form-section__header">
+    <div class="admin-form-section__icon">
+      {% include "core/partials/admin_icon.html" with icon=section.icon|default:"settings" %}
+    </div>
+    <span class="admin-form-section__title">{{ section.title }}</span>
+  </div>
+  <div class="row g-3">
+    {% for item in section.bound_fields %}
+      {% include "core/partials/admin_field.html" with field=item.field cols=item.cols %}
+    {% endfor %}
+  </div>
+</div>

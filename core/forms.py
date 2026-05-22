@@ -13,6 +13,10 @@ class StyledFormMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
+            widget = field.widget
+            if isinstance(widget, forms.CheckboxInput):
+                field.widget.attrs["class"] = "admin-form-checkbox"
+                continue
             css_classes = field.widget.attrs.get("class", "")
             field.widget.attrs["class"] = f"{css_classes} form-control".strip()
 

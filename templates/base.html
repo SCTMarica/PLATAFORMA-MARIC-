@@ -14,12 +14,16 @@
     {% block extra_head %}{% endblock %}
   </head>
   <body>
-    {% include "partials/header.html" %}
+    {% block site_header %}
+      {% include "partials/header.html" %}
+    {% endblock %}
     {% include "partials/messages.html" %}
     <main>
       {% block content %}{% endblock %}
     </main>
-    {% include "partials/footer.html" %}
+    {% block footer %}
+      {% include "partials/footer.html" %}
+    {% endblock %}
     <div vw class="enabled">
       <div vw-access-button class="active" aria-label="Ativar acessibilidade em Libras"></div>
       <div vw-plugin-wrapper>
@@ -31,6 +35,7 @@
     <script>
       new window.VLibras.Widget("https://vlibras.gov.br/app");
     </script>
+    <script src="{% static 'js/vlibras-position.js' %}"></script>
     {% block extra_scripts %}{% endblock %}
   </body>
 </html>

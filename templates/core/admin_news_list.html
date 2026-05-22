@@ -1,0 +1,150 @@
+{% extends "core/admin_base.html" %}
+{% load static %}
+
+{% block title %}Noticias | {{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
+
+{% block admin_head %}{% endblock %}
+
+{% block admin_content %}
+<div class="admin-list-page">
+  <header class="admin-list-page__header">
+    <div class="admin-list-page__header-main">
+      <div class="admin-page__head-icon">
+        {% include "core/partials/admin_icon.html" with icon="news" %}
+      </div>
+      <div>
+        <h1 class="admin-list-page__title">Noticias</h1>
+        <p class="admin-list-page__subtitle">
+          {% if page_obj.paginator.count %}
+            {{ page_obj.paginator.count }} noticia{{ page_obj.paginator.count|pluralize }} cadastrada{{ page_obj.paginator.count|pluralize }}
+          {% else %}
+            Gerencie as noticias publicadas no portal
+          {% endif %}
+        </p>
+      </div>
+    </div>
+    <a href="{% url 'core:admin-news-create' %}" class="admin-list-page__create btn btn-primary btn-sm">
+      {% include "core/partials/admin_icon.html" with icon="plus" %}
+      <span>Nova noticia</span>
+    </a>
+  </header>
+
+  <form method="get" class="admin-list-toolbar" id="admin-list-filter-form">
+    <input type="hidden" name="status" id="filter-status" value="{{ status_filter }}">
+    <input type="hidden" name="featured" id="filter-featured" value="{{ featured_filter }}">
+
+    <div class="admin-list-toolbar__search">
+      <input type="search" name="search" value="{{ search }}" placeholder="Buscar noticias..." class="admin-list-toolbar__input">
+    </div>
+    <button type="submit" class="admin-list-toolbar__icon-btn" title="Buscar">
+      {% include "core/partials/admin_icon.html" with icon="search" %}
+    </button>
+
+    <div class="admin-list-toolbar__filters">
+      <button type="button" class="admin-list-toolbar__filter-toggle" data-admin-filter-toggle>
+        {% include "core/partials/admin_icon.html" with icon="filter" %}
+        <span>Filtros</span>
+        {% if filters_active %}<span class="admin-list-toolbar__dot"></span>{% endif %}
+      </button>
+      <div class="admin-list-toolbar__panel" data-admin-filter-panel hidden>
+        <p class="admin-list-toolbar__panel-title">Filtros</p>
+        <label class="admin-list-toolbar__field">
+          <span>Status</span>
+          <select id="panel-status" data-admin-filter-field="status">
+            <option value="">Todos</option>
+            <option value="published" {% if status_filter == "published" %}selected{% endif %}>Publicadas</option>
+            <option value="draft" {% if status_filter == "draft" %}selected{% endif %}>Rascunho</option>
+          </select>
+        </label>
+        <label class="admin-list-toolbar__field">
+          <span>Destaque</span>
+          <select id="panel-featured" data-admin-filter-field="featured">
+            <option value="">Todos</option>
+            <option value="yes" {% if featured_filter == "yes" %}selected{% endif %}>Em destaque</option>
+            <option value="no" {% if featured_filter == "no" %}selected{% endif %}>Sem destaque</option>
+          </select>
+        </label>
+        <div class="admin-list-toolbar__panel-actions">
+          <a href="{% url 'core:admin-news-list' %}" class="admin-list-toolbar__clear">Limpar</a>
+          <button type="button" class="admin-list-toolbar__apply" data-admin-filter-apply>Aplicar</button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="admin-list-card">
+    <div class="table-responsive d-none d-md-block">
+      <table class="admin-list-table">
+        <thead>
+          <tr>
+            <th>Titulo</th>
+            <th>Publicacao</th>
+            <th>Status</th>
+            <th class="text-end">Acoes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td>
+              <strong>{{ item.title }}</strong>
+              <span class="admin-list-table__meta">{{ item.slug }}</span>
+            </td>
+            <td>{{ item.published_at|date:"d/m/Y H:i" }}</td>
+            <td>
+              {% if item.is_published %}
+              <span class="admin-list-badge admin-list-badge--ok">Publicada</span>
+              {% else %}
+              <span class="admin-list-badge">Rascunho</span>
+              {% endif %}
+              {% if item.is_featured %}
+              <span class="admin-list-badge admin-list-badge--info">Destaque</span>
+              {% endif %}
+            </td>
+            <td class="text-end">
+              <a href="{{ item.get_absolute_url }}" class="admin-list-action" title="Ver no site" target="_blank" rel="noopener">
+                {% include "core/partials/admin_icon.html" with icon="external" %}
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="admin-list-empty-cell">
+              {% url 'core:admin-news-create' as news_create_url %}
+              {% include "core/partials/admin_list_empty.html" with icon="news" title="Nenhuma noticia encontrada" text="Publique a primeira noticia ou ajuste os filtros da busca." create_url=news_create_url create_label="Nova noticia" %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="admin-list-mobile d-md-none">
+      {% for item in items %}
+      <article class="admin-list-mobile__item">
+        <div class="admin-list-mobile__head">
+          <strong>{{ item.title }}</strong>
+          {% if item.is_published %}
+          <span class="admin-list-badge admin-list-badge--ok">Publicada</span>
+          {% else %}
+          <span class="admin-list-badge">Rascunho</span>
+          {% endif %}
+        </div>
+        <p class="admin-list-mobile__meta">{{ item.published_at|date:"d/m/Y H:i" }}</p>
+        <a href="{{ item.get_absolute_url }}" class="admin-list-mobile__link" target="_blank" rel="noopener">Ver no site</a>
+      </article>
+      {% empty %}
+      {% url 'core:admin-news-create' as news_create_url %}
+      {% include "core/partials/admin_list_empty.html" with icon="news" title="Nenhuma noticia encontrada" text="Publique a primeira noticia ou ajuste os filtros da busca." create_url=news_create_url create_label="Nova noticia" %}
+      {% endfor %}
+    </div>
+
+    {% include "core/partials/admin_list_pagination.html" %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+{{ block.super }}
+<script src="{% static 'js/admin-list-filters.js' %}"></script>
+{% endblock %}

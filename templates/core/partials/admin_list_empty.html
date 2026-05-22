@@ -1,0 +1,10 @@
+<div class="admin-list-empty-state">
+  <div class="admin-list-empty-state__icon">
+    {% include "core/partials/admin_icon.html" with icon=icon|default:"news" %}
+  </div>
+  <p class="admin-list-empty-state__title">{{ title }}</p>
+  <p class="admin-list-empty-state__text">{{ text }}</p>
+  {% if create_url %}
+  <a href="{{ create_url }}" class="admin-list-empty-state__cta btn btn-primary btn-sm">{{ create_label|default:"Criar agora" }}</a>
+  {% endif %}
+</div>

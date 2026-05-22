@@ -1,43 +1,81 @@
 {% extends "base.html" %}
-{% load site_i18n %}
+{% load static site_i18n %}
 
 {% block title %}{% tr 'titles.login' %} | {{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
 
+{% block extra_head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+<style>
+  body {
+    font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  }
+</style>
+{% endblock %}
+
+{% block site_header %}
+  {% include "partials/header_auth.html" %}
+{% endblock %}
+
 {% block content %}
-<section class="py-5">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-5">
-        <div class="content-card p-4 p-lg-5">
-          <p class="section-eyebrow mb-2">{% tr 'login.eyebrow' %}</p>
-          <h1 class="h3 mb-3">{% tr 'login.title' %}</h1>
-          <p class="text-secondary">{% tr 'login.subtitle' %}</p>
-          <p class="small text-muted">{% tr 'login.admin_hint' %}</p>
-          <form method="post" class="d-grid gap-3">
+<section class="auth-page" aria-labelledby="login-title">
+  <div class="auth-page__layout">
+    <aside class="auth-page__brand" aria-label="Identidade institucional">
+      <div class="auth-page__brand-inner">
+        <p class="auth-page__brand-eyebrow">{% tr 'login.eyebrow' %}</p>
+        <h2 class="auth-page__brand-title">{% tr 'login.brand_subtitle' %}</h2>
+        <p class="auth-page__brand-text">{% tr 'login.brand_description' %}</p>
+        <ul class="auth-page__brand-list">
+          <li>{% tr 'login.brand_feature_1' %}</li>
+          <li>{% tr 'login.brand_feature_2' %}</li>
+          <li>{% tr 'login.brand_feature_3' %}</li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="auth-page__form-wrap">
+        <div class="auth-card">
+          <p class="auth-card__eyebrow">{% tr 'login.form_entry' %}</p>
+          <h1 class="auth-card__title" id="login-title">{% tr 'login.title' %}</h1>
+          <p class="auth-card__lead">{% tr 'login.subtitle' %}</p>
+
+          <div class="auth-card__hint" role="note">
+            <span class="auth-card__hint-icon" aria-hidden="true">i</span>
+            <span>{% tr 'login.admin_hint' %}</span>
+          </div>
+
+          <form method="post" class="auth-form">
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ next|default:'' }}">
-            <div>
-              <label class="form-label" for="{{ form.username.id_for_label }}">{% tr 'login.user' %}</label>
+
+            <div class="auth-form__field">
+              <label for="{{ form.username.id_for_label }}">{% tr 'login.user' %}</label>
               {{ form.username }}
               {% for error in form.username.errors %}
-                <div class="text-danger small mt-1">{{ error }}</div>
+                <div class="auth-form__error mt-1">{{ error }}</div>
               {% endfor %}
             </div>
-            <div>
-              <label class="form-label" for="{{ form.password.id_for_label }}">{% tr 'login.password' %}</label>
+
+            <div class="auth-form__field">
+              <label for="{{ form.password.id_for_label }}">{% tr 'login.password' %}</label>
               {{ form.password }}
               {% for error in form.password.errors %}
-                <div class="text-danger small mt-1">{{ error }}</div>
+                <div class="auth-form__error mt-1">{{ error }}</div>
               {% endfor %}
             </div>
+
             {% for error in form.non_field_errors %}
-              <div class="text-danger small">{{ error }}</div>
+              <div class="auth-form__error">{{ error }}</div>
             {% endfor %}
-            <button type="submit" class="btn btn-primary">{% tr 'login.button' %}</button>
+
+            <button type="submit" class="auth-form__submit w-100">{% tr 'login.button' %}</button>
           </form>
-        </div>
       </div>
     </div>
   </div>
 </section>
 {% endblock %}
+
+{% block footer %}{% endblock %}

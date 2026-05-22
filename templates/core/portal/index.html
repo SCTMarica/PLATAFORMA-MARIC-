@@ -24,9 +24,12 @@
         <div class="hero-panel p-4 mt-4">
           <h2 class="h5 mb-2">{% tr 'portal.admin_title' %}</h2>
           <p class="text-secondary mb-3">{% tr 'portal.admin_description' %}</p>
-          <a href="{% url 'core:admin-panel' %}" class="btn btn-primary">{% tr 'portal.admin_button' %}</a>
+          <a href="{% url 'core:admin-dashboard' %}" class="btn btn-primary">{% tr 'portal.admin_button' %}</a>
         </div>
       {% endif %}
+      <div class="mt-4">
+        {% include "partials/logout_button.html" %}
+      </div>
     </div>
   </div>
 </section>

@@ -107,7 +107,12 @@ class AuthenticationFlowTests(TestCase):
             first_name="Admin",
         )
 
-    def test_registration_creates_authenticated_client_user(self):
+    def test_registration_is_disabled_and_redirects_to_login(self):
+        response = self.client.get(reverse("core:register"))
+
+        self.assertRedirects(response, reverse("core:login"))
+        self.assertFalse(User.objects.filter(email="maria@example.com").exists())
+
         response = self.client.post(
             reverse("core:register"),
             {
@@ -119,10 +124,8 @@ class AuthenticationFlowTests(TestCase):
             },
         )
 
-        self.assertRedirects(response, reverse("core:portal"))
-        user = User.objects.get(email="maria@example.com")
-        self.assertEqual(user.role, User.Role.CLIENT)
-        self.assertEqual(int(self.client.session["_auth_user_id"]), user.pk)
+        self.assertRedirects(response, reverse("core:login"))
+        self.assertFalse(User.objects.filter(email="maria@example.com").exists())
 
     def test_login_accepts_email_for_client_and_redirects_to_portal(self):
         response = self.client.post(
@@ -132,13 +135,13 @@ class AuthenticationFlowTests(TestCase):
 
         self.assertRedirects(response, reverse("core:portal"))
 
-    def test_admin_login_redirects_to_admin_panel(self):
+    def test_admin_login_redirects_to_admin_dashboard(self):
         response = self.client.post(
             reverse("core:login"),
             {"username": "admin@example.com", "password": "SenhaSegura123!"},
         )
 
-        self.assertRedirects(response, reverse("core:admin-panel"))
+        self.assertRedirects(response, reverse("core:admin-dashboard"))
 
     def test_portal_requires_authentication(self):
         response = self.client.get(reverse("core:portal"))
@@ -146,12 +149,27 @@ class AuthenticationFlowTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("core:login"), response.url)
 
+    def test_admin_dashboard_requires_admin_user(self):
+        self.client.force_login(self.client_user)
+
+        response = self.client.get(reverse("core:admin-dashboard"))
+
+        self.assertRedirects(response, reverse("core:portal"))
+
     def test_admin_panel_requires_admin_user(self):
         self.client.force_login(self.client_user)
 
         response = self.client.get(reverse("core:admin-panel"))
 
-        self.assertEqual(response.status_code, 403)
+        self.assertRedirects(response, reverse("core:portal"))
+
+    def test_logout_redirects_to_login(self):
+        self.client.force_login(self.client_user)
+
+        response = self.client.post(reverse("core:logout"))
+
+        self.assertRedirects(response, reverse("core:login"))
+        self.assertNotIn("_auth_user_id", self.client.session)
 
     def test_admin_panel_updates_site_settings(self):
         self.client.force_login(self.admin_user)
@@ -198,7 +216,7 @@ class AuthenticationFlowTests(TestCase):
                 "published_at": timezone.now().strftime("%Y-%m-%dT%H:%M"),
             },
         )
-        self.assertRedirects(news_response, reverse("core:admin-panel"))
+        self.assertRedirects(news_response, reverse("core:admin-news-list"))
         self.assertTrue(NewsArticle.objects.filter(slug="nova-noticia").exists())
 
         banner_response = self.client.post(
@@ -212,7 +230,7 @@ class AuthenticationFlowTests(TestCase):
                 "is_active": "on",
             },
         )
-        self.assertRedirects(banner_response, reverse("core:admin-panel"))
+        self.assertRedirects(banner_response, reverse("core:admin-banner-list"))
         self.assertTrue(MediaItem.objects.filter(title="Banner novo", media_type=MediaItem.MediaType.BANNER).exists())
 
         form_response = self.client.post(
@@ -225,8 +243,43 @@ class AuthenticationFlowTests(TestCase):
                 "is_active": "on",
             },
         )
-        self.assertRedirects(form_response, reverse("core:admin-panel"))
+        self.assertRedirects(form_response, reverse("core:admin-signup-form-list"))
         self.assertTrue(SignupForm.objects.filter(slug="oficina").exists())
+
+    def test_admin_list_pages_require_admin_user(self):
+        self.client.force_login(self.client_user)
+
+        for url_name in (
+            "core:admin-news-list",
+            "core:admin-banner-list",
+            "core:admin-signup-form-list",
+            "core:admin-signup-submission-list",
+        ):
+            response = self.client.get(reverse(url_name))
+            self.assertRedirects(response, reverse("core:portal"))
+
+    def test_admin_news_list_supports_search_and_filters(self):
+        NewsArticle.objects.create(
+            title="Noticia publicada",
+            slug="noticia-publicada",
+            summary="Resumo",
+            content="Conteudo",
+            is_published=True,
+        )
+        NewsArticle.objects.create(
+            title="Rascunho interno",
+            slug="rascunho-interno",
+            summary="Resumo",
+            content="Conteudo",
+            is_published=False,
+        )
+
+        self.client.force_login(self.admin_user)
+
+        response = self.client.get(reverse("core:admin-news-list"), {"search": "Rascunho", "status": "draft"})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Rascunho interno")
+        self.assertNotContains(response, "Noticia publicada")
 
     def test_signup_form_submission_is_saved(self):
         signup_form = SignupForm.objects.create(
