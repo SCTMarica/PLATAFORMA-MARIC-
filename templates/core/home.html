@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load site_i18n %}
+{% load site_i18n static %}
 
 {% block title %}{{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
 
@@ -253,31 +253,27 @@
   </div>
 </section>
 
-<!-- SEÇÃO DE INSCRIÇÕES -->
-<section class="py-5 bg-light-subtle">
+<!-- SEÇÃO SOBRE NÓS (Substituindo tópico anterior) -->
+<section class="py-5">
   <div class="container">
-    <div class="d-flex justify-content-between align-items-end mb-4">
-      <div>
-        <p class="section-eyebrow mb-2">Inscricoes</p>
-        <h2 class="mb-0">Escolha um formulario</h2>
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <h2 class="display-5 fw-bold mb-3">{% tr 'about.heading' %}</h2>
+        <h3 class="h4 mb-3 text-primary">{% tr 'about.summary_title' %}</h3>
+        <p class="lead fw-semibold mb-4">{% tr 'about.highlight' %}</p>
+        <div class="content-text text-secondary">
+          <p class="mb-3">{% tr 'about.paragraph_1' %}</p>
+          <p class="mb-0">{% tr 'about.paragraph_2' %}</p>
+        </div>
+        <div class="mt-4">
+          <a href="{% url 'core:about' %}" class="btn btn-outline-primary">{% tr 'home.learn_more' %}</a>
+        </div>
       </div>
-    </div>
-    <div class="row g-4">
-      {% for form_item in signup_forms %}
-        <div class="col-md-6 col-xl-4">
-          <article class="content-card p-4 h-100">
-            <h2 class="h5 mb-2">{{ form_item.title }}</h2>
-            {% if form_item.description %}
-              <p class="text-secondary">{{ form_item.description }}</p>
-            {% endif %}
-            <a class="btn btn-primary" href="{{ form_item.get_absolute_url }}">Abrir formulario</a>
-          </article>
+      <div class="col-lg-5">
+        <div class="about-home-image-placeholder rounded-4 shadow-sm overflow-hidden" style="min-height: 300px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+          <img src="{% static 'img/marica1.jpg' %}" class="img-fluid w-100 h-100 object-fit-cover" alt="{% tr 'about.slide_1' %}">
         </div>
-      {% empty %}
-        <div class="col-12">
-          <div class="empty-state p-4 rounded-4">Nenhum formulário de inscrição esta disponível no momento.</div>
-        </div>
-      {% endfor %}
+      </div>
     </div>
   </div>
 </section>
