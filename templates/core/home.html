@@ -256,10 +256,13 @@
 <!-- SEÇÃO DE INSCRIÇÕES -->
 <section class="py-5 bg-light-subtle">
   <div class="container">
-    <div class="d-flex justify-content-between align-items-end mb-4">
-      <div>
-        <p class="section-eyebrow mb-2">Inscricoes</p>
-        <h2 class="mb-0">Escolha um formulario</h2>
+        <div class="d-flex justify-content-between align-items-start mb-4">
+      <a href="{% url 'core:signup' %}" class="btn btn-primary">Inscreva-se</a>
+      <div class="text-end">
+        <h3 class="h5 mb-1">Como participar</h3>
+        <p class="text-muted mb-3">Saiba passo a passo como realizar sua inscrição e participar de todas as atividades.</p>
+        <h3 class="h5 mb-1">Informações sobre os locais participantes/Endereço da sede</h3>
+        <p class="text-muted">Confira todos os detalhes, endereços e orientações necessárias para sua participação.</p>
       </div>
     </div>
     <div class="row g-4">
@@ -272,10 +275,6 @@
             {% endif %}
             <a class="btn btn-primary" href="{{ form_item.get_absolute_url }}">Abrir formulario</a>
           </article>
-        </div>
-      {% empty %}
-        <div class="col-12">
-          <div class="empty-state p-4 rounded-4">Nenhum formulário de inscrição esta disponível no momento.</div>
         </div>
       {% endfor %}
     </div>
