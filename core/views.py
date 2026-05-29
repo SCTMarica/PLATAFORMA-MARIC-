@@ -58,22 +58,6 @@ class SiteContextMixin:
 
 class HomeView(SiteContextMixin, TemplateView):
     template_name = "core/home.html"
-    month_names = [
-        "",
-        "Janeiro",
-        "Fevereiro",
-        "Marco",
-        "Abril",
-        "Maio",
-        "Junho",
-        "Julho",
-        "Agosto",
-        "Setembro",
-        "Outubro",
-        "Novembro",
-        "Dezembro",
-    ]
-    weekday_labels = ["D", "S", "T", "Q", "Q", "S", "S"]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -81,28 +65,6 @@ class HomeView(SiteContextMixin, TemplateView):
             media_type=MediaItem.MediaType.BANNER,
             is_active=True,
         )[:5]
-        today = timezone.localdate()
-        month_range = calendar.monthrange(today.year, today.month)
-        month_start = timezone.make_aware(timezone.datetime(today.year, today.month, 1, 0, 0))
-        month_end = timezone.make_aware(timezone.datetime(today.year, today.month, month_range[1], 23, 59, 59))
-        month_events = Event.objects.published().filter(start_at__gte=month_start, start_at__lte=month_end)
-        events_by_day = {}
-        for event in month_events:
-            events_by_day.setdefault(timezone.localtime(event.start_at).day, []).append(event)
-
-        context["home_calendar_label"] = f"{self.month_names[today.month]} {today.year}"
-        context["home_calendar_weekdays"] = self.weekday_labels
-        context["home_calendar_weeks"] = [
-            [
-                {
-                    "day": day,
-                    "events": events_by_day.get(day, []),
-                    "is_today": day == today.day,
-                }
-                for day in week
-            ]
-            for week in calendar.Calendar(firstweekday=6).monthdayscalendar(today.year, today.month)
-        ]
         return context
 
 
