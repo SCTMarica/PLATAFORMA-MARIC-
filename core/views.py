@@ -207,6 +207,10 @@ class LinksView(TemplateView):
     template_name = "core/links.html"
 
 
+class FileUploadView(TemplateView):
+    template_name = "core/file_upload.html"
+
+
 class UserLoginView(LoginView):
     template_name = "core/auth/login.html"
     authentication_form = EmailOrUsernameAuthenticationForm
