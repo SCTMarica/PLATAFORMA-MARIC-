@@ -25,6 +25,22 @@ class User(AbstractUser):
     )
     phone = models.CharField(max_length=20, blank=True)
 
+    @property
+    def can_access_admin(self):
+        return self.is_active and (
+            self.is_superuser or self.is_staff or self.role in {self.Role.SUPERVISOR, self.Role.MASTER}
+        )
+
+    def save(self, *args, **kwargs):
+        if self.role == self.Role.MASTER:
+            self.is_superuser = True
+            self.is_staff = True
+        elif self.role == self.Role.SUPERVISOR:
+            self.is_staff = True
+        elif not self.is_superuser:
+            self.is_staff = False
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.get_full_name() or self.username
 
@@ -151,3 +167,35 @@ class SocialLink(TimeStampedModel):
 
     def __str__(self):
         return self.label
+
+
+class SignupForm(TimeStampedModel):
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True)
+    description = models.TextField(blank=True)
+    fields_schema = models.JSONField(default=list)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Formulario de inscricao"
+        verbose_name_plural = "Formularios de inscricao"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse("core:signup-form-detail", args=[self.slug])
+
+
+class SignupSubmission(TimeStampedModel):
+    form = models.ForeignKey(SignupForm, on_delete=models.CASCADE, related_name="submissions")
+    data = models.JSONField(default=dict)
+
+    class Meta:
+        verbose_name = "Inscricao enviada"
+        verbose_name_plural = "Inscricoes enviadas"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.form.title} - {self.created_at:%d/%m/%Y %H:%M}"

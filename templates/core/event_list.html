@@ -1,13 +1,20 @@
 {% extends "base.html" %}
+{% load site_i18n %}
 
-{% block title %}Eventos | {{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
+{% block title %}{% tr 'titles.events' %} | {{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
 
 {% block content %}
+{% tr 'common.local_to_define' as local_to_define %}
 <section class="page-header py-5">
   <div class="container">
-    <p class="section-eyebrow mb-2">Agenda institucional</p>
-    <h1 class="display-6 fw-bold">Eventos</h1>
-    <p class="text-secondary mb-0">Divulgue encontros, oficinas, atividades e ações comunitárias.</p>
+    <p class="section-eyebrow mb-2">{% tr 'events.eyebrow' %}</p>
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3">
+      <div>
+        <h1 class="display-6 fw-bold">{% tr 'events.title' %}</h1>
+        <p class="text-secondary mb-0">{% tr 'events.subtitle' %}</p>
+      </div>
+      <a href="{% url 'core:event-calendar' %}" class="btn btn-primary">Calendario de eventos</a>
+    </div>
   </div>
 </section>
 
@@ -24,13 +31,13 @@
               <span class="badge text-bg-warning mb-2">{{ event.start_at|date:"d/m/Y H:i" }}</span>
               <h2 class="h5"><a class="stretched-link text-decoration-none" href="{{ event.get_absolute_url }}">{{ event.title }}</a></h2>
               <p class="text-secondary mb-2">{{ event.summary }}</p>
-              <p class="small text-muted mb-0">{{ event.location|default:"Local a definir" }}</p>
+              <p class="small text-muted mb-0">{{ event.location|default:local_to_define }}</p>
             </div>
           </article>
         </div>
       {% empty %}
         <div class="col-12">
-          <div class="empty-state p-4 rounded-4">Nenhum evento cadastrado.</div>
+          <div class="empty-state p-4 rounded-4">{% tr 'events.empty' %}</div>
         </div>
       {% endfor %}
     </div>
