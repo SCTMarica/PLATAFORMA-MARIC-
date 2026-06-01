@@ -1,6 +1,9 @@
 import calendar
+import logging
 from datetime import date
 
+import httpx
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -12,8 +15,11 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView, UpdateView
 
+logger = logging.getLogger(__name__)
+
 from .forms import (
     BannerForm,
+    ContactForm,
     EmailOrUsernameAuthenticationForm,
     NewsArticleForm,
     SignupFormAdminForm,
@@ -193,6 +199,11 @@ class MediaView(TemplateView):
 
 class ContactView(TemplateView):
     template_name = "core/contact.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["web3forms_key"] = settings.WEB3FORMS_KEY
+        return context
 
 
 class SignupView(SiteContextMixin, ListView):

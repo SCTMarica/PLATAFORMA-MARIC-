@@ -256,3 +256,24 @@ def build_signup_submission_form(signup_form):
             fields[name] = forms.CharField(label=label, required=required)
 
     return type("DynamicSignupSubmissionForm", (StyledFormMixin, forms.Form), fields)
+
+
+class ContactForm(StyledFormMixin, forms.Form):
+    name = forms.CharField(
+        label="Nome",
+        max_length=150,
+        widget=forms.TextInput(attrs={"placeholder": "Seu nome"}),
+    )
+    email = forms.EmailField(
+        label="Email",
+        widget=forms.EmailInput(attrs={"placeholder": "voce@exemplo.com"}),
+    )
+    subject = forms.CharField(
+        label="Assunto",
+        max_length=200,
+        widget=forms.TextInput(attrs={"placeholder": "Como podemos ajudar?"}),
+    )
+    message = forms.CharField(
+        label="Mensagem",
+        widget=forms.Textarea(attrs={"rows": 5, "placeholder": "Escreva sua mensagem"}),
+    )
