@@ -1,8 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
-from .models import Event, MediaItem, NewsArticle, SiteSettings, SocialLink, User
+from .models import Event, MediaItem, NewsArticle, SiteSettings, SocialLink, User, SignupForm, SignupSubmission
 
 
 admin.site.site_header = "Painel Plataforma Maric"
@@ -180,3 +181,229 @@ class SocialLinkAdmin(admin.ModelAdmin):
             },
         ),
     )
+
+
+@admin.register(SignupForm)
+class SignupFormAdmin(admin.ModelAdmin):
+    list_display = ("title", "slug", "is_active", "created_at")
+    list_filter = ("is_active",)
+    search_fields = ("title", "description")
+    prepopulated_fields = {"slug": ("title",)}
+    fieldsets = (
+        (
+            "Informações do Formulário",
+            {
+                "fields": ("title", "slug", "description", "is_active"),
+            },
+        ),
+        (
+            "Estrutura (Avançado)",
+            {
+                "fields": ("fields_schema",),
+                "description": "Schema JSON com a estrutura do formulário.",
+                "classes": ("collapse",),
+            },
+        ),
+    )
+
+
+@admin.register(SignupSubmission)
+class SignupSubmissionAdmin(admin.ModelAdmin):
+    list_display = ("get_citizen_name", "get_protocol", "get_form_title", "created_at")
+    list_filter = ("form", "created_at")
+    search_fields = ("form__title", "data")
+    readonly_fields = ("form", "created_at", "formatted_answers")
+    
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": ("form", "created_at", "data"),
+            },
+        ),
+        (
+            "Dados Preenchidos",
+            {
+                "fields": ("formatted_answers",),
+            },
+        ),
+    )
+
+    def get_citizen_name(self, obj):
+        return obj.data.get("nome_completo", "Não informado")
+    get_citizen_name.short_description = "Nome do Cidadão"
+
+    def get_protocol(self, obj):
+        return obj.data.get("id_cadastro", "-")
+    get_protocol.short_description = "Protocolo"
+
+    def get_form_title(self, obj):
+        return obj.form.title
+    get_form_title.short_description = "Formulário"
+
+    def formatted_answers(self, obj):
+        if not obj.data:
+            return "Nenhuma resposta"
+        
+        html = '''
+        <style>
+            .field-data {
+                display: none !important;
+            }
+            .submission-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 15px;
+                width: 100%;
+                margin-top: 10px;
+            }
+            @media (max-width: 1200px) {
+                .submission-grid { grid-template-columns: repeat(3, 1fr); }
+            }
+            @media (max-width: 900px) {
+                .submission-grid { grid-template-columns: repeat(2, 1fr); }
+            }
+            @media (max-width: 600px) {
+                .submission-grid { grid-template-columns: 1fr; }
+            }
+            .submission-card {
+                position: relative;
+                background: var(--darkened-bg, rgba(0, 0, 0, 0.03));
+                padding: 16px;
+                padding-right: 40px;
+                border-radius: 8px;
+                border: 1px solid var(--border-color, #e0e0e0);
+                transition: transform 0.2s, box-shadow 0.2s;
+            }
+            .submission-card:hover {
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                transform: translateY(-2px);
+            }
+            .edit-icon {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                cursor: pointer;
+                color: #ffffff;
+                opacity: 0.2;
+                transition: opacity 0.2s, transform 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .submission-card:hover .edit-icon {
+                opacity: 0.6;
+            }
+            .edit-icon:hover {
+                opacity: 1 !important;
+                transform: scale(1.1);
+            }
+            .inline-edit-input {
+                width: 100%;
+                padding: 4px;
+                border: 1px solid var(--primary, #1351b4);
+                border-radius: 4px;
+                background: var(--body-bg, #fff);
+                color: var(--body-fg, #222);
+                font-size: 1.05rem;
+                box-sizing: border-box;
+                font-family: inherit;
+            }
+            .inline-edit-input:focus {
+                outline: none;
+            }
+            .submission-label {
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 0.8px;
+                color: var(--body-quiet-color, #777);
+                margin-bottom: 6px;
+                font-weight: 700;
+            }
+            .submission-value {
+                font-size: 1.05rem;
+                font-weight: 500;
+                color: var(--body-fg, #222);
+                word-break: break-word;
+                line-height: 1.4;
+                min-height: 20px;
+            }
+        </style>
+        <div class="submission-grid">
+        '''
+        
+        for key, value in obj.data.items():
+            clean_key = str(key).replace('_', ' ').title()
+            if not value:
+                display_value = '<span style="color: var(--body-quiet-color); font-style: italic;">Não informado</span>'
+            else:
+                display_value = str(value)
+                
+            html += f'''
+                <div class="submission-card" data-key="{key}">
+                    <div class="edit-icon" title="Editar este campo">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                    </div>
+                    <div class="submission-label">{clean_key}</div>
+                    <div class="submission-value">{display_value}</div>
+                </div>
+            '''
+        
+        html += '''
+        </div>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var dataTextarea = document.querySelector('.field-data textarea');
+            if (!dataTextarea) return;
+
+            var editIcons = document.querySelectorAll('.edit-icon');
+            editIcons.forEach(function(icon) {
+                icon.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    var card = this.closest('.submission-card');
+                    var valContainer = card.querySelector('.submission-value');
+                    var key = card.getAttribute('data-key');
+                    var currentText = valContainer.innerText.trim();
+                    
+                    if (valContainer.querySelector('input')) return;
+                    
+                    var input = document.createElement('input');
+                    input.className = 'inline-edit-input';
+                    input.type = 'text';
+                    input.value = currentText === 'Não informado' ? '' : currentText;
+                    
+                    var saveEdit = function() {
+                        var newVal = input.value.trim();
+                        if (newVal === '') {
+                            valContainer.innerHTML = '<span style="color: var(--body-quiet-color); font-style: italic;">Não informado</span>';
+                        } else {
+                            valContainer.innerText = newVal;
+                        }
+                        
+                        try {
+                            var dataObj = JSON.parse(dataTextarea.value);
+                            dataObj[key] = newVal;
+                            dataTextarea.value = JSON.stringify(dataObj);
+                        } catch(err) {
+                            console.error('Erro ao atualizar JSON', err);
+                        }
+                    };
+                    
+                    input.addEventListener('blur', saveEdit);
+                    input.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            input.blur();
+                        }
+                    });
+                    
+                    valContainer.innerHTML = '';
+                    valContainer.appendChild(input);
+                    input.focus();
+                });
+            });
+        });
+        </script>
+        '''
+        return mark_safe(html)
+    formatted_answers.short_description = "Dados Preenchidos"

@@ -376,8 +376,26 @@ class SignupFormDetailView(FormView):
         return build_signup_submission_form(self.signup_form)
 
     def form_valid(self, form):
-        SignupSubmission.objects.create(form=self.signup_form, data=form.cleaned_data)
-        messages.success(self.request, "Inscricao enviada com sucesso.")
+        cleaned_data = form.cleaned_data.copy()
+        generated_id = None
+        
+        if "id_cadastro" in cleaned_data:
+            import random
+            import string
+            from django.utils import timezone
+            
+            chars = string.ascii_uppercase + string.digits
+            random_suffix = ''.join(random.choices(chars, k=5))
+            generated_id = f"MARICA-{timezone.now().year}-{random_suffix}"
+            cleaned_data["id_cadastro"] = generated_id
+            
+        SignupSubmission.objects.create(form=self.signup_form, data=cleaned_data)
+        
+        if generated_id:
+            messages.success(self.request, f"Inscrição enviada com sucesso! Seu ID de Cadastro é: {generated_id}")
+        else:
+            messages.success(self.request, "Inscricao enviada com sucesso.")
+            
         return redirect("core:signup")
 
     def get_context_data(self, **kwargs):
