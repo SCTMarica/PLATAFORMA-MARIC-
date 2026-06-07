@@ -1,0 +1,59 @@
+{% load site_i18n %}
+<footer class="site-footer py-5 mt-5">
+  <div class="container site-footer__shell">
+    <div class="site-footer__top">
+      <div class="row g-4 align-items-start">
+        <div class="col-lg-4">
+          <div class="site-footer__brand-block">
+            <a class="site-footer__brand-mark" href="{% url 'core:home' %}" aria-label="Ir para a pagina inicial">
+              {% if site_settings.logo_url %}
+                <img src="{{ site_settings.logo_url }}" alt="{{ site_settings.site_name|default:'Logo do site' }}">
+              {% else %}
+                <span>{{ site_settings.site_name|default:"Nome do Site" }}</span>
+              {% endif %}
+            </a>
+            <p class="site-footer__brand-name mb-2">{{ site_settings.site_name|default:"Nome do Site" }}</p>
+            <p class="site-footer__brand-text mb-0">{{ site_settings.footer_text|default:site_settings.tagline|default:"Base institucional white-label pronta para personalização." }}</p>
+          </div>
+
+          <div class="site-footer__socials" aria-label="{% tr 'footer.networks' %}">
+            {% for link in social_links %}
+              <a class="site-footer__social-link" href="{{ link.url }}" target="_blank" rel="noreferrer" aria-label="{{ link.label }}">
+                <span aria-hidden="true">{{ link.label|slice:":1"|upper }}</span>
+              </a>
+            {% empty %}
+              <span class="site-footer__empty">{% tr 'footer.empty_links' %}</span>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="site-footer__search-card">
+            <p class="site-footer__eyebrow mb-2">Utilize nossa busca para encontrar o que procura</p>
+            <form class="site-footer__search-form" action="{% url 'core:links' %}" method="get" role="search">
+              <label class="visually-hidden" for="footer-search">Buscar no site</label>
+              <input id="footer-search" type="search" name="q" placeholder="Buscar" aria-label="Buscar">
+              <button type="submit" aria-label="Enviar busca">
+                <span class="site-footer__search-icon" aria-hidden="true"></span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="site-footer__contact-block">
+            <h6 class="site-footer__section-title">{% tr 'footer.contact' %}</h6>
+            <ul class="site-footer__contact-list list-unstyled mb-0">
+              <li><a href="mailto:{{ site_settings.contact_email|default:'contato@exemplo.com' }}">{{ site_settings.contact_email|default:"contato@exemplo.com" }}</a></li>
+              <li><a href="tel:{{ site_settings.contact_phone|default:'(00) 0000-0000' }}">{{ site_settings.contact_phone|default:"(00) 0000-0000" }}</a></li>
+              {% if site_settings.whatsapp %}
+                <li><a href="https://wa.me/{{ site_settings.whatsapp|cut:'('|cut:')'|cut:' '|cut:'-' }}" target="_blank" rel="noreferrer">WhatsApp: {{ site_settings.whatsapp }}</a></li>
+              {% endif %}
+              <li><span>{{ site_settings.address|default:"Endereço institucional" }}</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+{% load site_i18n %}
+
+{% block title %}{% tr 'titles.news' %} | {{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
+
+{% block content %}
+<style>
+  /* Estilos para a aba de notícias - SEM FUNDO DIFERENCIADO */
+  .page-header {
+    border-bottom: 1px solid #eef2f5;
+    background-color: transparent;
+  }
+
+  .section-eyebrow {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    color: #0d6efd;
+    background: transparent;
+    display: inline-block;
+    padding: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Grid de notícias lado a lado */
+  .news-grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin: 0 -1rem;
+  }
+
+  .news-card {
+    flex: 1 1 calc(33.333% - 2rem);
+    min-width: 280px;
+    background: transparent;
+    border-radius: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin: 0 1rem;
+    border-bottom: 1px solid #eef2f5;
+    padding-bottom: 1.5rem;
+  }
+
+  .news-card:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Imagem */
+  .news-card-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+  }
+
+  /* Conteúdo */
+  .news-card-content {
+    padding: 0;
+  }
+
+  .news-category {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #0d6efd;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+    background: transparent;
+    padding: 0;
+  }
+
+  .news-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #212529;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+  }
+
+  .news-title:hover {
+    color: #0d6efd;
+    text-decoration: underline;
+  }
+
+  .news-summary {
+    font-size: 0.85rem;
+    color: #6c757d;
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+
+  .news-date {
+    font-size: 0.75rem;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: transparent;
+    border-radius: 1rem;
+    color: #6c757d;
+    width: 100%;
+  }
+
+  /* Linha divisória entre categorias (estilo da imagem) */
+  .category-divider {
+    margin: 2rem 0 1.5rem 0;
+    border: none;
+    border-top: 1px solid #eef2f5;
+  }
+
+  /* Responsivo */
+  @media (max-width: 992px) {
+    .news-card {
+      flex: 1 1 calc(50% - 2rem);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .news-card {
+      flex: 1 1 100%;
+      margin: 0 0.5rem;
+    }
+    .news-card-image {
+      height: 200px;
+    }
+    .page-header h1 {
+      font-size: 1.75rem;
+    }
+  }
+</style>
+
+<section class="page-header py-5">
+  <div class="container">
+    <p class="section-eyebrow mb-2">{% tr 'news.eyebrow' %}</p>
+    <h1 class="display-6 fw-bold">{% tr 'news.title' %}</h1>
+    <p class="text-secondary mb-0">{% tr 'news.subtitle' %}</p>
+  </div>
+</section>
+
+<section class="pb-5">
+  <div class="container">
+    <div class="news-grid">
+      {% if news_list %}
+        {% for article in news_list|slice:":3" %}
+          <article class="news-card">
+            {% if article.cover_image_url %}
+              <img src="{{ article.cover_image_url }}" class="news-card-image" alt="{{ article.title }}">
+            {% else %}
+              <img src="https://picsum.photos/id/20/400/180" class="news-card-image" alt="Imagem ilustrativa">
+            {% endif %}
+            <div class="news-card-content">
+              {% if article.category %}
+                <div class="news-category">{{ article.category }}</div>
+              {% endif %}
+              <a href="{{ article.get_absolute_url }}" class="news-title">
+                {{ article.title }}
+              </a>
+              {% if article.summary %}
+                <p class="news-summary">{{ article.summary|truncatewords:20 }}</p>
+              {% endif %}
+              <div class="news-date">
+                <span>📅</span>
+                <span>{{ article.published_at|date:"d/m/Y" }}</span>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      {% else %}
+        <!-- APENAS 3 NOTÍCIAS DE EXEMPLO - Estilo da imagem -->
+        
+        <!-- Notícia 1 - Cultura -->
+        <article class="news-card">
+          <img src="https://picsum.photos/id/20/400/180" class="news-card-image" alt="Cine Henfil">
+          <div class="news-card-content">
+            <div class="news-category">CULTURA E UTOPIA</div>
+            <a href="#" class="news-title">
+              Prefeitura de Maricá divulga programação do Cine Henfil de 21 a 24/05
+            </a>
+            <p class="news-summary">
+              Sessões especiais e filmes nacionais gratuitos no Cine Henfil durante toda a semana.
+            </p>
+            <div class="news-date">
+              📅 21/05/2026
+            </div>
+          </div>
+        </article>
+
+        <!-- Notícia 2 - Educação -->
+        <article class="news-card">
+          <img src="https://picsum.photos/id/42/400/180" class="news-card-image" alt="Capacitação">
+          <div class="news-card-content">
+            <div class="news-category">ESCOLA MUNICIPAL DE ADMINISTRAÇÃO - EMAR</div>
+            <a href="#" class="news-title">
+              Prefeitura de Maricá promove capacitação em gestão de documentos para servidores do município
+            </a>
+            <p class="news-summary">
+              Treinamento visa modernizar os processos administrativos e arquivamento digital.
+            </p>
+            <div class="news-date">
+              📅 21/05/2026
+            </div>
+          </div>
+        </article>
+
+        <!-- Notícia 3 - Transporte -->
+        <article class="news-card">
+          <img src="https://picsum.photos/id/58/400/180" class="news-card-image" alt="Vermelhinhos">
+          <div class="news-card-content">
+            <div class="news-category">EMPRESA PÚBLICA DE TRANSPORTES (EPT)</div>
+            <a href="#" class="news-title">
+              Maricá 212 anos: Prefeitura prepara esquema especial dos Vermelhinhos para segunda semana de shows
+            </a>
+            <p class="news-summary">
+              Horários estendidos e rotas especiais para atender o público durante as festividades.
+            </p>
+            <div class="news-date">
+              📅 21/05/2026
+            </div>
+          </div>
+        </article>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

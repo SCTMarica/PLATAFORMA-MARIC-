@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load site_i18n %}
+
+{% block title %}{% tr 'titles.register' %} | {{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-7">
+        <div class="content-card p-4 p-lg-5">
+          <p class="section-eyebrow mb-2">{% tr 'register.eyebrow' %}</p>
+          <h1 class="h3 mb-3">{% tr 'register.title' %}</h1>
+          <p class="text-secondary">{% tr 'register.subtitle' %}</p>
+          <form method="post" class="row g-3">
+            {% csrf_token %}
+            <div class="col-md-6">
+              <label class="form-label" for="{{ form.full_name.id_for_label }}">{% tr 'register.full_name' %}</label>
+              {{ form.full_name }}
+              {% for error in form.full_name.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="{{ form.email.id_for_label }}">{% tr 'register.email' %}</label>
+              {{ form.email }}
+              {% for error in form.email.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="{{ form.phone.id_for_label }}">{% tr 'register.phone' %}</label>
+              {{ form.phone }}
+              {% for error in form.phone.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="{{ form.password.id_for_label }}">{% tr 'register.password' %}</label>
+              {{ form.password }}
+              {% for error in form.password.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="{{ form.confirm_password.id_for_label }}">{% tr 'register.confirm_password' %}</label>
+              {{ form.confirm_password }}
+              {% for error in form.confirm_password.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
+            </div>
+            {% for error in form.non_field_errors %}
+              <div class="col-12 text-danger small">{{ error }}</div>
+            {% endfor %}
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary">{% tr 'register.button' %}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

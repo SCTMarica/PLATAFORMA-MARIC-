@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load site_i18n %}
+
+{% block title %}{% tr 'titles.portal' %} | {{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <div class="content-card p-4 p-lg-5">
+      <p class="section-eyebrow mb-2">{% tr 'portal.eyebrow' %}</p>
+      <h1 class="h3 mb-3">{% tr 'portal.title' %}</h1>
+      <p class="text-secondary mb-4">{% tr 'portal.subtitle' %}</p>
+      <div class="hero-panel p-4 mb-4">
+        <p class="mb-2 text-uppercase small fw-semibold">{% tr 'portal.welcome' %}</p>
+        <h2 class="h4 mb-2">{{ request.user.get_full_name|default:request.user.username }}</h2>
+        <p class="mb-0 text-secondary"><strong>{% tr 'portal.role' %}:</strong> {{ user_role_label }}</p>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-4"><div class="hero-panel p-3 h-100">{% tr 'portal.card_1' %}</div></div>
+        <div class="col-md-4"><div class="hero-panel p-3 h-100">{% tr 'portal.card_2' %}</div></div>
+        <div class="col-md-4"><div class="hero-panel p-3 h-100">{% tr 'portal.card_3' %}</div></div>
+      </div>
+      {% if request.user.can_access_admin %}
+        <div class="hero-panel p-4 mt-4">
+          <h2 class="h5 mb-2">{% tr 'portal.admin_title' %}</h2>
+          <p class="text-secondary mb-3">{% tr 'portal.admin_description' %}</p>
+          <a href="{% url 'core:admin-panel' %}" class="btn btn-primary">{% tr 'portal.admin_button' %}</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

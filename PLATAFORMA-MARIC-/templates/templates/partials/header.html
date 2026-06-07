@@ -1,0 +1,73 @@
+{% load site_i18n %}
+
+<nav class="navbar navbar-expand-xl site-header sticky-top shadow-sm">
+  <div class="container-xl py-2">
+    <a class="navbar-brand site-header__brand fw-bold d-flex align-items-center gap-2" href="{% url 'core:home' %}">
+      <span>{{ site_settings.site_name|default:"Nome do Site" }}</span>
+    </a>
+    <button class="navbar-toggler site-header__toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav"
+      aria-controls="siteNav" aria-expanded="false" aria-label="Alternar navegacao">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="siteNav">
+      <div class="site-header__content ms-xl-auto">
+        <ul class="navbar-nav site-header__menu align-items-xl-center gap-xl-2">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Quem Somos</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'core:about' %}">Quem Somos</a></li>
+              <li><a class="dropdown-item" href="{% url 'core:contact' %}">Contato</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Notícias</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'core:news-list' %}">Notícias</a></li>
+              <li><a class="dropdown-item" href="{% url 'core:event-list' %}">Eventos</a></li>
+              <li><a class="dropdown-item" href="{% url 'core:media' %}">Mídia</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Transparência</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'core:links' %}">Links Úteis</a></li>
+              <li><a class="dropdown-item" href="#">Opção 2</a></li>
+            </ul>
+          </li>
+        </ul>
+
+        <div class="site-header__actions">
+          <div class="font-controls" role="group" aria-label="Controle de tamanho da fonte">
+            <button type="button" class="font-controls__button" data-font-scale="decrease" aria-label="Diminuir fonte">A-</button>
+            <button type="button" class="font-controls__button font-controls__button--status" data-font-scale="reset" aria-label="Restaurar fonte para 100%">100%</button>
+            <button type="button" class="font-controls__button" data-font-scale="increase" aria-label="Aumentar fonte">A+</button>
+          </div>
+
+          <button type="button" class="theme-toggle" data-theme-toggle aria-label="Alternar tema" title="Alternar tema">
+            <span class="theme-toggle__icon" aria-hidden="true"></span>
+            <span class="visually-hidden" data-theme-toggle-label>Alternar tema</span>
+          </button>
+
+          <form method="post" action="{% url 'core:set-language' %}" class="language-switcher" aria-label="{% tr 'menu.language' %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <span class="visually-hidden">{% tr 'menu.language' %}</span>
+            <div class="language-switcher__options" role="group" aria-label="{% tr 'menu.language' %}">
+              {% for language in available_languages %}
+                <button type="submit" name="language" value="{{ language.code }}" class="language-switcher__button{% if language.code == current_language %} is-active{% endif %}">
+                  {{ language.code|upper }}
+                </button>
+              {% endfor %}
+            </div>
+          </form>
+
+          <div class="site-header__auth">
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'core:login' %}">{% tr 'menu.login' %}</a>
+            <a class="btn btn-primary btn-sm" href="{% url 'core:signup' %}">{% tr 'menu.register' %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
