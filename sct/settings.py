@@ -70,7 +70,6 @@ DATABASES = {
         "PORT": env("POSTGRES_PORT", "5432"),
     }
 }
-
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -90,6 +89,8 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CSRF_TRUSTED_ORIGINS = [
+    "https://plataforma-maric.onrender.com",
     "https://plataforma-maric-1.onrender.com",
 ]
+
 WEB3FORMS_KEY = 'f4c3fddb-f0ea-42d7-9c50-5eb60305e662'
