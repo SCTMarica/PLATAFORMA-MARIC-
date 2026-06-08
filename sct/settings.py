@@ -89,4 +89,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-WEB3FORMS_KEY = env("WEB3FORMS_KEY", "")
+CSRF_TRUSTED_ORIGINS = [
+    "https://plataforma-maric-1.onrender.com",
+]
+WEB3FORMS_KEY = 'f4c3fddb-f0ea-42d7-9c50-5eb60305e662'
