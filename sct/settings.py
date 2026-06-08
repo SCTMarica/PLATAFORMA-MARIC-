@@ -11,7 +11,10 @@ def env(key, default=None):
 
 SECRET_KEY = env("DJANGO_SECRET_KEY", "django-insecure-dev-key-change-me")
 DEBUG = env("DJANGO_DEBUG", "1") == "1"
-ALLOWED_HOSTS = [host.strip() for host in env("DJANGO_ALLOWED_HOSTS", "*").split(",") if host.strip()]
+ALLOWED_HOSTS = ["*"]
+
+print("ALLOWED_HOSTS =", ALLOWED_HOSTS)
+print("DJANGO_ALLOWED_HOSTS =", os.getenv("DJANGO_ALLOWED_HOSTS"))
 
 
 INSTALLED_APPS = [
@@ -70,6 +73,7 @@ DATABASES = {
         "PORT": env("POSTGRES_PORT", "5432"),
     }
 }
+WEB3FORMS_KEY = 'f4c3fddb-f0ea-42d7-9c50-5eb60305e662'
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -92,5 +96,3 @@ CSRF_TRUSTED_ORIGINS = [
     "https://plataforma-maric.onrender.com",
     "https://plataforma-maric-1.onrender.com",
 ]
-
-WEB3FORMS_KEY = 'f4c3fddb-f0ea-42d7-9c50-5eb60305e662'
