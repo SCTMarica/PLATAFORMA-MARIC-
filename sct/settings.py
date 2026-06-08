@@ -59,7 +59,7 @@ AUTH_USER_MODEL = "core.User"
 LOGIN_URL = "core:login"
 LOGIN_REDIRECT_URL = "core:portal"
 LOGOUT_REDIRECT_URL = "core:home"
-
+DATABASE_URL = env("DATABASE_URL")
 if DATABASE_URL:
     DATABASES = {
         "default": dj_database_url.parse(
