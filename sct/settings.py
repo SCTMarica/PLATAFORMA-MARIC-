@@ -11,7 +11,7 @@ def env(key, default=None):
 
 SECRET_KEY = env("DJANGO_SECRET_KEY", "django-insecure-dev-key-change-me")
 DEBUG = env("DJANGO_DEBUG", "1") == "1"
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [host.strip() for host in env("DJANGO_ALLOWED_HOSTS", "*").split(",") if host.strip()]
 
 
 INSTALLED_APPS = [
@@ -91,5 +91,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CSRF_TRUSTED_ORIGINS = [
     "https://plataforma-maric.onrender.com",
-    "https://plataforma-maric-1.onrender.com",
 ]
