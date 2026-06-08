@@ -11,10 +11,7 @@ def env(key, default=None):
 
 SECRET_KEY = env("DJANGO_SECRET_KEY", "django-insecure-dev-key-change-me")
 DEBUG = env("DJANGO_DEBUG", "1") == "1"
-ALLOWED_HOSTS = ["*"]
-
-print("ALLOWED_HOSTS =", ALLOWED_HOSTS)
-print("DJANGO_ALLOWED_HOSTS =", os.getenv("DJANGO_ALLOWED_HOSTS"))
+ALLOWED_HOSTS = [host.strip() for host in env("DJANGO_ALLOWED_HOSTS", "*").split(",") if host.strip()]
 
 
 INSTALLED_APPS = [
