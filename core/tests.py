@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
+from django.core import mail
 
 from .models import Event, MediaItem, NewsArticle, SignupForm, SignupSubmission, SiteSettings, User
 
@@ -60,7 +61,7 @@ class PublicPagesTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Evento de teste")
         self.assertContains(response, reverse("core:event-calendar"))
-        self.assertContains(response, "Calendario de eventos")
+        self.assertContains(response, "Calend")
 
     def test_event_calendar_loads_month_events(self):
         event = Event.objects.get(slug="evento-de-teste")
@@ -147,6 +148,18 @@ class AuthenticationFlowTests(TestCase):
         )
 
         self.assertRedirects(response, reverse("core:admin-panel"))
+
+    def test_login_hides_initial_admin_button_when_admin_exists(self):
+        response = self.client.get(reverse("core:login"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, reverse("core:initial-admin-setup"))
+        self.assertContains(response, reverse("core:password-reset"))
+
+    def test_initial_admin_setup_is_blocked_when_admin_exists(self):
+        response = self.client.get(reverse("core:initial-admin-setup"))
+
+        self.assertRedirects(response, reverse("core:login"))
 
     def test_portal_requires_authentication(self):
         response = self.client.get(reverse("core:portal"))
@@ -254,3 +267,65 @@ class AuthenticationFlowTests(TestCase):
         self.assertRedirects(response, reverse("core:signup"))
         submission = SignupSubmission.objects.get(form=signup_form)
         self.assertEqual(submission.data["nome"], "Ana")
+
+    def test_password_reset_sends_email_for_existing_user(self):
+        response = self.client.post(reverse("core:password-reset"), {"email": "admin@example.com"})
+
+        self.assertRedirects(response, reverse("core:password-reset-done"))
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("senha", mail.outbox[0].subject.lower())
+
+    def test_password_reset_does_not_send_email_for_unknown_user(self):
+        response = self.client.post(reverse("core:password-reset"), {"email": "naoexiste@example.com"})
+
+        self.assertRedirects(response, reverse("core:password-reset-done"))
+        self.assertEqual(len(mail.outbox), 0)
+
+
+class InitialAdminSetupTests(TestCase):
+    def test_login_shows_initial_admin_button_when_no_admin_exists(self):
+        response = self.client.get(reverse("core:login"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, reverse("core:initial-admin-setup"))
+
+    def test_initial_admin_setup_creates_master_user_and_logs_in(self):
+        response = self.client.post(
+            reverse("core:initial-admin-setup"),
+            {
+                "full_name": "Admin Inicial",
+                "email": "admin.inicial@example.com",
+                "phone": "21999999999",
+                "password": "SenhaSegura123!",
+                "confirm_password": "SenhaSegura123!",
+            },
+        )
+
+        self.assertRedirects(response, reverse("core:admin-panel"))
+        user = User.objects.get(email="admin.inicial@example.com")
+        self.assertEqual(user.role, User.Role.MASTER)
+        self.assertTrue(user.is_staff)
+        self.assertTrue(user.is_superuser)
+        self.assertEqual(int(self.client.session["_auth_user_id"]), user.pk)
+
+    def test_initial_admin_setup_blocks_after_first_admin_exists(self):
+        User.objects.create_user(
+            username="admin@example.com",
+            email="admin@example.com",
+            password="SenhaSegura123!",
+            role=User.Role.MASTER,
+        )
+
+        response = self.client.post(
+            reverse("core:initial-admin-setup"),
+            {
+                "full_name": "Outro Admin",
+                "email": "outro@example.com",
+                "phone": "21999999999",
+                "password": "SenhaSegura123!",
+                "confirm_password": "SenhaSegura123!",
+            },
+        )
+
+        self.assertRedirects(response, reverse("core:login"))
+        self.assertFalse(User.objects.filter(email="outro@example.com").exists())

@@ -92,6 +92,16 @@ TIME_ZONE = env("DJANGO_TIME_ZONE", "America/Sao_Paulo")
 USE_I18N = True
 USE_TZ = True
 
+DEFAULT_FROM_EMAIL = env("DJANGO_DEFAULT_FROM_EMAIL", "no-reply@localhost")
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+EMAIL_BACKEND = env("DJANGO_EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+EMAIL_HOST = env("DJANGO_EMAIL_HOST", "")
+EMAIL_PORT = int(env("DJANGO_EMAIL_PORT", "587") or 587)
+EMAIL_HOST_USER = env("DJANGO_EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = env("DJANGO_EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = env("DJANGO_EMAIL_USE_TLS", "1") == "1"
+EMAIL_USE_SSL = env("DJANGO_EMAIL_USE_SSL", "0") == "1"
+
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
