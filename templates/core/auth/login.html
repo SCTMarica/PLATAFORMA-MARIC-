@@ -35,6 +35,12 @@
             {% endfor %}
             <button type="submit" class="btn btn-primary">{% tr 'login.button' %}</button>
           </form>
+          <div class="d-grid gap-2 mt-3">
+            <a class="btn btn-outline-primary" href="{% url 'core:password-reset' %}">Esqueceu sua senha?</a>
+            {% if can_create_initial_admin %}
+              <a class="btn btn-outline-secondary" href="{% url 'core:initial-admin-setup' %}">Cadastrar primeiro admin</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>

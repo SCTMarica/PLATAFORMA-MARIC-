@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth import authenticate, get_user_model
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.utils.text import slugify
 
 from .models import MediaItem, NewsArticle, SignupForm, SiteSettings
@@ -92,6 +93,36 @@ class UserRegistrationForm(StyledFormMixin, forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class InitialAdminRegistrationForm(UserRegistrationForm):
+    def clean_email(self):
+        email = super().clean_email()
+        if User.objects.filter(
+            is_active=True,
+        ).filter(
+            Q(is_staff=True) | Q(is_superuser=True) | Q(role__in=[User.Role.SUPERVISOR, User.Role.MASTER])
+        ).exists():
+            raise ValidationError("O primeiro administrador ja foi configurado.")
+        return email
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.role = User.Role.MASTER
+        user.is_active = True
+        user.is_staff = True
+        user.is_superuser = True
+        if commit:
+            user.save()
+        return user
+
+
+class StyledPasswordResetForm(StyledFormMixin, PasswordResetForm):
+    email = forms.EmailField(label="Email")
+
+
+class StyledSetPasswordForm(StyledFormMixin, SetPasswordForm):
+    pass
 
 
 class SiteSettingsForm(StyledFormMixin, forms.ModelForm):

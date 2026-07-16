@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Cadastrar primeiro admin | {{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-6">
+        <div class="content-card p-4 p-lg-5">
+          <p class="section-eyebrow mb-2">Configuracao inicial</p>
+          <h1 class="h3 mb-3">Cadastrar primeiro administrador</h1>
+          <p class="text-secondary">Esta tela fica disponivel somente enquanto nao existe nenhum usuario administrativo no sistema.</p>
+          <form method="post" class="d-grid gap-3">
+            {% csrf_token %}
+            {% for field in form %}
+              <div>
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                  <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% for error in field.errors %}
+                  <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Criar admin</button>
+            <a class="btn btn-outline-secondary" href="{% url 'core:login' %}">Voltar ao login</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
