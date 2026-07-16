@@ -22,6 +22,7 @@ from .views import (
     UserLogoutView,
     UserRegisterView,
     FileUploadView,
+    SearchView,
     set_language,
 )
 
@@ -40,6 +41,7 @@ urlpatterns = [
     path("inscreva-se/", SignupView.as_view(), name="signup"),
     path("inscreva-se/<slug:slug>/", SignupFormDetailView.as_view(), name="signup-form-detail"),
     path("links/", LinksView.as_view(), name="links"),
+    path("busca/", SearchView.as_view(), name="search"),
     path("arquivos/", FileUploadView.as_view(), name="file-upload"),
     path("login/", UserLoginView.as_view(), name="login"),
     path("sair/", UserLogoutView.as_view(), name="logout"),

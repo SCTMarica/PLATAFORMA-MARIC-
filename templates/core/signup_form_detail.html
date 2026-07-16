@@ -2,35 +2,38 @@
 
 {% block title %}{{ signup_form.title }} | {{ site_settings.site_name|default:"Plataforma Maricá" }}{% endblock %}
 
+
+
 {% block content %}
 <style>
   .gov-form-wrapper {
-    background-color: #ffefef;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    border-top: 5px solid #ff3838;
+    background-color: var(--surface-card);
+    border-radius: 1.25rem;
+    box-shadow: var(--shadow-soft);
+    border-top: 5px solid var(--brand-primary);
+    border: 1px solid var(--border-soft);
   }
 
   .gov-form-wrapper .form-check-label {
-    color: #333;
+    color: var(--text-main);
     font-weight: 500;
   }
 
   .gov-header {
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid var(--border-soft);
     padding-bottom: 1.5rem;
     margin-bottom: 2rem;
   }
 
   .gov-header h1 {
-    color: #ff3838;
+    color: var(--brand-primary);
     font-weight: 700;
   }
 
   .gov-form-section {
-    background: white;
-    border: 1px solid #dee2e6;
-    border-radius: 12px;
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-soft);
+    border-radius: 1rem;
     padding: 1.5rem;
     margin-bottom: 2rem;
     transition: all 0.3s ease;
@@ -42,17 +45,17 @@
   }
 
   .gov-form-section:hover {
-    border-color: #ff3838;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    border-color: color-mix(in srgb, var(--brand-primary) 40%, var(--border-soft));
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   }
 
   .section-title {
-    color: #ff3838;
+    color: var(--brand-primary);
     font-weight: 700;
     font-size: 1.2rem;
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid #ffefef;
+    border-bottom: 2px solid color-mix(in srgb, var(--brand-primary) 12%, transparent);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -60,28 +63,35 @@
 
   .gov-form-wrapper .form-label {
     font-weight: 600;
-    color: #000000;
+    color: var(--text-main);
     margin-bottom: 0.5rem;
     font-size: 0.95rem;
   }
 
-  .gov-form-wrapper .form-control {
+  .gov-form-wrapper .form-control, .gov-form-wrapper .form-select {
     border-radius: 10px;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--border-soft);
+    background: var(--surface-elevated);
+    color: var(--text-main);
     padding: 0.6rem 1rem;
     font-size: 1rem;
     transition: all 0.2s;
   }
 
-  .gov-form-wrapper .form-control:focus {
-    box-shadow: 0 0 0 0.25rem rgba(255, 56, 56, 0.192);
-    border-color: #ff3838;
+  .gov-form-wrapper .form-control::placeholder, .gov-form-wrapper .form-select::placeholder {
+    color: color-mix(in srgb, var(--text-main) 55%, transparent);
+    opacity: 1; /* Garante que navegadores não apliquem transparência extra */
+  }
+
+  .gov-form-wrapper .form-control:focus, .gov-form-wrapper .form-select:focus {
+    box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--brand-primary) 18%, transparent);
+    border-color: var(--brand-primary);
   }
 
   .gov-btn {
-    background-color: #ff3838;
+    background-color: var(--brand-primary);
     color: #fff;
-    border-radius: 20px;
+    border-radius: 999px;
     padding: 0.75rem 2rem;
     font-weight: 600;
     border: none;
@@ -89,14 +99,14 @@
   }
 
   .gov-btn:hover {
-    background-color: #d62a2a;
+    background-color: color-mix(in srgb, var(--brand-primary) 85%, black);
     color: #fff;
   }
 
   .gov-btn-secondary {
-    background-color: #484e53;
+    background-color: var(--brand-secondary);
     color: #fff;
-    border-radius: 20px;
+    border-radius: 999px;
     padding: 0.75rem 2rem;
     font-weight: 600;
     border: none;
@@ -104,16 +114,16 @@
   }
 
   .gov-btn-secondary:hover {
-    background-color: #484e53;
+    background-color: color-mix(in srgb, var(--brand-secondary) 85%, black);
     color: #fff;
   }
 
   .gov-eyebrow {
-    color: #555;
+    color: var(--text-muted);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    font-size: 0.78rem;
   }
 
   .step-indicator-container {
@@ -141,7 +151,7 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: #484e53;
+    background-color: var(--brand-secondary);
     color: white;
     display: flex;
     align-items: center;
@@ -152,13 +162,13 @@
   }
 
   .step-item.active .step-circle {
-    background-color: #ff3838;
+    background-color: var(--brand-primary);
   }
 
   .step-label {
     font-size: 0.75rem;
     font-weight: 600;
-    color: #484e53;
+    color: var(--text-muted);
     text-align: center;
     max-width: 90px;
   }
@@ -166,6 +176,7 @@
 
 <section class="py-5 bg-light-subtle">
   <div class="container" style="max-width: 900px;">
+
     <div class="gov-form-wrapper p-4 p-lg-5">
       <div class="gov-header text-center">
         <p class="gov-eyebrow mb-2">Formulário de Inscrição</p>
@@ -202,17 +213,18 @@
           <h2 class="section-title">Identificação do Cidadão</h2>
           <div class="row g-3">
 
-            {% for field in form %}
-            {% if field.label == 'Nome Completo' or field.label == 'E-mail' or field.label == 'Telefone' %}
             <div class="col-12">
-              <label class="form-label">{{ field.label }}</label>
-              {{ field }}
-              {% for error in field.errors %}
-              <div class="invalid-feedback d-block">{{ error }}</div>
-              {% endfor %}
+              <label class="form-label">Nome Completo</label>
+              <input type="text" name="nome_completo" class="form-control" required placeholder="Seu nome completo">
             </div>
-            {% endif %}
-            {% endfor %}
+            <div class="col-12">
+              <label class="form-label">E-mail</label>
+              <input type="email" name="email" class="form-control" required placeholder="seu.email@exemplo.com">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Telefone</label>
+              <input type="tel" name="telefone" class="form-control" required placeholder="(00) 00000-0000">
+            </div>
 
             <div class="col-md-4">
               <label class="form-label">Nome Social (Opcional)</label>

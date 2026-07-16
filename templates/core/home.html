@@ -15,7 +15,6 @@
         <h1 class="display-4 fw-bold mb-3">{{ site_settings.hero_title }}</h1>
         <p class="lead text-secondary mb-4">{{ site_settings.hero_subtitle }}</p>
         <div class="d-flex flex-wrap gap-3">
-          <a href="{% url 'core:signup' %}" class="btn btn-primary btn-lg">{% tr 'home.create_account' %}</a>
           <a href="{% url 'core:about' %}" class="btn btn-outline-primary btn-lg">{% tr 'home.learn_more' %}</a>
         </div>
       </div>

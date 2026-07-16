@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.db.models import Q
 from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView, UpdateView
 
@@ -375,26 +376,32 @@ class SignupFormDetailView(FormView):
     def get_form_class(self):
         return build_signup_submission_form(self.signup_form)
 
-    def form_valid(self, form):
-        cleaned_data = form.cleaned_data.copy()
-        generated_id = None
+    def post(self, request, *args, **kwargs):
+        self.signup_form = get_object_or_404(SignupForm, slug=kwargs["slug"], is_active=True)
         
-        if "id_cadastro" in cleaned_data:
-            import random
-            import string
-            from django.utils import timezone
-            
-            chars = string.ascii_uppercase + string.digits
-            random_suffix = ''.join(random.choices(chars, k=5))
-            generated_id = f"MARICA-{timezone.now().year}-{random_suffix}"
-            cleaned_data["id_cadastro"] = generated_id
+        cleaned_data = {}
+        
+        # Add all POST data to cleaned_data
+        for key, value in request.POST.items():
+            if key != "csrfmiddlewaretoken":
+                cleaned_data[key] = value
+                
+        # Also capture uploaded file names (since we don't have a storage logic for this yet)
+        for key, file_obj in request.FILES.items():
+            cleaned_data[key] = file_obj.name
+
+        import random
+        import string
+        from django.utils import timezone
+        
+        chars = string.ascii_uppercase + string.digits
+        random_suffix = ''.join(random.choices(chars, k=5))
+        generated_id = f"MARICA-{timezone.now().year}-{random_suffix}"
+        cleaned_data["id_cadastro"] = generated_id
             
         SignupSubmission.objects.create(form=self.signup_form, data=cleaned_data)
         
-        if generated_id:
-            messages.success(self.request, f"Inscrição enviada com sucesso! Seu ID de Cadastro é: {generated_id}")
-        else:
-            messages.success(self.request, "Inscricao enviada com sucesso.")
+        messages.success(self.request, f"Inscrição enviada com sucesso! Seu ID de Cadastro é: {generated_id}")
             
         return redirect("core:signup")
 
@@ -417,3 +424,32 @@ def set_language(request):
     ):
         next_url = reverse("core:home")
     return redirect(next_url)
+
+
+class SearchView(SiteContextMixin, TemplateView):
+    template_name = "core/search_results.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        q = self.request.GET.get("q", "").strip()
+        context["query"] = q
+        
+        if q:
+            context["news_results"] = NewsArticle.objects.published().filter(
+                Q(title__icontains=q) | Q(summary__icontains=q) | Q(content__icontains=q)
+            ).distinct()
+            
+            context["event_results"] = Event.objects.published().filter(
+                Q(title__icontains=q) | Q(summary__icontains=q) | Q(description__icontains=q) | Q(location__icontains=q)
+            ).distinct()
+            
+            context["form_results"] = SignupForm.objects.filter(is_active=True).filter(
+                Q(title__icontains=q) | Q(description__icontains=q)
+            ).distinct()
+        else:
+            context["news_results"] = []
+            context["event_results"] = []
+            context["form_results"] = []
+            
+        context["total_results"] = len(context["news_results"]) + len(context["event_results"]) + len(context["form_results"])
+        return context

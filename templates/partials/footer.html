@@ -30,7 +30,7 @@
         <div class="col-lg-4">
           <div class="site-footer__search-card">
             <p class="site-footer__eyebrow mb-2">Utilize nossa busca para encontrar o que procura</p>
-            <form class="site-footer__search-form" action="{% url 'core:links' %}" method="get" role="search">
+            <form class="site-footer__search-form" action="{% url 'core:search' %}" method="get" role="search">
               <label class="visually-hidden" for="footer-search">Buscar no site</label>
               <input id="footer-search" type="search" name="q" placeholder="Buscar" aria-label="Buscar">
               <button type="submit" aria-label="Enviar busca">
