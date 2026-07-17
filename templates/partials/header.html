@@ -30,11 +30,24 @@
 
 <nav class="navbar navbar-expand-xl site-header sticky-top shadow-sm">
   <div class="container-xl py-2">
-    <a class="navbar-brand site-header__brand fw-bold d-flex align-items-center gap-2" href="{% url 'core:home' %}">
-      <span>{{ site_settings.site_name|default:"Nome do Site" }}</span>
-    </a>
+    <div class="d-flex align-items-center gap-2">
+      {% if request.resolver_match.url_name != 'home' %}
+      <button onclick="history.back()" aria-label="Voltar à página anterior"
+        style="display:inline-flex;align-items:center;justify-content:center;width:2.1rem;height:2.1rem;border-radius:50%;border:1.5px solid var(--border-soft);background:transparent;color:var(--text-muted);cursor:pointer;transition:color 0.18s,border-color 0.18s;margin-right:0.25rem;"
+        onmouseover="this.style.color='var(--brand-primary)';this.style.borderColor='var(--brand-primary)';"
+        onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border-soft)';">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      {% endif %}
+      <a class="navbar-brand site-header__brand fw-bold d-flex align-items-center gap-2 mb-0" href="{% url 'core:home' %}">
+        <span>{{ site_settings.site_name|default:"Nome do Site" }}</span>
+      </a>
+    </div>
     <button class="navbar-toggler site-header__toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav"
-      aria-controls="siteNav" aria-expanded="false" aria-label="Alternar navegacao">
+      aria-controls="siteNav" aria-expanded="false" aria-label="Alternar navegação">
       <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -49,19 +62,22 @@
             </ul>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Noticias</a>
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Notícias</a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{% url 'core:news-list' %}">Noticias</a></li>
+              <li><a class="dropdown-item" href="{% url 'core:news-list' %}">Notícias</a></li>
               <li><a class="dropdown-item" href="{% url 'core:event-list' %}">Eventos</a></li>
-              <li><a class="dropdown-item" href="{% url 'core:media' %}">Midia</a></li>
+              <li><a class="dropdown-item" href="{% url 'core:media' %}">Mídia</a></li>
             </ul>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Transparencia</a>
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Transparência</a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{% url 'core:links' %}">Links uteis</a></li>
+              <li><a class="dropdown-item" href="{% url 'core:links' %}">Links úteis</a></li>
               <li><a class="dropdown-item" href="{% url 'core:file-upload' %}">Arquivos</a></li>
             </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'core:signup' %}">Inscreva-se</a>
           </li>
         </ul>
 

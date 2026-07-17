@@ -1,23 +1,41 @@
 import calendar
+import logging
 from datetime import date
 
+import httpx
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import (
+    LoginView,
+    LogoutView,
+    PasswordResetCompleteView,
+    PasswordResetConfirmView,
+    PasswordResetDoneView,
+    PasswordResetView,
+)
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.db.models import Q
 from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView, UpdateView
 
+logger = logging.getLogger(__name__)
+
 from .forms import (
     BannerForm,
+    ContactForm,
     EmailOrUsernameAuthenticationForm,
+    InitialAdminRegistrationForm,
     NewsArticleForm,
     SignupFormAdminForm,
     SiteSettingsForm,
+    StyledPasswordResetForm,
+    StyledSetPasswordForm,
     UserRegistrationForm,
     build_signup_submission_form,
 )
@@ -29,6 +47,12 @@ def get_user_landing_url(user):
     if getattr(user, "can_access_admin", False):
         return reverse("core:admin-panel")
     return reverse("core:portal")
+
+
+def admin_users_exist():
+    return User.objects.filter(is_active=True).filter(
+        Q(is_staff=True) | Q(is_superuser=True) | Q(role__in=[User.Role.SUPERVISOR, User.Role.MASTER])
+    ).exists()
 
 
 def sync_user_access_flags(user):
@@ -194,6 +218,11 @@ class MediaView(TemplateView):
 class ContactView(TemplateView):
     template_name = "core/contact.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["web3forms_key"] = settings.WEB3FORMS_KEY
+        return context
+
 
 class SignupView(SiteContextMixin, ListView):
     template_name = "core/signup.html"
@@ -226,6 +255,51 @@ class UserLoginView(LoginView):
         sync_user_access_flags(form.get_user())
         messages.success(self.request, "Acesso realizado com sucesso.")
         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["can_create_initial_admin"] = not admin_users_exist()
+        return context
+
+
+class InitialAdminSetupView(FormView):
+    template_name = "core/auth/initial_admin.html"
+    form_class = InitialAdminRegistrationForm
+
+    def dispatch(self, request, *args, **kwargs):
+        if admin_users_exist():
+            messages.info(request, "O administrador inicial ja foi configurado. Use a recuperacao de senha se precisar.")
+            return redirect("core:login")
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        messages.success(self.request, "Administrador inicial criado com sucesso.")
+        return redirect("core:admin-panel")
+
+
+class UserPasswordResetView(PasswordResetView):
+    template_name = "core/auth/password_reset_form.html"
+    form_class = StyledPasswordResetForm
+    email_template_name = "core/auth/password_reset_email.txt"
+    subject_template_name = "core/auth/password_reset_subject.txt"
+    success_url = reverse_lazy("core:password-reset-done")
+    from_email = settings.DEFAULT_FROM_EMAIL
+
+
+class UserPasswordResetDoneView(PasswordResetDoneView):
+    template_name = "core/auth/password_reset_done.html"
+
+
+class UserPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = "core/auth/password_reset_confirm.html"
+    form_class = StyledSetPasswordForm
+    success_url = reverse_lazy("core:password-reset-complete")
+
+
+class UserPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = "core/auth/password_reset_complete.html"
 
 
 class UserRegisterView(FormView):
@@ -364,9 +438,33 @@ class SignupFormDetailView(FormView):
     def get_form_class(self):
         return build_signup_submission_form(self.signup_form)
 
-    def form_valid(self, form):
-        SignupSubmission.objects.create(form=self.signup_form, data=form.cleaned_data)
-        messages.success(self.request, "Inscricao enviada com sucesso.")
+    def post(self, request, *args, **kwargs):
+        self.signup_form = get_object_or_404(SignupForm, slug=kwargs["slug"], is_active=True)
+        
+        cleaned_data = {}
+        
+        # Add all POST data to cleaned_data
+        for key, value in request.POST.items():
+            if key != "csrfmiddlewaretoken":
+                cleaned_data[key] = value
+                
+        # Also capture uploaded file names (since we don't have a storage logic for this yet)
+        for key, file_obj in request.FILES.items():
+            cleaned_data[key] = file_obj.name
+
+        import random
+        import string
+        from django.utils import timezone
+        
+        chars = string.ascii_uppercase + string.digits
+        random_suffix = ''.join(random.choices(chars, k=5))
+        generated_id = f"MARICA-{timezone.now().year}-{random_suffix}"
+        cleaned_data["id_cadastro"] = generated_id
+            
+        SignupSubmission.objects.create(form=self.signup_form, data=cleaned_data)
+        
+        messages.success(self.request, f"Inscrição enviada com sucesso! Seu ID de Cadastro é: {generated_id}")
+            
         return redirect("core:signup")
 
     def get_context_data(self, **kwargs):
@@ -388,3 +486,32 @@ def set_language(request):
     ):
         next_url = reverse("core:home")
     return redirect(next_url)
+
+
+class SearchView(SiteContextMixin, TemplateView):
+    template_name = "core/search_results.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        q = self.request.GET.get("q", "").strip()
+        context["query"] = q
+        
+        if q:
+            context["news_results"] = NewsArticle.objects.published().filter(
+                Q(title__icontains=q) | Q(summary__icontains=q) | Q(content__icontains=q)
+            ).distinct()
+            
+            context["event_results"] = Event.objects.published().filter(
+                Q(title__icontains=q) | Q(summary__icontains=q) | Q(description__icontains=q) | Q(location__icontains=q)
+            ).distinct()
+            
+            context["form_results"] = SignupForm.objects.filter(is_active=True).filter(
+                Q(title__icontains=q) | Q(description__icontains=q)
+            ).distinct()
+        else:
+            context["news_results"] = []
+            context["event_results"] = []
+            context["form_results"] = []
+            
+        context["total_results"] = len(context["news_results"]) + len(context["event_results"]) + len(context["form_results"])
+        return context

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Resultados da Busca | {{ site_settings.site_name|default:"Plataforma Maricá" }}{% endblock %}
+
+{% block content %}
+<section class="page-header py-5 bg-light-subtle">
+  <div class="container">
+    <h1 class="display-6 fw-bold">Resultados da Busca</h1>
+    {% if query %}
+      <p class="text-secondary mb-0">Foram encontrados <strong>{{ total_results }}</strong> resultados para "<strong>{{ query }}</strong>"</p>
+    {% else %}
+      <p class="text-secondary mb-0">Digite um termo para pesquisar no site.</p>
+    {% endif %}
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    {% if not query %}
+      <div class="alert alert-info border-0 shadow-sm" style="background-color: var(--surface-card); color: var(--text-main);">
+        Por favor, insira um termo na caixa de busca no rodapé para pesquisar.
+      </div>
+    {% elif total_results == 0 %}
+      <div class="empty-state p-5 text-center rounded-4 border shadow-sm" style="background-color: var(--surface-card); border-color: var(--border-soft);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-3 text-muted" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <h2 class="h5" style="color: var(--text-main);">Nenhum resultado encontrado</h2>
+        <p class="text-muted mb-0">Tente buscar por outras palavras-chave.</p>
+      </div>
+    {% else %}
+      
+      <div class="row g-5">
+        {% if news_results %}
+          <div class="col-12">
+            <h2 class="h5 mb-4 fw-bold" style="color: var(--text-main); border-bottom: 1px solid var(--border-soft); padding-bottom: 0.75rem;">
+              Notícias
+            </h2>
+            <div class="row g-3">
+              {% for item in news_results %}
+                <div class="col-md-6 col-lg-4">
+                  <a href="{{ item.get_absolute_url }}" class="text-decoration-none h-100 d-block">
+                    <div class="content-card p-4 h-100 d-flex flex-column" style="transition: transform 0.2s, box-shadow 0.2s;">
+                      <h3 class="h6 mb-2" style="color: var(--brand-primary); font-weight: 700;">{{ item.title }}</h3>
+                      <p class="mb-3 text-muted" style="font-size: 0.9rem; line-height: 1.5; flex-grow: 1;">{{ item.summary|truncatewords:15 }}</p>
+                      <small class="text-secondary fw-medium mt-auto" style="font-size: 0.8rem;">{{ item.published_at|date:"d/m/Y" }}</small>
+                    </div>
+                  </a>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        {% if event_results %}
+          <div class="col-12">
+            <h2 class="h5 mb-4 fw-bold" style="color: var(--text-main); border-bottom: 1px solid var(--border-soft); padding-bottom: 0.75rem;">
+              Eventos
+            </h2>
+            <div class="row g-3">
+              {% for item in event_results %}
+                <div class="col-md-6 col-lg-4">
+                  <a href="{{ item.get_absolute_url }}" class="text-decoration-none h-100 d-block">
+                    <div class="content-card p-4 h-100 d-flex flex-column" style="transition: transform 0.2s, box-shadow 0.2s;">
+                      <h3 class="h6 mb-2" style="color: var(--brand-secondary); font-weight: 700;">{{ item.title }}</h3>
+                      {% if item.location %}
+                        <p class="mb-2" style="color: var(--text-main); font-size: 0.85rem; font-weight: 500;">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1 text-muted" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                          {{ item.location }}
+                        </p>
+                      {% endif %}
+                      <p class="mb-3 text-muted" style="font-size: 0.9rem; line-height: 1.5; flex-grow: 1;">{{ item.summary|truncatewords:15 }}</p>
+                      <small class="text-secondary fw-medium mt-auto" style="font-size: 0.8rem;">{{ item.start_at|date:"d/m/Y \à\s H:i" }}</small>
+                    </div>
+                  </a>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        {% if form_results %}
+          <div class="col-12">
+            <h2 class="h5 mb-4 fw-bold" style="color: var(--text-main); border-bottom: 1px solid var(--border-soft); padding-bottom: 0.75rem;">
+              Inscrições
+            </h2>
+            <div class="row g-3">
+              {% for item in form_results %}
+                <div class="col-md-6 col-lg-4">
+                  <a href="{{ item.get_absolute_url }}" class="text-decoration-none h-100 d-block">
+                    <div class="content-card p-4 h-100 d-flex flex-column border-start border-4 border-primary" style="transition: transform 0.2s, box-shadow 0.2s; border-color: var(--brand-primary) !important;">
+                      <h3 class="h6 mb-2" style="color: var(--text-main); font-weight: 700;">{{ item.title }}</h3>
+                      <p class="mb-0 text-muted" style="font-size: 0.9rem; line-height: 1.5;">{{ item.description|truncatewords:15 }}</p>
+                      <div class="mt-auto pt-3">
+                        <span class="badge" style="background-color: color-mix(in srgb, var(--brand-primary) 10%, transparent); color: var(--brand-primary); font-weight: 600;">Formulário de Inscrição</span>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
