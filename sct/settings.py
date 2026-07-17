@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
+
 import dj_database_url
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,6 +27,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -59,7 +62,9 @@ AUTH_USER_MODEL = "core.User"
 LOGIN_URL = "core:login"
 LOGIN_REDIRECT_URL = "core:portal"
 LOGOUT_REDIRECT_URL = "core:home"
+
 DATABASE_URL = env("DATABASE_URL")
+
 if DATABASE_URL:
     DATABASES = {
         "default": dj_database_url.parse(
@@ -79,7 +84,7 @@ else:
             "PORT": env("POSTGRES_PORT", "5432"),
         }
     }
-WEB3FORMS_KEY = 'f4c3fddb-f0ea-42d7-9c50-5eb60305e662'
+
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
