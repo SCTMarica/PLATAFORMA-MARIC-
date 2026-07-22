@@ -15,6 +15,7 @@ from django.contrib.auth.views import (
     PasswordResetDoneView,
     PasswordResetView,
 )
+from django.core.mail import send_mail
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
@@ -28,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 from .forms import (
     BannerForm,
-    ContactForm,
+    ContactMessageForm,
     EmailOrUsernameAuthenticationForm,
     InitialAdminRegistrationForm,
     NewsArticleForm,
@@ -40,7 +41,7 @@ from .forms import (
     build_signup_submission_form,
 )
 from .i18n import LANGUAGE_SESSION_KEY, normalize_language
-from .models import Event, MediaItem, NewsArticle, SignupForm, SignupSubmission, SiteSettings, User
+from .models import ContactMessage, Event, MediaItem, NewsArticle, SignupForm, SignupSubmission, SiteSettings, User
 
 
 def get_user_landing_url(user):
@@ -215,13 +216,39 @@ class MediaView(TemplateView):
         return context
 
 
-class ContactView(TemplateView):
+class ContactView(CreateView):
     template_name = "core/contact.html"
+    form_class = ContactMessageForm
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["web3forms_key"] = settings.WEB3FORMS_KEY
-        return context
+    def form_valid(self, form):
+        contact_msg = form.save()
+
+        # Send email notification
+        site_settings = SiteSettings.objects.order_by("id").first()
+        destination_email = None
+        if site_settings:
+            destination_email = (
+                site_settings.contact_email_destination or site_settings.contact_email
+            )
+
+        if destination_email:
+            try:
+                send_mail(
+                    subject=f"[Contato] {contact_msg.subject}",
+                    message=(
+                        f"Nome: {contact_msg.name}\n"
+                        f"Email: {contact_msg.email}\n\n"
+                        f"{contact_msg.message}"
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[destination_email],
+                    fail_silently=True,
+                )
+            except Exception:
+                logger.exception("Erro ao enviar email de contato")
+
+        messages.success(self.request, "Mensagem enviada com sucesso! Entraremos em contato em breve.")
+        return redirect("core:contact")
 
 
 class SignupView(SiteContextMixin, ListView):
@@ -363,6 +390,13 @@ class AdminPanelView(AdminRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse("core:admin-panel")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["contact_messages_count"] = ContactMessage.objects.filter(
+            status=ContactMessage.Status.NEW
+        ).count()
+        return context
 
 
 class AdminNewsCreateView(AdminRequiredMixin, CreateView):

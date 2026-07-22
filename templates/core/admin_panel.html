@@ -79,9 +79,15 @@
           <h2>Contato</h2>
           <div class="row g-3">
             {% include "core/partials/admin_field.html" with field=form.contact_email cols="col-md-6" %}
+            {% include "core/partials/admin_field.html" with field=form.contact_email_destination cols="col-md-6" %}
             {% include "core/partials/admin_field.html" with field=form.contact_phone cols="col-md-6" %}
             {% include "core/partials/admin_field.html" with field=form.whatsapp cols="col-md-6" %}
             {% include "core/partials/admin_field.html" with field=form.address cols="col-md-6" %}
+            <div class="col-md-6 d-flex align-items-end">
+              <a class="btn btn-outline-primary w-100" href="/admin/core/contactmessage/" target="_blank">
+                📬 Ver mensagens recebidas{% if contact_messages_count %} ({{ contact_messages_count }} nova{{ contact_messages_count|pluralize:"s" }}){% endif %}
+              </a>
+            </div>
           </div>
         </div>
 
