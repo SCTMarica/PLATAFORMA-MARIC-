@@ -1287,6 +1287,25 @@ div[vw-access-button] .pop-up {
   justify-content: flex-end;
 }
 
+.home-preview-editor__color-button {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+}
+
+.home-preview-editor__color-swatch {
+  width: .9rem;
+  height: .9rem;
+  border: 1px solid rgba(15, 23, 42, .18);
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--brand-primary) 0 33%,
+    var(--brand-secondary) 33% 66%,
+    var(--brand-accent) 66% 100%
+  );
+  box-shadow: 0 0 0 2px var(--surface-card);
+}
+
 .home-preview-editor__viewport {
   display: inline-flex;
   border: 1px solid var(--border-soft);

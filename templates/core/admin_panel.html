@@ -59,6 +59,10 @@
             </div>
             <div class="home-preview-editor__controls">
               <button type="button" class="btn btn-outline-primary btn-sm" data-admin-editor-section="general">Configurações gerais</button>
+              <button type="button" class="btn btn-outline-primary btn-sm home-preview-editor__color-button" data-admin-editor-section="colors">
+                <span class="home-preview-editor__color-swatch" aria-hidden="true"></span>
+                Cores do sistema
+              </button>
               <div class="home-preview-editor__viewport" role="group" aria-label="Tamanho da previa">
                 <button type="button" class="is-active" data-preview-width="100%">Desktop</button>
                 <button type="button" data-preview-width="430px">Celular</button>
@@ -96,7 +100,10 @@
                 <p class="home-editor-drawer__group-label">Página Sobre</p>
                 {% include "core/partials/admin_field.html" with field=form.about_title cols="col-12" %}
                 {% include "core/partials/admin_field.html" with field=form.about_content cols="col-12" %}
-                <p class="home-editor-drawer__group-label">Aparência</p>
+              </div>
+              <div data-editor-panel="colors" hidden>
+                <h3>Cores do sistema</h3>
+                <p class="text-secondary">Escolha as cores usadas nos botões, destaques e superfícies do portal.</p>
                 {% include "core/partials/admin_field.html" with field=form.primary_color cols="col-12" %}
                 {% include "core/partials/admin_field.html" with field=form.secondary_color cols="col-12" %}
                 {% include "core/partials/admin_field.html" with field=form.accent_color cols="col-12" %}
@@ -179,6 +186,7 @@
       hero: "Destaque principal",
       identity: "Identidade e cabeçalho",
       general: "Configurações gerais",
+      colors: "Cores do sistema",
       about: "Seção Sobre nós",
       signup: "Inscrições",
       news: "Notícias",

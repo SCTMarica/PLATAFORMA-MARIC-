@@ -211,6 +211,8 @@ class AuthenticationFlowTests(TestCase):
         self.assertContains(response, "Prévia da página inicial")
         self.assertContains(response, f'{reverse("core:home")}?admin_preview=1')
         self.assertContains(response, 'data-admin-editor-section="general"')
+        self.assertContains(response, 'data-admin-editor-section="colors"')
+        self.assertContains(response, 'data-editor-panel="colors"')
         self.assertNotContains(response, 'id="admin-identity-section"')
 
         preview = self.client.get(reverse("core:home"), {"admin_preview": "1"})
