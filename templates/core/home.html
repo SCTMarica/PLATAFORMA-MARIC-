@@ -1,30 +1,32 @@
-
 {% extends "base.html" %}
-{% load site_i18n static %}
+{% load static site_i18n %}
 
 {% block title %}{{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
 
 {% block content %}
-{% tr 'common.local_to_define' as local_to_define %}
-{% tr 'common.learn_more' as learn_more_label %}
-<section class="hero-section py-5 py-lg-6">
+{% static 'img/marica1.jpg' as default_about_image %}
+{% tr 'home.learn_more' as translated_learn_more %}
+{% tr 'home.create_account' as translated_create_account %}
+
+<section class="hero-section py-5 py-lg-6{% if admin_preview %} preview-editable{% endif %}">
+  {% if admin_preview %}<button type="button" class="preview-edit-button" data-editor-section="hero">Editar destaque</button>{% endif %}
   <div class="container">
     <div class="row align-items-center g-5">
       <div class="col-lg-7">
-        <span class="badge text-bg-light border mb-3">{% tr 'home.badge' %}</span>
+        <span class="badge text-bg-light border mb-3">{{ site_settings.hero_badge }}</span>
         <h1 class="display-4 fw-bold mb-3">{{ site_settings.hero_title }}</h1>
         <p class="lead text-secondary mb-4">{{ site_settings.hero_subtitle }}</p>
         <div class="d-flex flex-wrap gap-3">
-          <a href="{% url 'core:about' %}" class="btn btn-outline-primary btn-lg">{% tr 'home.learn_more' %}</a>
+          <a href="{% url 'core:about' %}" class="btn btn-outline-primary btn-lg" aria-label="{{ translated_learn_more }} — {{ translated_create_account }}">{{ site_settings.hero_button_label }}</a>
         </div>
       </div>
       <div class="col-lg-5">
         <div class="hero-panel p-4 p-lg-5">
-          <h2 class="h4 mb-3">{% tr 'home.ready_title' %}</h2>
+          <h2 class="h4 mb-3">{{ site_settings.hero_panel_title }}</h2>
           <ul class="list-unstyled mb-0 d-grid gap-3">
-            <li>{% tr 'home.ready_item_1' %}</li>
-            <li>{% tr 'home.ready_item_2' %}</li>
-            <li>{% tr 'home.ready_item_3' %}</li>
+            <li>{{ site_settings.hero_panel_item_1 }}</li>
+            <li>{{ site_settings.hero_panel_item_2 }}</li>
+            <li>{{ site_settings.hero_panel_item_3 }}</li>
           </ul>
         </div>
       </div>
@@ -32,17 +34,11 @@
   </div>
 </section>
 
-<section class="py-5">
+<section class="py-5{% if admin_preview %} preview-editable{% endif %}">
+  {% if admin_preview %}<button type="button" class="preview-edit-button" data-editor-section="carousel">Gerenciar carrossel</button>{% endif %}
   <div class="container">
     {% if hero_banners %}
       <div id="homeCarousel" class="carousel slide home-carousel shadow-sm" data-bs-ride="carousel">
-        {% if hero_banners|length > 1 %}
-          <div class="carousel-indicators">
-            {% for banner in hero_banners %}
-              <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" {% if forloop.first %}aria-current="true"{% endif %} aria-label="Slide {{ forloop.counter }}"></button>
-            {% endfor %}
-          </div>
-        {% endif %}
         <div class="carousel-inner">
           {% for banner in hero_banners %}
             <div class="carousel-item {% if forloop.first %}active{% endif %}">
@@ -54,72 +50,51 @@
               <div class="carousel-caption home-carousel__caption text-start">
                 <div class="home-carousel__content">
                   <h3 class="h2 mb-3">{{ banner.title }}</h3>
-                  {% if banner.description %}
-                    <p class="{% if banner.external_url %}mb-3{% else %}mb-0{% endif %}">{{ banner.description }}</p>
-                  {% endif %}
-                  {% if banner.external_url %}
-                    <a href="{{ banner.external_url }}" class="btn btn-light btn-sm" target="_blank" rel="noreferrer">{{ learn_more_label }}</a>
-                  {% endif %}
+                  {% if banner.description %}<p class="mb-0">{{ banner.description }}</p>{% endif %}
                 </div>
               </div>
             </div>
           {% endfor %}
         </div>
-        {% if hero_banners|length > 1 %}
-          <button class="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#homeCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-          </button>
-        {% endif %}
       </div>
     {% else %}
-      <div class="empty-state p-4 rounded-4">
-        {% tr 'home.banner_empty' %}
-      </div>
+      <div class="empty-state p-4 rounded-4">Nenhum banner ativo.</div>
     {% endif %}
   </div>
 </section>
 
-
-<!-- SEÇÃO SOBRE NÓS (Substituindo tópico anterior) -->
-<section class="py-5">
+<section class="py-5{% if admin_preview %} preview-editable{% endif %}">
+  {% if admin_preview %}<button type="button" class="preview-edit-button" data-editor-section="about">Editar seção</button>{% endif %}
   <div class="container">
     <div class="row align-items-center g-5">
       <div class="col-lg-7">
-        <h2 class="display-5 fw-bold mb-3">{% tr 'about.heading' %}</h2>
-        <h3 class="h4 mb-3 text-primary">{% tr 'about.summary_title' %}</h3>
-        <p class="lead fw-semibold mb-4">{% tr 'about.highlight' %}</p>
+        <h2 class="display-5 fw-bold mb-3">{{ site_settings.about_home_heading }}</h2>
+        {% if site_settings.about_home_summary_title %}<h3 class="h4 mb-3 text-primary">{{ site_settings.about_home_summary_title }}</h3>{% endif %}
+        {% if site_settings.about_home_highlight %}<p class="lead fw-semibold mb-4">{{ site_settings.about_home_highlight }}</p>{% endif %}
         <div class="content-text text-secondary">
-          <p class="mb-3">{% tr 'about.paragraph_1' %}</p>
-          <p class="mb-0">{% tr 'about.paragraph_2' %}</p>
-        </div>
-        <div class="mt-4">
-          <a href="{% url 'core:about' %}" class="btn btn-outline-primary">{% tr 'home.learn_more' %}</a>
+          <p>{{ site_settings.about_home_paragraph_1 }}</p>
+          <p>{{ site_settings.about_home_paragraph_2 }}</p>
         </div>
       </div>
       <div class="col-lg-5">
-        <div class="about-home-image-placeholder rounded-4 shadow-sm overflow-hidden" style="min-height: 300px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
-          <img src="{% static 'img/marica1.jpg' %}" class="img-fluid w-100 h-100 object-fit-cover" alt="{% tr 'about.slide_1' %}">
+        <div class="about-home-image-placeholder rounded-4 shadow-sm overflow-hidden">
+          <img src="{{ site_settings.about_home_image_url|default:default_about_image }}" class="img-fluid w-100 h-100 object-fit-cover" alt="Imagem sobre a instituição">
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SEÇÃO DE INSCRIÇÕES -->
-<section class="py-5 bg-light-subtle">
+<section class="py-5 bg-light-subtle{% if admin_preview %} preview-editable{% endif %}">
+  {% if admin_preview %}<button type="button" class="preview-edit-button" data-editor-section="signup">Editar inscrições</button>{% endif %}
   <div class="container">
-        <div class="d-flex justify-content-between align-items-start mb-4">
-      <a href="{% url 'core:signup' %}" class="btn btn-primary">Inscreva-se</a>
+    <div class="d-flex justify-content-between align-items-start mb-4">
+      <a href="{% url 'core:signup' %}" class="btn btn-primary">{{ site_settings.signup_button_label }}</a>
       <div class="text-end">
-        <h3 class="h5 mb-1">Como participar</h3>
-        <p class="text-muted mb-3">Saiba passo a passo como realizar sua inscrição e participar de todas as atividades.</p>
-        <h3 class="h5 mb-1">Informações sobre os locais participantes/Endereço da sede</h3>
-        <p class="text-muted">Confira todos os detalhes, endereços e orientações necessárias para sua participação.</p>
+        <h3 class="h5 mb-1">{{ site_settings.signup_info_title }}</h3>
+        <p class="text-muted mb-3">{{ site_settings.signup_info_text }}</p>
+        <h3 class="h5 mb-1">{{ site_settings.signup_address_title }}</h3>
+        <p class="text-muted">{{ site_settings.signup_address_text }}</p>
       </div>
     </div>
     <div class="row g-4">
@@ -127,93 +102,59 @@
         <div class="col-md-6 col-xl-4">
           <article class="content-card p-4 h-100">
             <h2 class="h5 mb-2">{{ form_item.title }}</h2>
-            {% if form_item.description %}
-              <p class="text-secondary">{{ form_item.description }}</p>
-            {% endif %}
+            <p class="text-secondary">{{ form_item.description }}</p>
             <a class="btn btn-primary" href="{{ form_item.get_absolute_url }}">Abrir formulário</a>
           </article>
         </div>
+      {% empty %}
+        <p class="text-secondary">Nenhum formulário ativo.</p>
       {% endfor %}
     </div>
   </div>
 </section>
 
-<!-- SEÇÃO DE NOTÍCIAS - COM 3 NOTÍCIAS FIXAS -->
-<section class="py-5 bg-light-subtle">
+<section class="py-5 bg-light-subtle{% if admin_preview %} preview-editable{% endif %}">
+  {% if admin_preview %}<button type="button" class="preview-edit-button" data-editor-section="news">Editar notícias</button>{% endif %}
   <div class="container">
     <div class="d-flex justify-content-between align-items-end mb-4">
       <div>
-        <p class="section-eyebrow mb-2">{% tr 'home.news_eyebrow' %}</p>
-        <h2 class="mb-0">{% tr 'home.news_title' %}</h2>
+        <p class="section-eyebrow mb-2">{{ site_settings.news_eyebrow }}</p>
+        <h2 class="mb-0">{{ site_settings.news_title }}</h2>
       </div>
-      <a href="{% url 'core:news-list' %}" class="btn btn-outline-primary">{% tr 'common.view_all' %}</a>
+      <a href="{% url 'core:news-list' %}" class="btn btn-outline-primary">{{ site_settings.news_button_label }}</a>
     </div>
     <div class="row g-4">
-      {% if featured_news %}
-        {% for article in featured_news|slice:":3" %}
-          <div class="col-md-6 col-xl-4">
-            <article class="card h-100 border-0 shadow-sm">
-              {% if article.cover_image_url %}
-                <img src="{{ article.cover_image_url }}" class="card-img-top object-fit-cover media-cover" alt="{{ article.title }}">
-              {% else %}
-                <img src="https://picsum.photos/id/20/400/200" class="card-img-top object-fit-cover media-cover" alt="Imagem ilustrativa">
-              {% endif %}
-              <div class="card-body">
-                {% if article.category %}
-                  <span class="badge text-bg-light border mb-2">{{ article.category }}</span>
-                {% else %}
-                  <span class="badge text-bg-light border mb-2">{% tr 'home.news_badge' %}</span>
-                {% endif %}
-                <h3 class="h5"><a class="stretched-link text-decoration-none" href="{{ article.get_absolute_url }}">{{ article.title }}</a></h3>
-                <p class="text-secondary mb-2">{{ article.summary|truncatewords:20 }}</p>
-                <p class="small text-muted mb-0">{{ article.published_at|date:"d/m/Y" }}</p>
-              </div>
-            </article>
-          </div>
-        {% endfor %}
-      {% else %}
-        <!-- 3 NOTÍCIAS DE EXEMPLO -->
-        <!-- Notícia 1 - Cultura -->
+      {% for article in featured_news %}
         <div class="col-md-6 col-xl-4">
           <article class="card h-100 border-0 shadow-sm">
-            <img src="https://picsum.photos/id/20/400/200" class="card-img-top object-fit-cover media-cover" alt="Cine Henfil">
+            {% if article.cover_image_url %}<img src="{{ article.cover_image_url }}" class="card-img-top object-fit-cover media-cover" alt="{{ article.title }}">{% endif %}
             <div class="card-body">
-              <span class="badge text-bg-light border mb-2">CULTURA E UTOPIA</span>
-              <h3 class="h5"><a href="#" class="stretched-link text-decoration-none">Prefeitura de Maricá divulga programação do Cine Henfil de 21 a 24/05</a></h3>
-              <p class="text-secondary mb-2">Sessões especiais e filmes nacionais gratuitos no Cine Henfil durante toda a semana.</p>
-              <p class="small text-muted mb-0">21/05/2026</p>
+              <h3 class="h5">{{ article.title }}</h3>
+              <p class="text-secondary mb-2">{{ article.summary|truncatewords:20 }}</p>
+              <p class="small text-muted mb-0">{{ article.published_at|date:"d/m/Y" }}</p>
             </div>
           </article>
         </div>
-
-        <!-- Notícia 2 - Educação -->
-        <div class="col-md-6 col-xl-4">
-          <article class="card h-100 border-0 shadow-sm">
-            <img src="https://picsum.photos/id/42/400/200" class="card-img-top object-fit-cover media-cover" alt="Capacitação">
-            <div class="card-body">
-              <span class="badge text-bg-light border mb-2">ESCOLA MUNICIPAL DE ADMINISTRAÇÃO - EMAR</span>
-              <h3 class="h5"><a href="#" class="stretched-link text-decoration-none">Prefeitura de Maricá promove capacitação em gestão de documentos para servidores do município</a></h3>
-              <p class="text-secondary mb-2">Treinamento visa modernizar os processos administrativos e arquivamento digital.</p>
-              <p class="small text-muted mb-0">21/05/2026</p>
-            </div>
-          </article>
-        </div>
-
-        <!-- Notícia 3 - Transporte -->
-        <div class="col-md-6 col-xl-4">
-          <article class="card h-100 border-0 shadow-sm">
-            <img src="https://picsum.photos/id/58/400/200" class="card-img-top object-fit-cover media-cover" alt="Vermelhinhos">
-            <div class="card-body">
-              <span class="badge text-bg-light border mb-2">EMPRESA PÚBLICA DE TRANSPORTES (EPT)</span>
-              <h3 class="h5"><a href="#" class="stretched-link text-decoration-none">Maricá 212 anos: Prefeitura prepara esquema especial dos Vermelhinhos para segunda semana de shows</a></h3>
-              <p class="text-secondary mb-2">Horários estendidos e rotas especiais para atender o público durante as festividades.</p>
-              <p class="small text-muted mb-0">21/05/2026</p>
-            </div>
-          </article>
-        </div>
-      {% endif %}
+      {% empty %}
+        <p class="text-secondary">Nenhuma notícia publicada.</p>
+      {% endfor %}
     </div>
   </div>
 </section>
+{% endblock %}
 
+{% block extra_scripts %}
+{% if admin_preview %}
+<script>
+  document.addEventListener("click", function (event) {
+    const editButton = event.target.closest("[data-editor-section]");
+    if (editButton) {
+      window.parent.postMessage({ type: "maric-home-edit", section: editButton.dataset.editorSection }, window.location.origin);
+      return;
+    }
+    const link = event.target.closest("a");
+    if (link) event.preventDefault();
+  });
+</script>
+{% endif %}
 {% endblock %}

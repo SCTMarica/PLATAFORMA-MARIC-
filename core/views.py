@@ -19,7 +19,9 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.db.models import Q
 from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView, UpdateView
@@ -80,6 +82,7 @@ class SiteContextMixin:
         return context
 
 
+@method_decorator(xframe_options_sameorigin, name="dispatch")
 class HomeView(SiteContextMixin, TemplateView):
     template_name = "core/home.html"
 
@@ -89,6 +92,11 @@ class HomeView(SiteContextMixin, TemplateView):
             media_type=MediaItem.MediaType.BANNER,
             is_active=True,
         )[:5]
+        context["signup_forms"] = SignupForm.objects.filter(is_active=True)
+        context["admin_preview"] = (
+            self.request.GET.get("admin_preview") == "1"
+            and getattr(self.request.user, "can_access_admin", False)
+        )
         return context
 
 

@@ -203,6 +203,26 @@ class AuthenticationFlowTests(TestCase):
         self.assertEqual(settings.site_name, "Novo Portal")
         self.assertEqual(settings.hero_title, "Titulo atualizado")
 
+    def test_admin_panel_embeds_visual_home_preview(self):
+        self.client.force_login(self.admin_user)
+
+        response = self.client.get(reverse("core:admin-panel"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Prévia da página inicial")
+        self.assertContains(response, f'{reverse("core:home")}?admin_preview=1')
+        self.assertContains(response, 'data-admin-editor-section="general"')
+        self.assertNotContains(response, 'id="admin-identity-section"')
+
+        preview = self.client.get(reverse("core:home"), {"admin_preview": "1"})
+        self.assertEqual(preview.status_code, 200)
+        self.assertEqual(preview.headers["X-Frame-Options"], "SAMEORIGIN")
+        self.assertContains(preview, 'data-editor-section="hero"')
+        self.assertContains(preview, 'data-editor-section="footer"')
+
+    def test_public_home_does_not_show_editor_controls(self):
+        response = self.client.get(reverse("core:home"), {"admin_preview": "1"})
+        self.assertNotContains(response, "preview-edit-button")
+
     def test_admin_can_create_news_banner_and_signup_form(self):
         self.client.force_login(self.admin_user)
 
