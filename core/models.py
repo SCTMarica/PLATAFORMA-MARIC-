@@ -61,6 +61,31 @@ class SiteSettings(TimeStampedModel):
     secondary_color = models.CharField(max_length=7, default="#0b132b")
     accent_color = models.CharField(max_length=7, default="#f59e0b")
     footer_text = models.CharField(max_length=255, blank=True)
+    hero_badge = models.CharField(max_length=120, default="Portal institucional")
+    hero_button_label = models.CharField(max_length=80, default="Conheca mais")
+    hero_panel_title = models.CharField(max_length=160, default="Pronto para comecar?")
+    hero_panel_item_1 = models.CharField(max_length=180, blank=True)
+    hero_panel_item_2 = models.CharField(max_length=180, blank=True)
+    hero_panel_item_3 = models.CharField(max_length=180, blank=True)
+    about_home_heading = models.CharField(max_length=200, default="Sobre nos")
+    about_home_summary_title = models.CharField(max_length=200, blank=True)
+    about_home_highlight = models.CharField(max_length=255, blank=True)
+    about_home_paragraph_1 = models.TextField(blank=True)
+    about_home_paragraph_2 = models.TextField(blank=True)
+    about_home_image_url = models.URLField(blank=True)
+    signup_button_label = models.CharField(max_length=80, default="Inscreva-se")
+    signup_info_title = models.CharField(max_length=200, blank=True)
+    signup_info_text = models.TextField(blank=True)
+    signup_address_title = models.CharField(max_length=200, blank=True)
+    signup_address_text = models.TextField(blank=True)
+    news_eyebrow = models.CharField(max_length=120, default="Noticias")
+    news_title = models.CharField(max_length=200, default="Ultimas noticias")
+    news_button_label = models.CharField(max_length=80, default="Ver todas")
+    contact_email_destination = models.EmailField(
+        blank=True,
+        verbose_name="Email destino do formulario de contato",
+        help_text="As mensagens do formulario de contato serao enviadas para este email. Se vazio, usa o email de contato.",
+    )
 
     class Meta:
         verbose_name = "Configuração do site"
@@ -199,3 +224,30 @@ class SignupSubmission(TimeStampedModel):
 
     def __str__(self):
         return f"{self.form.title} - {self.created_at:%d/%m/%Y %H:%M}"
+
+
+class ContactMessage(TimeStampedModel):
+    class Status(models.TextChoices):
+        NEW = "new", "Nova"
+        READ = "read", "Lida"
+        REPLIED = "replied", "Respondida"
+        ARCHIVED = "archived", "Arquivada"
+
+    name = models.CharField(max_length=150, verbose_name="Nome")
+    email = models.EmailField(verbose_name="Email")
+    subject = models.CharField(max_length=200, verbose_name="Assunto")
+    message = models.TextField(verbose_name="Mensagem")
+    status = models.CharField(
+        max_length=10,
+        choices=Status.choices,
+        default=Status.NEW,
+        verbose_name="Status",
+    )
+
+    class Meta:
+        verbose_name = "Mensagem de contato"
+        verbose_name_plural = "Mensagens de contato"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.name} - {self.subject}"

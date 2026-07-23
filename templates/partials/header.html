@@ -29,6 +29,7 @@
 </div>
 
 <nav class="navbar navbar-expand-xl site-header sticky-top shadow-sm">
+  {% if admin_preview %}<button type="button" class="preview-edit-button preview-edit-button--header" data-editor-section="identity">Editar cabeçalho</button>{% endif %}
   <div class="container-xl py-2">
     <div class="d-flex align-items-center gap-2">
       {% if request.resolver_match.url_name != 'home' %}

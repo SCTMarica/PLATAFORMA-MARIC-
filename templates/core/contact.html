@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load site_i18n %}
 
-{% block title %}{% tr 'titles.contact' %} | {{ site_settings.site_name|default:"Plataforma Maric" }}{% endblock %}
+{% block title %}{% tr 'titles.contact' %} | {{ site_settings.site_name|default:"Plataforma Maricá" }}{% endblock %}
 
 {% block content %}
 <section class="page-header py-5">
@@ -28,32 +28,34 @@
         <div class="content-card p-4 p-lg-5">
           <h2 class="h4 mb-3">{% tr 'contact.form_title' %}</h2>
           
-          <form id="contactForm" class="row g-3">
-            <input type="hidden" name="access_key" value="{{ web3forms_key }}">
+          <form method="post" class="row g-3" id="contactForm">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
             <div class="col-md-6">
-              <label class="form-label" for="name">{% tr 'contact.name' %}</label>
-              <input type="text" id="name" name="name" class="form-control" placeholder="{% tr 'contact.placeholder_name' %}" required>
+              <label class="form-label" for="id_name">{% tr 'contact.name' %}</label>
+              {{ form.name }}
+              {% if form.name.errors %}<div class="text-danger small mt-1">{{ form.name.errors.0 }}</div>{% endif %}
             </div>
             <div class="col-md-6">
-              <label class="form-label" for="email">{% tr 'contact.email' %}</label>
-              <input type="email" id="email" name="email" class="form-control" placeholder="{% tr 'contact.placeholder_email' %}" required>
+              <label class="form-label" for="id_email">{% tr 'contact.email' %}</label>
+              {{ form.email }}
+              {% if form.email.errors %}<div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>{% endif %}
             </div>
             <div class="col-12">
-              <label class="form-label" for="subject">{% tr 'contact.subject' %}</label>
-              <input type="text" id="subject" name="subject" class="form-control" placeholder="{% tr 'contact.placeholder_subject' %}" required>
+              <label class="form-label" for="id_subject">{% tr 'contact.subject' %}</label>
+              {{ form.subject }}
+              {% if form.subject.errors %}<div class="text-danger small mt-1">{{ form.subject.errors.0 }}</div>{% endif %}
             </div>
             <div class="col-12">
-              <label class="form-label" for="message">{% tr 'contact.message' %}</label>
-              <textarea id="message" name="message" class="form-control" rows="5" placeholder="{% tr 'contact.placeholder_message' %}" required></textarea>
+              <label class="form-label" for="id_message">{% tr 'contact.message' %}</label>
+              {{ form.message }}
+              {% if form.message.errors %}<div class="text-danger small mt-1">{{ form.message.errors.0 }}</div>{% endif %}
             </div>
             <div class="col-12">
-              <button type="submit" id="submitBtn" class="btn btn-primary">
-                <span class="btn-text">{% tr 'contact.button' %}</span>
-                <span class="spinner-border spinner-border-sm d-none ms-2" role="status" aria-hidden="true"></span>
+              <button type="submit" class="btn btn-primary">
+                {% tr 'contact.button' %}
               </button>
-            </div>
-            <div id="formResult" class="col-12 d-none mt-2">
-              <div class="alert mb-0" role="alert"></div>
             </div>
           </form>
           
@@ -62,55 +64,4 @@
     </div>
   </div>
 </section>
-
-<script>
-  document.getElementById('contactForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const form = e.target;
-    const btn = document.getElementById('submitBtn');
-    const spinner = btn.querySelector('.spinner-border');
-    const resultDiv = document.getElementById('formResult');
-    const alertBox = resultDiv.querySelector('.alert');
-    
-    // Status de loading
-    btn.disabled = true;
-    spinner.classList.remove('d-none');
-    resultDiv.classList.add('d-none');
-    
-    const formData = new FormData(form);
-    const object = Object.fromEntries(formData);
-    const json = JSON.stringify(object);
-    
-    fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: json
-    })
-    .then(async (response) => {
-        let jsonResponse = await response.json();
-        if (response.status == 200) {
-            alertBox.className = 'alert alert-success mb-0';
-            alertBox.innerHTML = 'Mensagem enviada com sucesso! Entraremos em contato em breve.';
-            form.reset();
-        } else {
-            console.log(response);
-            alertBox.className = 'alert alert-danger mb-0';
-            alertBox.innerHTML = jsonResponse.message || 'Erro ao enviar a mensagem. Tente novamente.';
-        }
-    })
-    .catch(error => {
-        console.log(error);
-        alertBox.className = 'alert alert-danger mb-0';
-        alertBox.innerHTML = 'Erro de conexão. Verifique sua internet e tente novamente.';
-    })
-    .finally(() => {
-        resultDiv.classList.remove('d-none');
-        btn.disabled = false;
-        spinner.classList.add('d-none');
-    });
-  });
-</script>
 {% endblock %}

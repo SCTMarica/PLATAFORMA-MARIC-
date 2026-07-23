@@ -50,56 +50,180 @@
         {% csrf_token %}
         {{ form.non_field_errors }}
 
-        <div class="admin-panel__section">
-          <h2>Identidade</h2>
-          <div class="row g-3">
-            {% include "core/partials/admin_field.html" with field=form.site_name cols="col-md-6" %}
-            {% include "core/partials/admin_field.html" with field=form.logo_url cols="col-md-6" %}
-            {% include "core/partials/admin_field.html" with field=form.tagline cols="col-12" %}
+        <section class="home-preview-editor" id="home-preview-editor">
+          <div class="home-preview-editor__header">
+            <div>
+              <p class="section-eyebrow mb-2">Editor visual</p>
+              <h2>Prévia da página inicial</h2>
+              <p>Esta é a tela publicada atualmente. Passe o mouse sobre uma seção e clique em editar.</p>
+            </div>
+            <div class="home-preview-editor__controls">
+              <button type="button" class="btn btn-outline-primary btn-sm" data-admin-editor-section="general">Configurações gerais</button>
+              <button type="button" class="btn btn-outline-primary btn-sm home-preview-editor__color-button" data-admin-editor-section="colors">
+                <span class="home-preview-editor__color-swatch" aria-hidden="true"></span>
+                Cores do sistema
+              </button>
+              <div class="home-preview-editor__viewport" role="group" aria-label="Tamanho da previa">
+                <button type="button" class="is-active" data-preview-width="100%">Desktop</button>
+                <button type="button" data-preview-width="430px">Celular</button>
+              </div>
+            </div>
           </div>
-        </div>
-
-        <div class="admin-panel__section">
-          <h2>Pagina inicial</h2>
-          <div class="row g-3">
-            {% include "core/partials/admin_field.html" with field=form.hero_title cols="col-12" %}
-            {% include "core/partials/admin_field.html" with field=form.hero_subtitle cols="col-12" %}
+          <div class="home-preview-editor__canvas">
+            <iframe
+              id="home-preview-frame"
+              src="{% url 'core:home' %}?admin_preview=1"
+              title="Prévia editável da página inicial"
+            ></iframe>
           </div>
-        </div>
+        </section>
 
-        <div class="admin-panel__section">
-          <h2>Sobre</h2>
-          <div class="row g-3">
-            {% include "core/partials/admin_field.html" with field=form.about_title cols="col-12" %}
-            {% include "core/partials/admin_field.html" with field=form.about_content cols="col-12" %}
-          </div>
-        </div>
-
-        <div class="admin-panel__section">
-          <h2>Contato</h2>
-          <div class="row g-3">
-            {% include "core/partials/admin_field.html" with field=form.contact_email cols="col-md-6" %}
-            {% include "core/partials/admin_field.html" with field=form.contact_phone cols="col-md-6" %}
-            {% include "core/partials/admin_field.html" with field=form.whatsapp cols="col-md-6" %}
-            {% include "core/partials/admin_field.html" with field=form.address cols="col-md-6" %}
-          </div>
-        </div>
-
-        <div class="admin-panel__section">
-          <h2>Aparencia e rodape</h2>
-          <div class="row g-3">
-            {% include "core/partials/admin_field.html" with field=form.primary_color cols="col-md-4" %}
-            {% include "core/partials/admin_field.html" with field=form.secondary_color cols="col-md-4" %}
-            {% include "core/partials/admin_field.html" with field=form.accent_color cols="col-md-4" %}
-            {% include "core/partials/admin_field.html" with field=form.footer_text cols="col-12" %}
-          </div>
-        </div>
-
-        <div class="admin-panel__actions">
-          <button type="submit" class="btn btn-primary">Salvar alteracoes</button>
+        <div class="home-editor-drawer" id="home-editor-drawer" aria-hidden="true">
+          <button type="button" class="home-editor-drawer__backdrop" data-editor-close aria-label="Fechar editor"></button>
+          <aside class="home-editor-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="home-editor-title">
+            <div class="home-editor-drawer__header">
+              <div>
+                <p class="section-eyebrow mb-1">Editar conteúdo</p>
+                <h2 id="home-editor-title">Página inicial</h2>
+              </div>
+              <button type="button" class="home-editor-drawer__close" data-editor-close aria-label="Fechar">×</button>
+            </div>
+            <div class="home-editor-drawer__body">
+              <div data-editor-panel="identity" hidden>
+                <h3>Identidade e cabeçalho</h3>
+                {% include "core/partials/admin_field.html" with field=form.site_name cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.logo_url cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.tagline cols="col-12" %}
+              </div>
+              <div data-editor-panel="general" hidden>
+                <h3>Configurações gerais</h3>
+                <p class="home-editor-drawer__group-label">Página Sobre</p>
+                {% include "core/partials/admin_field.html" with field=form.about_title cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.about_content cols="col-12" %}
+              </div>
+              <div data-editor-panel="colors" hidden>
+                <h3>Cores do sistema</h3>
+                <p class="text-secondary">Escolha as cores usadas nos botões, destaques e superfícies do portal.</p>
+                {% include "core/partials/admin_field.html" with field=form.primary_color cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.secondary_color cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.accent_color cols="col-12" %}
+              </div>
+              <div data-editor-panel="hero">
+                <h3>Destaque principal</h3>
+                {% include "core/partials/admin_field.html" with field=form.hero_badge cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.hero_title cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.hero_subtitle cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.hero_button_label cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.hero_panel_title cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.hero_panel_item_1 cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.hero_panel_item_2 cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.hero_panel_item_3 cols="col-12" %}
+              </div>
+              <div data-editor-panel="about" hidden>
+                <h3>Seção Sobre nós</h3>
+                {% include "core/partials/admin_field.html" with field=form.about_home_heading cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.about_home_summary_title cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.about_home_highlight cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.about_home_paragraph_1 cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.about_home_paragraph_2 cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.about_home_image_url cols="col-12" %}
+              </div>
+              <div data-editor-panel="signup" hidden>
+                <h3>Inscrições</h3>
+                {% include "core/partials/admin_field.html" with field=form.signup_button_label cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.signup_info_title cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.signup_info_text cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.signup_address_title cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.signup_address_text cols="col-12" %}
+                <a class="btn btn-outline-primary w-100" href="{% url 'core:admin-signup-form-create' %}">Gerenciar formulários</a>
+              </div>
+              <div data-editor-panel="news" hidden>
+                <h3>Notícias</h3>
+                {% include "core/partials/admin_field.html" with field=form.news_eyebrow cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.news_title cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.news_button_label cols="col-12" %}
+                <a class="btn btn-outline-primary w-100" href="{% url 'core:admin-news-create' %}">Gerenciar notícias</a>
+              </div>
+              <div data-editor-panel="carousel" hidden>
+                <h3>Carrossel</h3>
+                <p class="text-secondary">Adicione e organize as imagens que aparecem neste bloco.</p>
+                <a class="btn btn-primary w-100" href="{% url 'core:admin-banner-create' %}">Gerenciar carrossel</a>
+              </div>
+              <div data-editor-panel="footer" hidden>
+                <h3>Rodapé</h3>
+                {% include "core/partials/admin_field.html" with field=form.footer_text cols="col-12" %}
+                <p class="home-editor-drawer__group-label">Contato exibido no rodapé</p>
+                {% include "core/partials/admin_field.html" with field=form.contact_email cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.contact_email_destination cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.contact_phone cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.whatsapp cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.address cols="col-12" %}
+                <a class="btn btn-outline-primary w-100" href="/admin/core/contactmessage/" target="_blank" rel="noreferrer">
+                  Ver mensagens recebidas{% if contact_messages_count %} ({{ contact_messages_count }} nova{{ contact_messages_count|pluralize:"s" }}){% endif %}
+                </a>
+              </div>
+            </div>
+            <div class="home-editor-drawer__actions">
+              <button type="button" class="btn btn-outline-secondary" data-editor-close>Fechar</button>
+              <button type="submit" class="btn btn-primary">Salvar alterações</button>
+            </div>
+          </aside>
         </div>
       </form>
     </div>
   </div>
 </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  (function () {
+    const drawer = document.getElementById("home-editor-drawer");
+    const frame = document.getElementById("home-preview-frame");
+    const title = document.getElementById("home-editor-title");
+    const panels = Array.from(document.querySelectorAll("[data-editor-panel]"));
+    const labels = {
+      hero: "Destaque principal",
+      identity: "Identidade e cabeçalho",
+      general: "Configurações gerais",
+      colors: "Cores do sistema",
+      about: "Seção Sobre nós",
+      signup: "Inscrições",
+      news: "Notícias",
+      carousel: "Carrossel",
+      footer: "Rodapé"
+    };
+
+    function openEditor(section) {
+      panels.forEach((panel) => panel.hidden = panel.dataset.editorPanel !== section);
+      title.textContent = labels[section] || "Página inicial";
+      drawer.classList.add("is-open");
+      drawer.setAttribute("aria-hidden", "false");
+      document.body.classList.add("drawer-open");
+    }
+
+    function closeEditor() {
+      drawer.classList.remove("is-open");
+      drawer.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("drawer-open");
+    }
+
+    window.addEventListener("message", function (event) {
+      if (event.origin !== window.location.origin || event.source !== frame.contentWindow) return;
+      if (event.data && event.data.type === "maric-home-edit") openEditor(event.data.section);
+    });
+
+    document.querySelectorAll("[data-editor-close]").forEach((button) => button.addEventListener("click", closeEditor));
+    document.querySelectorAll("[data-admin-editor-section]").forEach((button) => {
+      button.addEventListener("click", function () { openEditor(button.dataset.adminEditorSection); });
+    });
+    document.querySelectorAll("[data-preview-width]").forEach((button) => {
+      button.addEventListener("click", function () {
+        document.querySelectorAll("[data-preview-width]").forEach((item) => item.classList.remove("is-active"));
+        button.classList.add("is-active");
+        frame.style.maxWidth = button.dataset.previewWidth;
+      });
+    });
+  }());
+</script>
 {% endblock %}

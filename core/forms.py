@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.utils.text import slugify
 
-from .models import MediaItem, NewsArticle, SignupForm, SiteSettings
+from .models import ContactMessage, MediaItem, NewsArticle, SignupForm, SiteSettings
 
 User = get_user_model()
 
@@ -126,6 +126,29 @@ class StyledSetPasswordForm(StyledFormMixin, SetPasswordForm):
 
 
 class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
+    visual_home_fields = (
+        "hero_badge", "hero_button_label", "hero_panel_title", "hero_panel_item_1",
+        "hero_panel_item_2", "hero_panel_item_3", "about_home_heading",
+        "about_home_summary_title", "about_home_highlight", "about_home_paragraph_1",
+        "about_home_paragraph_2", "about_home_image_url", "signup_button_label",
+        "signup_info_title", "signup_info_text", "signup_address_title",
+        "signup_address_text", "news_eyebrow", "news_title", "news_button_label",
+    )
+
+    def __init__(self, *args, **kwargs):
+        bound_data = args[0] if args else kwargs.get("data")
+        if bound_data is not None and kwargs.get("instance") is not None:
+            data = bound_data.copy()
+            instance = kwargs["instance"]
+            for field_name in self.visual_home_fields:
+                if field_name not in data:
+                    data[field_name] = getattr(instance, field_name, "")
+            if args:
+                args = (data, *args[1:])
+            else:
+                kwargs["data"] = data
+        super().__init__(*args, **kwargs)
+
     class Meta:
         model = SiteSettings
         fields = (
@@ -133,9 +156,30 @@ class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
             "tagline",
             "hero_title",
             "hero_subtitle",
+            "hero_badge",
+            "hero_button_label",
+            "hero_panel_title",
+            "hero_panel_item_1",
+            "hero_panel_item_2",
+            "hero_panel_item_3",
+            "about_home_heading",
+            "about_home_summary_title",
+            "about_home_highlight",
+            "about_home_paragraph_1",
+            "about_home_paragraph_2",
+            "about_home_image_url",
+            "signup_button_label",
+            "signup_info_title",
+            "signup_info_text",
+            "signup_address_title",
+            "signup_address_text",
+            "news_eyebrow",
+            "news_title",
+            "news_button_label",
             "about_title",
             "about_content",
             "contact_email",
+            "contact_email_destination",
             "contact_phone",
             "whatsapp",
             "address",
@@ -150,9 +194,30 @@ class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
             "tagline": "Descricao curta",
             "hero_title": "Titulo da pagina inicial",
             "hero_subtitle": "Subtitulo da pagina inicial",
+            "hero_badge": "Selo de destaque",
+            "hero_button_label": "Texto do botao",
+            "hero_panel_title": "Titulo do quadro lateral",
+            "hero_panel_item_1": "Primeiro item",
+            "hero_panel_item_2": "Segundo item",
+            "hero_panel_item_3": "Terceiro item",
+            "about_home_heading": "Titulo da secao",
+            "about_home_summary_title": "Subtitulo",
+            "about_home_highlight": "Texto em destaque",
+            "about_home_paragraph_1": "Primeiro paragrafo",
+            "about_home_paragraph_2": "Segundo paragrafo",
+            "about_home_image_url": "URL da imagem",
+            "signup_button_label": "Texto do botao",
+            "signup_info_title": "Titulo de participacao",
+            "signup_info_text": "Orientacoes de participacao",
+            "signup_address_title": "Titulo dos locais",
+            "signup_address_text": "Informacoes dos locais",
+            "news_eyebrow": "Chamada superior",
+            "news_title": "Titulo da secao",
+            "news_button_label": "Texto do botao",
             "about_title": "Titulo da pagina sobre",
             "about_content": "Conteudo da pagina sobre",
-            "contact_email": "Email de contato",
+            "contact_email": "Email de contato (exibido no site)",
+            "contact_email_destination": "Email destino (recebe as mensagens)",
             "contact_phone": "Telefone",
             "whatsapp": "WhatsApp",
             "address": "Endereco",
@@ -289,22 +354,19 @@ def build_signup_submission_form(signup_form):
     return type("DynamicSignupSubmissionForm", (StyledFormMixin, forms.Form), fields)
 
 
-class ContactForm(StyledFormMixin, forms.Form):
-    name = forms.CharField(
-        label="Nome",
-        max_length=150,
-        widget=forms.TextInput(attrs={"placeholder": "Seu nome"}),
-    )
-    email = forms.EmailField(
-        label="Email",
-        widget=forms.EmailInput(attrs={"placeholder": "voce@exemplo.com"}),
-    )
-    subject = forms.CharField(
-        label="Assunto",
-        max_length=200,
-        widget=forms.TextInput(attrs={"placeholder": "Como podemos ajudar?"}),
-    )
-    message = forms.CharField(
-        label="Mensagem",
-        widget=forms.Textarea(attrs={"rows": 5, "placeholder": "Escreva sua mensagem"}),
-    )
+class ContactMessageForm(StyledFormMixin, forms.ModelForm):
+    class Meta:
+        model = ContactMessage
+        fields = ("name", "email", "subject", "message")
+        labels = {
+            "name": "Nome",
+            "email": "Email",
+            "subject": "Assunto",
+            "message": "Mensagem",
+        }
+        widgets = {
+            "name": forms.TextInput(attrs={"placeholder": "Seu nome"}),
+            "email": forms.EmailInput(attrs={"placeholder": "voce@exemplo.com"}),
+            "subject": forms.TextInput(attrs={"placeholder": "Como podemos ajudar?"}),
+            "message": forms.Textarea(attrs={"rows": 5, "placeholder": "Escreva sua mensagem"}),
+        }

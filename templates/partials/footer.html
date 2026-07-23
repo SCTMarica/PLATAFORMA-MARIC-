@@ -1,5 +1,6 @@
 {% load site_i18n %}
 <footer class="site-footer py-5 mt-5">
+  {% if admin_preview %}<button type="button" class="preview-edit-button" data-editor-section="footer">Editar rodapé</button>{% endif %}
   <div class="container site-footer__shell">
     <div class="site-footer__top">
       <div class="row g-4 align-items-start">

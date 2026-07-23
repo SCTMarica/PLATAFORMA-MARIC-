@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
-from .models import Event, MediaItem, NewsArticle, SiteSettings, SocialLink, User, SignupForm, SignupSubmission
+from .models import ContactMessage, Event, MediaItem, NewsArticle, SiteSettings, SocialLink, User, SignupForm, SignupSubmission
 
 
 admin.site.site_header = "Painel Plataforma Maric"
@@ -49,7 +49,7 @@ class SiteSettingsAdmin(admin.ModelAdmin):
         (
             "Contato",
             {
-                "fields": ("contact_email", "contact_phone", "whatsapp", "address"),
+                "fields": ("contact_email", "contact_email_destination", "contact_phone", "whatsapp", "address"),
             },
         ),
         (
@@ -407,3 +407,39 @@ class SignupSubmissionAdmin(admin.ModelAdmin):
         '''
         return mark_safe(html)
     formatted_answers.short_description = "Dados Preenchidos"
+
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ("name", "email", "subject", "status", "created_at")
+    list_filter = ("status", "created_at")
+    search_fields = ("name", "email", "subject", "message")
+    list_editable = ("status",)
+    readonly_fields = ("name", "email", "subject", "message", "created_at", "updated_at")
+    fieldsets = (
+        (
+            "Mensagem recebida",
+            {
+                "fields": ("name", "email", "subject", "message"),
+            },
+        ),
+        (
+            "Gerenciamento",
+            {
+                "fields": ("status", "created_at", "updated_at"),
+            },
+        ),
+    )
+    actions = ["mark_as_read", "mark_as_replied", "mark_as_archived"]
+
+    @admin.action(description="Marcar como lida")
+    def mark_as_read(self, request, queryset):
+        queryset.update(status=ContactMessage.Status.READ)
+
+    @admin.action(description="Marcar como respondida")
+    def mark_as_replied(self, request, queryset):
+        queryset.update(status=ContactMessage.Status.REPLIED)
+
+    @admin.action(description="Arquivar")
+    def mark_as_archived(self, request, queryset):
+        queryset.update(status=ContactMessage.Status.ARCHIVED)
