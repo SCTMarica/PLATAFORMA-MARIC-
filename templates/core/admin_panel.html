@@ -147,9 +147,13 @@
                 {% include "core/partials/admin_field.html" with field=form.footer_text cols="col-12" %}
                 <p class="home-editor-drawer__group-label">Contato exibido no rodapé</p>
                 {% include "core/partials/admin_field.html" with field=form.contact_email cols="col-12" %}
+                {% include "core/partials/admin_field.html" with field=form.contact_email_destination cols="col-12" %}
                 {% include "core/partials/admin_field.html" with field=form.contact_phone cols="col-12" %}
                 {% include "core/partials/admin_field.html" with field=form.whatsapp cols="col-12" %}
                 {% include "core/partials/admin_field.html" with field=form.address cols="col-12" %}
+                <a class="btn btn-outline-primary w-100" href="/admin/core/contactmessage/" target="_blank" rel="noreferrer">
+                  Ver mensagens recebidas{% if contact_messages_count %} ({{ contact_messages_count }} nova{{ contact_messages_count|pluralize:"s" }}){% endif %}
+                </a>
               </div>
             </div>
             <div class="home-editor-drawer__actions">

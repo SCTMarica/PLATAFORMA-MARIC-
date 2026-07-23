@@ -81,6 +81,11 @@ class SiteSettings(TimeStampedModel):
     news_eyebrow = models.CharField(max_length=120, default="Noticias")
     news_title = models.CharField(max_length=200, default="Ultimas noticias")
     news_button_label = models.CharField(max_length=80, default="Ver todas")
+    contact_email_destination = models.EmailField(
+        blank=True,
+        verbose_name="Email destino do formulario de contato",
+        help_text="As mensagens do formulario de contato serao enviadas para este email. Se vazio, usa o email de contato.",
+    )
 
     class Meta:
         verbose_name = "Configuração do site"
@@ -219,3 +224,30 @@ class SignupSubmission(TimeStampedModel):
 
     def __str__(self):
         return f"{self.form.title} - {self.created_at:%d/%m/%Y %H:%M}"
+
+
+class ContactMessage(TimeStampedModel):
+    class Status(models.TextChoices):
+        NEW = "new", "Nova"
+        READ = "read", "Lida"
+        REPLIED = "replied", "Respondida"
+        ARCHIVED = "archived", "Arquivada"
+
+    name = models.CharField(max_length=150, verbose_name="Nome")
+    email = models.EmailField(verbose_name="Email")
+    subject = models.CharField(max_length=200, verbose_name="Assunto")
+    message = models.TextField(verbose_name="Mensagem")
+    status = models.CharField(
+        max_length=10,
+        choices=Status.choices,
+        default=Status.NEW,
+        verbose_name="Status",
+    )
+
+    class Meta:
+        verbose_name = "Mensagem de contato"
+        verbose_name_plural = "Mensagens de contato"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.name} - {self.subject}"

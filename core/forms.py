@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.utils.text import slugify
 
-from .models import MediaItem, NewsArticle, SignupForm, SiteSettings
+from .models import ContactMessage, MediaItem, NewsArticle, SignupForm, SiteSettings
 
 User = get_user_model()
 
@@ -179,6 +179,7 @@ class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
             "about_title",
             "about_content",
             "contact_email",
+            "contact_email_destination",
             "contact_phone",
             "whatsapp",
             "address",
@@ -215,7 +216,8 @@ class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
             "news_button_label": "Texto do botao",
             "about_title": "Titulo da pagina sobre",
             "about_content": "Conteudo da pagina sobre",
-            "contact_email": "Email de contato",
+            "contact_email": "Email de contato (exibido no site)",
+            "contact_email_destination": "Email destino (recebe as mensagens)",
             "contact_phone": "Telefone",
             "whatsapp": "WhatsApp",
             "address": "Endereco",
@@ -352,22 +354,19 @@ def build_signup_submission_form(signup_form):
     return type("DynamicSignupSubmissionForm", (StyledFormMixin, forms.Form), fields)
 
 
-class ContactForm(StyledFormMixin, forms.Form):
-    name = forms.CharField(
-        label="Nome",
-        max_length=150,
-        widget=forms.TextInput(attrs={"placeholder": "Seu nome"}),
-    )
-    email = forms.EmailField(
-        label="Email",
-        widget=forms.EmailInput(attrs={"placeholder": "voce@exemplo.com"}),
-    )
-    subject = forms.CharField(
-        label="Assunto",
-        max_length=200,
-        widget=forms.TextInput(attrs={"placeholder": "Como podemos ajudar?"}),
-    )
-    message = forms.CharField(
-        label="Mensagem",
-        widget=forms.Textarea(attrs={"rows": 5, "placeholder": "Escreva sua mensagem"}),
-    )
+class ContactMessageForm(StyledFormMixin, forms.ModelForm):
+    class Meta:
+        model = ContactMessage
+        fields = ("name", "email", "subject", "message")
+        labels = {
+            "name": "Nome",
+            "email": "Email",
+            "subject": "Assunto",
+            "message": "Mensagem",
+        }
+        widgets = {
+            "name": forms.TextInput(attrs={"placeholder": "Seu nome"}),
+            "email": forms.EmailInput(attrs={"placeholder": "voce@exemplo.com"}),
+            "subject": forms.TextInput(attrs={"placeholder": "Como podemos ajudar?"}),
+            "message": forms.Textarea(attrs={"rows": 5, "placeholder": "Escreva sua mensagem"}),
+        }

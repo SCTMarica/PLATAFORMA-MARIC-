@@ -11,6 +11,13 @@
     <script src="{% static 'js/theme-toggle.js' %}"></script>
     <link rel="stylesheet" href="{% static 'css/theme.css' %}">
     <link rel="stylesheet" href="{% static 'css/reset.css' %}">
+    <style>
+      :root {
+        {% if site_settings.primary_color %}--brand-primary: {{ site_settings.primary_color }};{% endif %}
+        {% if site_settings.secondary_color %}--brand-secondary: {{ site_settings.secondary_color }};{% endif %}
+        {% if site_settings.accent_color %}--brand-accent: {{ site_settings.accent_color }};{% endif %}
+      }
+    </style>
     {% block extra_head %}{% endblock %}
   </head>
   <body>
