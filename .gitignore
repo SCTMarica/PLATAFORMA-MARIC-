@@ -1,6 +1,8 @@
 briefing.pdf
-*/__pycache__/
-*/*/__pycache__/
-*/*/*/__pycache__/
+__pycache__/
+**/__pycache__/
+*.py[cod]
 
 .env
+*.sqlite3
+test-results/

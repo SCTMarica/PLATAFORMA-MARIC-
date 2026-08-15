@@ -36,6 +36,6 @@ Inventário funcional dos cenários de ponta a ponta, com passos `Dado` / `Quand
 ### Próximos passos
 
 1. Revisar passos com o time e ajustar ambiguidades
-2. Definir fixtures / estado inicial do banco por Feature
-3. Mapear steps reutilizáveis (`Dado que existe...`, `Quando acessa...`)
-4. Automatizar E2E com seed + reset por cenário
+2. Implementar os cenários `@p0`, começando pela home e autenticação
+3. Expandir seeds Playwright em `tests/e2e/db/seeds/` (independentes do Django)
+4. Executar a suite com a [documentação de E2E](../tests/e2e/README.md)
