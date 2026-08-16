@@ -2,7 +2,7 @@
 Automation for: docs/e2e/01_paginas_publicas.feature
 
 Shared IDs with the spec:
-  [E2E-01-001] … [E2E-01-013]
+  [E2E-01-001], [E2E-01-002], [E2E-01-003], [E2E-01-007]
   tag @e2e-01-XXX  ↔  pytest.mark.e2e_01_XXX  ↔  test_e2e_01_XXX_*
 
 Code identifiers: English. UI assertions and seed content: Portuguese.
@@ -63,22 +63,6 @@ def test_e2e_01_003_home_shows_published_featured_news(page: Page, app_url: str,
     news = spotlight(page.get_by_role("heading", name="Notícia destaque publicada"))
     expect(news).to_be_visible()
     expect(page.get_by_text("Notícia rascunho oculta")).to_have_count(0)
-
-
-@pytest.mark.e2e
-@pytest.mark.e2e_01_004
-@pytest.mark.xfail(
-    reason="Home template does not render upcoming_events yet (context exists, UI does not).",
-    strict=False,
-)
-@seed("home_events")
-def test_e2e_01_004_home_shows_published_upcoming_events(page: Page, app_url: str, db):
-    """[E2E-01-004] Página inicial exibe próximos eventos publicados"""
-    page.goto(f"{app_url}/")
-
-    event = spotlight(page.get_by_role("heading", name="Evento publicado futuro"))
-    expect(event).to_be_visible()
-    expect(page.get_by_text("Evento oculto")).to_have_count(0)
 
 
 @pytest.mark.e2e

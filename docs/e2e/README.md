@@ -15,7 +15,7 @@ A automação Playwright fica em [`tests/e2e/`](../../tests/e2e/) — como rodar
 
 | Arquivo | Escopo | Cenários |
 | --- | --- | --- |
-| [01_paginas_publicas.feature](01_paginas_publicas.feature) | Home, sobre, navegação, links, arquivos | 13 |
+| [01_paginas_publicas.feature](01_paginas_publicas.feature) | Home, sobre, navegação, links, arquivos | 12 |
 | [02_noticias_eventos_midia.feature](02_noticias_eventos_midia.feature) | Notícias, eventos, calendário, mídia | 15 |
 | [03_inscricoes_contato.feature](03_inscricoes_contato.feature) | Inscrições e formulário de contato | 14 |
 | [04_autenticacao.feature](04_autenticacao.feature) | Cadastro, login, logout, reset, admin inicial | 21 |
@@ -23,7 +23,7 @@ A automação Playwright fica em [`tests/e2e/`](../../tests/e2e/) — como rodar
 | [06_painel_admin.feature](06_painel_admin.feature) | Painel, branding, conteúdo, preview | 19 |
 | [07_busca_i18n_acessibilidade.feature](07_busca_i18n_acessibilidade.feature) | Busca, idioma, tema e acessibilidade | 16 |
 
-**Total:** 110 cenários (`@p0` 51 · `@p1` 48 · `@p2` 11)
+**Total:** 109 cenários (`@p0` 50 · `@p1` 48 · `@p2` 11)
 
 ## Convenções
 

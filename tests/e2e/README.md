@@ -118,13 +118,13 @@ Declare seeds no cabeçalho do teste (não no corpo):
 ```python
 from tests.e2e.helpers.seed import seed
 
-@seed("home_banners")
-def test_e2e_01_002_...(page, app_url, db):
+@seed("home_news")
+def test_e2e_01_003_...(page, app_url, db):
     page.goto(f"{app_url}/")
     ...
 
 # várias seeds, ou a função direto:
-@seed("home_news", "home_events")
+@seed("home_banners", "home_news")
 @seed(seed_home_banners)
 ```
 

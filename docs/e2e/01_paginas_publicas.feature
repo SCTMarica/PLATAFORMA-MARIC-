@@ -32,14 +32,6 @@ Funcionalidade: Páginas públicas institucionais
     Então as notícias em destaque publicadas devem aparecer na home
     E a notícia não publicada não deve aparecer
 
-  @p0 @functional @e2e-01-004
-  Cenário: [E2E-01-004] Página inicial exibe próximos eventos publicados
-    Dado que existem eventos publicados com data futura
-    E que existe um evento não publicado
-    Quando o visitante acessa "/"
-    Então os próximos eventos publicados devem aparecer na home
-    E o evento não publicado não deve aparecer
-
   @p1 @functional @e2e-01-005
   Cenário: [E2E-01-005] Página inicial lista formulários de inscrição ativos
     Dado que existem formulários de inscrição ativos

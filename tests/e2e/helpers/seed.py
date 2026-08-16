@@ -22,14 +22,13 @@ from typing import Any
 
 import pytest
 
-from tests.e2e.db.seeds import seed_home_banners, seed_home_events, seed_home_news
+from tests.e2e.db.seeds import seed_home_banners, seed_home_news
 
 SeedFn = Callable[[Any], None]
 
 SEED_REGISTRY: dict[str, SeedFn] = {
     "home_banners": seed_home_banners,
     "home_news": seed_home_news,
-    "home_events": seed_home_events,
 }
 
 
