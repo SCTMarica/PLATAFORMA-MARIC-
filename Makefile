@@ -125,7 +125,8 @@ e2e-results:
 	@find test-results -mindepth 1 -maxdepth 1 -type d -name '????-??-??_??-??-??' 2>/dev/null | sort || true
 	@echo ""
 	@echo "-- Vídeos --"
-	@find test-results -type f \( -name '*.webm' -o -name '*.mp4' \) 2>/dev/null | sort || true
+	@find test-results -type f -name '*.mp4' 2>/dev/null | sort || true
+	@find test-results -type f -name '*.webm' 2>/dev/null | sort || true
 	@echo ""
 	@echo "-- Screenshots --"
 	@find test-results -type f -name '*.png' 2>/dev/null | sort || true
@@ -137,9 +138,15 @@ e2e-open-video:
 	@set -e; \
 	LATEST_RUN=$$(find test-results -mindepth 1 -maxdepth 1 -type d -name '????-??-??_??-??-??' 2>/dev/null | sort | tail -1); \
 	if [ -n "$$LATEST_RUN" ]; then \
-		VIDEO=$$(find "$$LATEST_RUN" -type f \( -name '*.webm' -o -name '*.mp4' \) -printf '%T@ %p\n' 2>/dev/null | sort -nr | head -1 | cut -d' ' -f2-); \
+		VIDEO=$$(find "$$LATEST_RUN" -type f -name '*.mp4' -printf '%T@ %p\n' 2>/dev/null | sort -nr | head -1 | cut -d' ' -f2-); \
+		if [ -z "$$VIDEO" ]; then \
+			VIDEO=$$(find "$$LATEST_RUN" -type f -name '*.webm' -printf '%T@ %p\n' 2>/dev/null | sort -nr | head -1 | cut -d' ' -f2-); \
+		fi; \
 	else \
-		VIDEO=$$(find test-results -type f \( -name '*.webm' -o -name '*.mp4' \) -printf '%T@ %p\n' 2>/dev/null | sort -nr | head -1 | cut -d' ' -f2-); \
+		VIDEO=$$(find test-results -type f -name '*.mp4' -printf '%T@ %p\n' 2>/dev/null | sort -nr | head -1 | cut -d' ' -f2-); \
+		if [ -z "$$VIDEO" ]; then \
+			VIDEO=$$(find test-results -type f -name '*.webm' -printf '%T@ %p\n' 2>/dev/null | sort -nr | head -1 | cut -d' ' -f2-); \
+		fi; \
 	fi; \
 	if [ -z "$$VIDEO" ]; then \
 		echo "Nenhum vídeo em test-results/. Rode: make e2e-video-id ID=e2e_01_001"; \

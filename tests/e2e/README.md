@@ -159,7 +159,7 @@ Os arquivos vão para `test-results/`:
 test-results/
   2026-08-15_21-58-00/          ← horário desta execução (grupo/laço)
     E2E-01-001_visitante-acessa-a-pagina-inicial/
-      video.webm
+      video.mp4
       pagina-final.png
       trace.zip
     E2E-01-002_pagina-inicial-exibe-banners-ativos-do-carrossel/
@@ -176,19 +176,18 @@ nesse modo para não capturar cartão nenhum.
 
 ### Cartões de abertura e resultado
 
-O vídeo final é montado em três partes:
+O vídeo final é montado em três partes e exportado como **MP4 (H.264)**:
 
 ```text
-[ cartão de abertura ]  +  [ gravação do teste ]  +  [ cartão de resultado ]
-        1,5 s                  íntegra, sem cortes            1,0 s
+[ cartão de abertura ]  +  [ gravação WebM do Playwright ]  +  [ cartão de resultado ]
+        1,5 s                  íntegra, sem cortes                      1,0 s
+                                    ↓
+                              video.mp4 (artefato final)
 ```
 
-Os cartões **não são exibidos dentro do navegador do teste**. Eles são
-renderizados em um contexto separado (que não é gravado), salvos como PNG e
-unidos ao vídeo pelo `ffmpeg` no fim da execução. Duas consequências:
-
-- a gravação do teste continua completa, sem nada por cima nem segundos perdidos;
-- o fundo dos cartões é uma imagem estática, então não existe piscada.
+O Playwright só grava WebM de forma nativa. No fim da execução o `ffmpeg`
+junta os cartões, converte para MP4 (mais leve e fácil de abrir no Windows /
+Trello / WhatsApp) e remove o `.webm` bruto.
 
 Abertura: ID + nome do cenário em português. Resultado, conforme o pytest:
 
@@ -200,9 +199,10 @@ Abertura: ID + nome do cenário em português. Resultado, conforme o pytest:
 Esses cartões não precisam ser adicionados em cada teste. A fixture automática
 `portuguese_title_card`, em `tests/e2e/conftest.py`, só entra quando `--video on`
 foi pedido; o hook `pytest_runtest_makereport` captura o resultado real e
-`tests/e2e/helpers/video.py` faz a junção. O `ffmpeg` completo vem instalado na
-imagem em `tests/e2e/Dockerfile` (o que o Playwright embute não tem `concat`).
-Se o `ffmpeg` não estiver disponível, o vídeo original é preservado como está.
+`tests/e2e/helpers/video.py` faz a junção + conversão para MP4. O `ffmpeg`
+completo vem instalado na imagem em `tests/e2e/Dockerfile` (o que o Playwright
+embute não tem `concat` / H.264). Se o `ffmpeg` não estiver disponível, o WebM
+original é preservado como está.
 
 Para testes novos, basta manter:
 
@@ -217,7 +217,7 @@ genéricos em inglês não chegam aos vídeos por acidente.
 
 | Artefato | Para quê |
 | --- | --- |
-| `*.webm` | Vídeo completo do teste (anexar na doc / Trello) |
+| `video.mp4` | Vídeo completo do teste (anexar na doc / Trello) |
 | `pagina-final.png` | Print da última tela do app (antes do cartão de resultado) |
 | `trace.zip` | Passo a passo clicável (melhor que print solto) |
 
@@ -236,7 +236,7 @@ pedidos explicitamente).
 ### Vídeo “parado”? Por quê?
 
 Muitos cenários só fazem `goto` + assert (sem cliques). O assert é quase instantâneo,
-então o `.webm` parece uma tela congelada.
+então o `.mp4` parece uma tela congelada.
 
 Playwright ajuda com:
 

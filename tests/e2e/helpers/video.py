@@ -1,8 +1,7 @@
 """Title/result cards rendered outside the recording and joined with ffmpeg.
 
-The recorded `video.webm` stays exactly as the test ran. Cards are separate
-clips concatenated around it, so nothing overlaps the test footage and the
-solid background never flickers.
+Playwright records WebM natively. After the run we prepend/append the cards and
+emit a lighter, shareable MP4 (H.264). The raw WebM is discarded on success.
 """
 
 from __future__ import annotations
@@ -19,7 +18,9 @@ RESULT_SECONDS = 1.0
 
 INTRO_FILE = ".intro.png"
 RESULT_FILE = ".resultado.png"
-VIDEO_FILE = "video.webm"
+# Playwright always writes WebM; final artifact delivered to the team is MP4.
+RAW_VIDEO_FILE = "video.webm"
+OUTPUT_VIDEO_FILE = "video.mp4"
 
 
 def card_html(scenario_id: str, heading: str, detail: str, background: str) -> str:
@@ -95,6 +96,11 @@ def _ffmpeg() -> str | None:
     return shutil.which("ffmpeg")
 
 
+def _even(value: int) -> int:
+    """H.264 yuv420p requires even frame dimensions."""
+    return value if value % 2 == 0 else value + 1
+
+
 def _video_geometry(video: Path) -> tuple[int, int, int] | None:
     ffprobe = shutil.which("ffprobe")
     if ffprobe is None:
@@ -116,27 +122,32 @@ def _video_geometry(video: Path) -> tuple[int, int, int] | None:
         return None
     width, height, rate = result.stdout.strip().split(",")[:3]
     fps = Fraction(rate) if "/" in rate else Fraction(float(rate))
-    return int(width), int(height), max(1, round(float(fps)))
+    return _even(int(width)), _even(int(height)), max(1, round(float(fps)))
 
 
 def attach_cards(scenario_dir: Path) -> bool:
-    """Rebuild video.webm as: intro card + original recording + result card."""
-    video = scenario_dir / VIDEO_FILE
+    """
+    Build video.mp4 as: intro card + Playwright WebM + result card.
+
+    On success the raw video.webm is removed so only the shareable MP4 remains.
+    """
+    raw_video = scenario_dir / RAW_VIDEO_FILE
+    output_video = scenario_dir / OUTPUT_VIDEO_FILE
     intro = scenario_dir / INTRO_FILE
     result_card = scenario_dir / RESULT_FILE
     ffmpeg = _ffmpeg()
 
-    if ffmpeg is None or not video.exists() or not intro.exists():
+    if ffmpeg is None or not raw_video.exists() or not intro.exists():
         return False
 
-    geometry = _video_geometry(video)
+    geometry = _video_geometry(raw_video)
     if geometry is None:
         return False
     width, height, fps = geometry
 
     inputs = [
         "-loop", "1", "-t", str(INTRO_SECONDS), "-i", str(intro),
-        "-i", str(video),
+        "-i", str(raw_video),
     ]
     parts = 2
     if result_card.exists():
@@ -144,13 +155,14 @@ def attach_cards(scenario_dir: Path) -> bool:
         parts = 3
 
     chains = "".join(
-        f"[{index}:v]scale={width}:{height},setsar=1,fps={fps},format=yuv420p[v{index}];"
+        f"[{index}:v]scale={width}:{height}:force_original_aspect_ratio=decrease,"
+        f"pad={width}:{height}:(ow-iw)/2:(oh-ih)/2,setsar=1,fps={fps},format=yuv420p[v{index}];"
         for index in range(parts)
     )
     streams = "".join(f"[v{index}]" for index in range(parts))
     filter_complex = f"{chains}{streams}concat=n={parts}:v=1:a=0[out]"
 
-    composed = scenario_dir / ".video-composed.webm"
+    composed = scenario_dir / ".video-composed.mp4"
     completed = subprocess.run(
         [
             ffmpeg, "-y", "-hide_banner", "-loglevel", "error",
@@ -158,9 +170,11 @@ def attach_cards(scenario_dir: Path) -> bool:
             "-filter_complex", filter_complex,
             "-map", "[out]",
             "-an",
-            "-c:v", "libvpx",
-            "-b:v", "1M",
-            "-crf", "30",
+            "-c:v", "libx264",
+            "-preset", "medium",
+            "-crf", "28",
+            "-pix_fmt", "yuv420p",
+            "-movflags", "+faststart",
             str(composed),
         ],
         capture_output=True,
@@ -172,7 +186,8 @@ def attach_cards(scenario_dir: Path) -> bool:
         composed.unlink(missing_ok=True)
         return False
 
-    composed.replace(video)
+    composed.replace(output_video)
+    raw_video.unlink(missing_ok=True)
     intro.unlink(missing_ok=True)
     result_card.unlink(missing_ok=True)
     return True

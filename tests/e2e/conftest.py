@@ -21,8 +21,8 @@ from tests.e2e.helpers.artifacts import (
 from tests.e2e.helpers.seed import apply_marked_seeds
 from tests.e2e.helpers.video import (
     INTRO_FILE,
+    RAW_VIDEO_FILE,
     RESULT_FILE,
-    VIDEO_FILE,
     attach_cards,
     render_card,
 )
@@ -67,8 +67,8 @@ def pytest_sessionfinish(session, exitstatus):
     if run_dir is None:
         return
 
-    # Videos are only on disk after each context closed, so join cards here.
-    for video in sorted(Path(run_dir).glob(f"*/{VIDEO_FILE}")):
+    # Playwright writes WebM; attach_cards emits the final shareable MP4.
+    for video in sorted(Path(run_dir).glob(f"*/{RAW_VIDEO_FILE}")):
         attach_cards(video.parent)
 
 
