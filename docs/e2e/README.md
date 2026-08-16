@@ -45,7 +45,7 @@ Exemplo para `01_paginas_publicas.feature`:
 
 | Spec | Tag Gherkin | Teste Playwright |
 | --- | --- | --- |
-| `[E2E-01-001] Visitante acessa a página inicial` | `@e2e-01-001` | `test_e2e_01_001_*` em `tests/e2e/test_01_paginas_publicas.py` |
+| `[E2E-01-001] Visitante acessa a página inicial` | `@e2e-01-001` | `test_e2e_01_001_*` em `tests/e2e/test_01_public_pages.py` |
 
 Regra: o número do arquivo Gherkin (`01`, `02`…) e o prefixo do arquivo de teste (`test_01_…`) são os mesmos.
 

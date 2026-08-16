@@ -29,6 +29,7 @@ from tests.e2e.helpers.video import (
 
 TITLE_BACKGROUND = "#0b132b"
 SCENARIO_MARK_RE = re.compile(r"^e2e_(\d+)_(\d+)$")
+EMAIL_OUTBOX_DIR = Path("test-results/e2e-mail-outbox")
 
 
 def evidence_enabled(config) -> bool:
@@ -225,3 +226,16 @@ def db(request):
                 conn.commit()
         finally:
             conn.close()
+
+
+@pytest.fixture
+def email_outbox():
+    """Empty the E2E mail outbox before and after a scenario."""
+    EMAIL_OUTBOX_DIR.mkdir(parents=True, exist_ok=True)
+    for message in EMAIL_OUTBOX_DIR.iterdir():
+        if message.is_file():
+            message.unlink()
+    yield EMAIL_OUTBOX_DIR
+    for message in EMAIL_OUTBOX_DIR.iterdir():
+        if message.is_file():
+            message.unlink()

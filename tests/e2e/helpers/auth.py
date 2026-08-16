@@ -22,3 +22,20 @@ def fill_registration_form(
 
 def submit_registration_form(page: Page) -> None:
     page.get_by_role("button", name="Cadastrar").click()
+
+
+def submit_login_form(page: Page, *, username: str, password: str) -> None:
+    page.locator("#id_username").fill(username)
+    page.locator("#id_password").fill(password)
+    page.get_by_role("button", name="Entrar").click()
+
+
+def submit_password_reset_request(page: Page, *, email: str) -> None:
+    page.locator("#id_email").fill(email)
+    page.get_by_role("button", name="Enviar link").click()
+
+
+def submit_new_password(page: Page, *, password: str) -> None:
+    page.locator("#id_new_password1").fill(password)
+    page.locator("#id_new_password2").fill(password)
+    page.get_by_role("button", name="Salvar nova senha").click()

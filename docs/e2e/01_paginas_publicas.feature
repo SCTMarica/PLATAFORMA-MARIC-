@@ -4,7 +4,7 @@ Funcionalidade: Páginas públicas institucionais
   Quero navegar pelo site institucional
   Para conhecer a instituição e encontrar informações básicas
 
-  # IDs: E2E-<arquivo>-<seq>  →  espelhado em tests/e2e/test_01_paginas_publicas.py
+  # IDs: E2E-<arquivo>-<seq>  →  espelhado em tests/e2e/test_01_public_pages.py
   # Ex.: @e2e-01-001 ↔ test_e2e_01_001_* ↔ docs/e2e/01_paginas_publicas.feature
 
   Contexto:

@@ -4,7 +4,7 @@ Funcionalidade: Autenticação e gestão de acesso
   Quero me cadastrar, entrar e recuperar acesso
   Para utilizar o portal conforme meu perfil
 
-  # IDs: E2E-04-<seq>  →  espelhado em tests/e2e/test_04_autenticacao.py
+  # IDs: E2E-04-<seq>  →  espelhado em tests/e2e/test_04_authentication.py
 
   @p0 @functional @e2e-04-001
   Cenário: [E2E-04-001] Visitante acessa a tela de cadastro
@@ -34,34 +34,34 @@ Funcionalidade: Autenticação e gestão de acesso
     Quando o cliente acessa "/cadastro/"
     Então o cliente deve ser redirecionado para "/portal/"
 
-  @p0 @functional
-  Cenário: Visitante acessa a tela de login
+  @p0 @functional @e2e-04-003
+  Cenário: [E2E-04-003] Visitante acessa a tela de login
     Quando o visitante acessa "/login/"
     Então a página deve carregar com status 200
     E o formulário de login deve estar visível
 
-  @p0 @functional
-  Cenário: Cliente faz login com e-mail e é redirecionado ao portal
+  @p0 @functional @e2e-04-004
+  Cenário: [E2E-04-004] Cliente faz login com e-mail e acessa o portal
     Dado que existe o cliente "cliente@teste.com" com senha válida
     Quando o visitante faz login em "/login/" com e-mail "cliente@teste.com" e senha válida
     Então o visitante deve ser redirecionado para "/portal/"
     E deve ver a mensagem "Acesso realizado com sucesso."
 
-  @p0 @functional
-  Cenário: Cliente faz login com nome de usuário
+  @p0 @functional @e2e-04-005
+  Cenário: [E2E-04-005] Cliente faz login com nome de usuário e acessa o portal
     Dado que existe o cliente com username "cliente@teste.com" e senha válida
     Quando o visitante faz login informando o username e a senha válida
     Então o visitante deve ser autenticado com sucesso
     E deve ser redirecionado para "/portal/"
 
-  @p0 @functional
-  Cenário: Administrador faz login e é redirecionado ao painel admin
+  @p0 @functional @e2e-04-006
+  Cenário: [E2E-04-006] Administrador master faz login e acessa o painel admin
     Dado que existe um usuário administrador master ativo
     Quando o administrador faz login com credenciais válidas
     Então o usuário deve ser redirecionado para "/painel-admin/"
 
-  @p0 @functional
-  Cenário: Supervisor faz login e acessa área administrativa
+  @p0 @functional @e2e-04-007
+  Cenário: [E2E-04-007] Supervisor faz login e acessa área administrativa
     Dado que existe um usuário supervisor ativo
     Quando o supervisor faz login com credenciais válidas
     Então o usuário deve ser redirecionado para "/painel-admin/"
@@ -74,10 +74,12 @@ Funcionalidade: Autenticação e gestão de acesso
     E a mensagem "Informe um email/usuário e senha válidos." deve ser exibida
     E o visitante não deve ficar autenticado
 
+  # Pendente de UI: não há botão/controle "Sair" visível no header/portal.
+  # Automação E2E fica bloqueada até o produto expor logout por clique.
   @p0 @functional
-  Cenário: Usuário autenticado encerra a sessão com sucesso
+  Cenário: Usuário autenticado encerra a sessão pelo botão Sair
     Dado que existe um usuário autenticado
-    Quando o usuário acessa "/sair/"
+    Quando o usuário clica no botão "Sair"
     Então a sessão deve ser encerrada
     E o usuário deve ser redirecionado para "/"
     E deve ver a mensagem "Sessão encerrada com sucesso."
@@ -110,8 +112,8 @@ Funcionalidade: Autenticação e gestão de acesso
     Quando o visitante acessa "/login/"
     Então a opção de configurar administrador inicial não deve aparecer
 
-  @p0 @functional
-  Cenário: Usuário solicita recuperação de senha com e-mail cadastrado
+  @p0 @functional @e2e-04-009
+  Cenário: [E2E-04-009] Usuário solicita recuperação de senha com e-mail cadastrado
     Dado que existe o usuário com e-mail "cliente@teste.com"
     Quando o visitante solicita recuperação de senha em "/senha/recuperar/" com "cliente@teste.com"
     Então o visitante deve ser redirecionado para "/senha/recuperar/enviado/"
@@ -123,8 +125,8 @@ Funcionalidade: Autenticação e gestão de acesso
     Então a página de confirmação de envio pode ser exibida
     Mas nenhum e-mail de recuperação deve ser enviado
 
-  @p0 @functional
-  Cenário: Usuário redefine a senha pelo link válido
+  @p0 @functional @e2e-04-010
+  Cenário: [E2E-04-010] Usuário redefine a senha pelo link válido
     Dado que existe um link válido de redefinição de senha para "cliente@teste.com"
     Quando o usuário abre o link e define uma nova senha válida
     Então a redefinição deve ser concluída com sucesso

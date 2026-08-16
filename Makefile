@@ -9,11 +9,11 @@ E2E_COMPOSE := $(COMPOSE) --profile e2e
 E2E_RUN := $(E2E_COMPOSE) run --rm playwright
 
 # Optional overrides:
-#   make e2e-file FILE=tests/e2e/test_01_paginas_publicas.py
-#   make e2e-test TEST=tests/e2e/test_01_paginas_publicas.py::test_e2e_01_001_visitor_opens_home
+#   make e2e-file FILE=tests/e2e/test_01_public_pages.py
+#   make e2e-test TEST=tests/e2e/test_01_public_pages.py::test_e2e_01_001_visitor_opens_home
 #   make e2e-id ID=e2e_01_001
 #   make e2e EVIDENCE=1
-FILE ?= tests/e2e/test_01_paginas_publicas.py
+FILE ?= tests/e2e/test_01_public_pages.py
 TEST ?=
 SLOWMO ?= 400
 ID ?= e2e_01_001

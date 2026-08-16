@@ -53,7 +53,9 @@ services:
       DJANGO_DEBUG: "1"
       DJANGO_ALLOWED_HOSTS: web-e2e,localhost,127.0.0.1
       DATABASE_URL: postgresql://plataforma_maric_e2e:plataforma_maric_e2e@db-e2e:5432/plataforma_maric_e2e
-      DJANGO_EMAIL_BACKEND: django.core.mail.backends.locmem.EmailBackend
+      # Shared with Playwright so E2E can inspect reset links without an SMTP service.
+      DJANGO_EMAIL_BACKEND: django.core.mail.backends.filebased.EmailBackend
+      DJANGO_EMAIL_FILE_PATH: /app/test-results/e2e-mail-outbox
     depends_on:
       db-e2e:
         condition: service_healthy
