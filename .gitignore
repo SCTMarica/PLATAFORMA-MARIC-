@@ -8,7 +8,7 @@ briefing.pdf
 # Local SQLite leftovers (app uses PostgreSQL)
 *.sqlite3
 
-# E2E / pytest artifacts
+# E2E / pytest artifacts (one folder per test run: video.webm, png, trace.zip)
 test-results/
 playwright-report/
 blob-report/

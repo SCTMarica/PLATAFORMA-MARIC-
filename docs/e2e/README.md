@@ -33,6 +33,24 @@ A automação Playwright fica em [`tests/e2e/`](../../tests/e2e/) — como rodar
 - `@functional` — comportamento funcional (não visual puro)
 - `Contexto` — pré-condições compartilhadas da Feature
 
+### Identificadores (spec ↔ teste)
+
+Cada cenário ganha um ID estável:
+
+```text
+E2E-<arquivo>-<seq>
+```
+
+Exemplo para `01_paginas_publicas.feature`:
+
+| Spec | Tag Gherkin | Teste Playwright |
+| --- | --- | --- |
+| `[E2E-01-001] Visitante acessa a página inicial` | `@e2e-01-001` | `test_e2e_01_001_*` em `tests/e2e/test_01_paginas_publicas.py` |
+
+Regra: o número do arquivo Gherkin (`01`, `02`…) e o prefixo do arquivo de teste (`test_01_…`) são os mesmos.
+
+**Language:** code identifiers in English (same as the Django app). UI assertions, seed content, and Gherkin stay in Portuguese.
+
 ## Estratégia de automação
 
 1. Specs vivem aqui e são a fonte da verdade do aceite.
