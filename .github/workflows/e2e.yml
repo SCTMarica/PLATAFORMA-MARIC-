@@ -1,7 +1,14 @@
 name: E2E
 
 on:
+  push:
+    branches:
+      - main
+      - "ci/**"
+      - "feature/**"
   pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 concurrency:
