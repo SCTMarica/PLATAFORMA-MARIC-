@@ -4,3 +4,20 @@ briefing.pdf
 */*/*/__pycache__/
 
 .env
+
+# Local SQLite leftovers (app uses PostgreSQL)
+*.sqlite3
+
+# E2E / pytest artifacts (one folder per test run: video.mp4, png, trace.zip)
+test-results/
+playwright-report/
+blob-report/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+.cache/
+*.log

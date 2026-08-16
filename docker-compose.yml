@@ -20,7 +20,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -28,6 +28,59 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  db-e2e:
+    image: postgres:17-alpine
+    profiles: ["e2e"]
+    environment:
+      POSTGRES_DB: plataforma_maric_e2e
+      POSTGRES_USER: plataforma_maric_e2e
+      POSTGRES_PASSWORD: plataforma_maric_e2e
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U plataforma_maric_e2e -d plataforma_maric_e2e"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web-e2e:
+    build: .
+    profiles: ["e2e"]
+    command: sh -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    environment:
+      DJANGO_SECRET_KEY: e2e-only-secret-key
+      DJANGO_DEBUG: "1"
+      DJANGO_ALLOWED_HOSTS: web-e2e,localhost,127.0.0.1
+      DATABASE_URL: postgresql://plataforma_maric_e2e:plataforma_maric_e2e@db-e2e:5432/plataforma_maric_e2e
+      # Shared with Playwright so E2E can inspect reset links without an SMTP service.
+      DJANGO_EMAIL_BACKEND: django.core.mail.backends.filebased.EmailBackend
+      DJANGO_EMAIL_FILE_PATH: /app/test-results/e2e-mail-outbox
+    depends_on:
+      db-e2e:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"from urllib.request import urlopen; urlopen('http://localhost:8000/', timeout=2)\""]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  playwright:
+    build:
+      context: .
+      dockerfile: tests/e2e/Dockerfile
+    profiles: ["e2e"]
+    working_dir: /app
+    volumes:
+      - .:/app
+      - ./test-results:/app/test-results
+    environment:
+      E2E_BASE_URL: http://web-e2e:8000
+      DATABASE_URL: postgresql://plataforma_maric_e2e:plataforma_maric_e2e@db-e2e:5432/plataforma_maric_e2e
+    depends_on:
+      web-e2e:
+        condition: service_healthy
+    command: pytest
 
 volumes:
   postgres_data:
