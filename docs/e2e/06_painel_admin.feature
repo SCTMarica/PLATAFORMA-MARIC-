@@ -8,27 +8,29 @@ Funcionalidade: Painel administrativo
     Dado que existe um administrador master autenticado
     E que o site possui configurações institucionais básicas
 
-  @p0 @functional
-  Cenário: Admin acessa o painel administrativo
+  # IDs: E2E-06-<seq>  →  espelhado em tests/e2e/test_06_admin_*.py
+
+  @p0 @functional @e2e-06-001
+  Cenário: [E2E-06-001] Admin acessa o painel administrativo
     Quando o administrador acessa "/painel-admin/"
     Então a página do painel deve carregar com status 200
     E o formulário de configurações do site deve estar visível
 
-  @p0 @functional
-  Cenário: Admin atualiza configurações gerais do site
+  @p0 @functional @e2e-06-002
+  Cenário: [E2E-06-002] Admin atualiza configurações gerais do site
     Quando o administrador altera o nome do site e o título do hero
     E salva as configurações em "/painel-admin/"
     Então deve ver a mensagem "Conteudo do site atualizado com sucesso."
     E as novas configurações devem permanecer salvas ao recarregar o painel
 
-  @p0 @functional
-  Cenário: Alterações de branding aparecem na página pública
+  @p0 @functional @e2e-06-003
+  Cenário: [E2E-06-003] Alterações de branding aparecem na página pública
     Dado que o administrador alterou o nome do site para "Portal Maricá"
     Quando o visitante acessa "/"
     Então o cabeçalho deve exibir "Portal Maricá"
 
-  @p0 @functional
-  Cenário: Admin atualiza cores do sistema pelo modal dedicado
+  @p0 @functional @e2e-06-004
+  Cenário: [E2E-06-004] Admin atualiza cores do sistema pelo modal dedicado
     Quando o administrador abre o modal "Cores do sistema"
     E altera as cores primária, secundária e de destaque
     E salva as alterações
@@ -50,16 +52,16 @@ Funcionalidade: Painel administrativo
     Quando o visitante acessa "/"
     Então os controles de edição do preview não devem aparecer
 
-  @p0 @functional
-  Cenário: Admin cadastra uma nova notícia
+  @p0 @functional @e2e-06-005
+  Cenário: [E2E-06-005] Admin cadastra uma nova notícia
     Quando o administrador acessa "/painel-admin/noticias/nova/"
     E preenche título, resumo, conteúdo e publica a notícia
     E salva o formulário
     Então deve ver a mensagem "Noticia cadastrada com sucesso."
     E deve ser redirecionado para "/painel-admin/"
 
-  @p0 @functional
-  Cenário: Notícia cadastrada aparece na listagem pública quando publicada
+  @p0 @functional @e2e-06-006
+  Cenário: [E2E-06-006] Notícia cadastrada aparece na listagem pública quando publicada
     Dado que o administrador cadastrou a notícia publicada "Nova edição"
     Quando o visitante acessa "/noticias/"
     Então a notícia "Nova edição" deve aparecer na lista
@@ -70,30 +72,30 @@ Funcionalidade: Painel administrativo
     E o visitante acessa "/"
     Então a notícia em destaque deve aparecer na home
 
-  @p0 @functional
-  Cenário: Admin cadastra imagem no carrossel
+  @p0 @functional @e2e-06-007
+  Cenário: [E2E-06-007] Admin cadastra imagem no carrossel
     Quando o administrador acessa "/painel-admin/carrossel/novo/"
     E preenche título, URL da imagem e ordem
     E salva o formulário
     Então deve ver a mensagem "Imagem do carrossel cadastrada com sucesso."
     E deve ser redirecionado para "/painel-admin/"
 
-  @p0 @functional
-  Cenário: Banner cadastrado aparece na home quando ativo
+  @p0 @functional @e2e-06-008
+  Cenário: [E2E-06-008] Banner cadastrado aparece na home quando ativo
     Dado que o administrador cadastrou um banner ativo "Campanha verão"
     Quando o visitante acessa "/"
     Então o banner "Campanha verão" deve aparecer no carrossel
 
-  @p0 @functional
-  Cenário: Admin cria formulário de inscrição
+  @p0 @functional @e2e-06-009
+  Cenário: [E2E-06-009] Admin cria formulário de inscrição
     Quando o administrador acessa "/painel-admin/formularios/novo/"
     E preenche título, descrição e schema de campos
     E salva o formulário
     Então deve ver a mensagem "Formulario de inscricao criado com sucesso."
     E deve ser redirecionado para "/painel-admin/"
 
-  @p0 @functional
-  Cenário: Formulário criado aparece na listagem pública de inscrições quando ativo
+  @p0 @functional @e2e-06-010
+  Cenário: [E2E-06-010] Formulário criado aparece na listagem pública de inscrições quando ativo
     Dado que o administrador criou o formulário ativo "Inscrição 2026"
     Quando o visitante acessa "/inscreva-se/"
     Então o formulário "Inscrição 2026" deve aparecer na lista

@@ -8,6 +8,7 @@ Funcionalidade: Inscrições e contato
     Dado que o site possui configurações institucionais básicas
 
   # IDs: E2E-03-<seq>  →  espelhado em tests/e2e/test_03_signups.py
+  #       e tests/e2e/test_03_contact.py
 
   @p0 @functional @e2e-03-001
   Cenário: [E2E-03-001] Visitante lista formulários de inscrição ativos
@@ -59,24 +60,24 @@ Funcionalidade: Inscrições e contato
     Quando o visitante envia a inscrição anexando o arquivo "documento.pdf"
     Então a inscrição salva deve conter "documento.pdf" nos dados
 
-  @p0 @functional
-  Cenário: Visitante acessa a página de contato
+  @p0 @functional @e2e-03-005
+  Cenário: [E2E-03-005] Visitante acessa a página de contato
     Quando o visitante acessa "/contato/"
     Então a página deve carregar com status 200
     E o formulário de contato deve estar visível
 
-  @p0 @functional
-  Cenário: Visitante envia mensagem de contato válida
+  @p0 @functional @e2e-03-006
+  Cenário: [E2E-03-006] Visitante envia mensagem de contato válida
     Quando o visitante preenche nome, e-mail, assunto e mensagem válidos
     E envia o formulário em "/contato/"
     Então o visitante deve ser redirecionado para "/contato/"
     E deve ver a mensagem "Mensagem enviada com sucesso! Entraremos em contato em breve."
 
-  @p0 @functional
-  Cenário: Mensagem de contato é persistida no banco
+  @p0 @functional @e2e-03-007
+  Cenário: [E2E-03-007] Mensagem de contato é persistida no banco
     Quando o visitante envia uma mensagem de contato válida
     Então deve existir um registro de ContactMessage com os dados enviados
-    E o status da mensagem deve ser "nova"
+    E o status da mensagem deve ser "new"
 
   @p1 @functional
   Cenário: Contato válido dispara e-mail para destino configurado

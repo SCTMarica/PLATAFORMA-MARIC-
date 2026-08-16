@@ -7,20 +7,22 @@ Funcionalidade: Busca, idioma e acessibilidade
   Contexto:
     Dado que o site possui configurações institucionais básicas
 
-  @p0 @functional
-  Cenário: Visitante busca conteúdo e vê resultados de notícias
+  # IDs: E2E-07-<seq>  →  espelhado em tests/e2e/test_07_*.py
+
+  @p0 @functional @e2e-07-001
+  Cenário: [E2E-07-001] Visitante busca conteúdo e vê resultados de notícias
     Dado que existe a notícia publicada "Feira de ciências"
     Quando o visitante acessa "/busca/?q=feira"
     Então os resultados devem incluir a notícia "Feira de ciências"
 
-  @p0 @functional
-  Cenário: Visitante busca conteúdo e vê resultados de eventos
+  @p0 @functional @e2e-07-002
+  Cenário: [E2E-07-002] Visitante busca conteúdo e vê resultados de eventos
     Dado que existe o evento publicado "Feira cultural"
     Quando o visitante acessa "/busca/?q=cultural"
     Então os resultados devem incluir o evento "Feira cultural"
 
-  @p0 @functional
-  Cenário: Visitante busca conteúdo e vê resultados de formulários
+  @p0 @functional @e2e-07-003
+  Cenário: [E2E-07-003] Visitante busca conteúdo e vê resultados de formulários
     Dado que existe o formulário ativo "Inscrição cultural"
     Quando o visitante acessa "/busca/?q=inscrição"
     Então os resultados devem incluir o formulário "Inscrição cultural"
@@ -45,15 +47,15 @@ Funcionalidade: Busca, idioma e acessibilidade
     Então a notícia não publicada não deve aparecer
     E o evento não publicado não deve aparecer
 
-  @p0 @functional
-  Cenário: Visitante troca o idioma do site
+  @p0 @functional @e2e-07-004
+  Cenário: [E2E-07-004] Visitante troca o idioma do site
     Dado que o visitante está em uma página pública
     Quando o visitante envia o seletor de idioma para "en"
     Então o idioma da sessão deve ficar como "en"
     E a interface deve refletir o idioma selecionado
 
-  @p0 @functional
-  Cenário: Idioma selecionado permanece na sessão ao navegar
+  @p0 @functional @e2e-07-005
+  Cenário: [E2E-07-005] Idioma selecionado permanece na sessão ao navegar
     Dado que o visitante selecionou o idioma "en"
     Quando o visitante navega para "/sobre/"
     Então o idioma da sessão deve continuar "en"

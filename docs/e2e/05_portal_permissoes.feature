@@ -4,14 +4,16 @@ Funcionalidade: Portal do usuário e permissões
   Quero acessar apenas as áreas permitidas ao meu papel
   Para usar o portal com segurança
 
-  @p0 @functional
-  Cenário: Visitante não autenticado é redirecionado ao tentar abrir o portal
+  # IDs: E2E-05-<seq>  →  espelhado em tests/e2e/test_05_user_portal.py
+
+  @p0 @functional @e2e-05-001
+  Cenário: [E2E-05-001] Visitante não autenticado é redirecionado ao tentar abrir o portal
     Dado que o visitante não está autenticado
     Quando o visitante acessa "/portal/"
     Então o visitante deve ser redirecionado para "/login/"
 
-  @p0 @functional
-  Cenário: Cliente autenticado acessa o portal
+  @p0 @functional @e2e-05-002
+  Cenário: [E2E-05-002] Cliente autenticado acessa o portal
     Dado que existe um cliente autenticado
     Quando o cliente acessa "/portal/"
     Então a página do portal deve carregar com status 200
@@ -22,21 +24,21 @@ Funcionalidade: Portal do usuário e permissões
     Quando o cliente acessa "/portal/"
     Então o portal deve exibir o rótulo do papel "Cliente final"
 
-  @p0 @functional
-  Cenário: Cliente final não acessa o painel administrativo
+  @p0 @functional @e2e-05-003
+  Cenário: [E2E-05-003] Cliente final não acessa o painel administrativo
     Dado que existe um cliente autenticado
     Quando o cliente acessa "/painel-admin/"
     Então o acesso deve ser negado
     E o cliente não deve visualizar o painel administrativo
 
-  @p0 @functional
-  Cenário: Supervisor acessa o painel administrativo
+  @p0 @functional @e2e-05-004
+  Cenário: [E2E-05-004] Supervisor acessa o painel administrativo
     Dado que existe um supervisor autenticado
     Quando o supervisor acessa "/painel-admin/"
     Então a página do painel deve carregar com status 200
 
-  @p0 @functional
-  Cenário: Administrador master acessa o painel administrativo
+  @p0 @functional @e2e-05-005
+  Cenário: [E2E-05-005] Administrador master acessa o painel administrativo
     Dado que existe um administrador master autenticado
     Quando o administrador acessa "/painel-admin/"
     Então a página do painel deve carregar com status 200

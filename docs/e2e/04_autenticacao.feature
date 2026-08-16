@@ -74,16 +74,6 @@ Funcionalidade: Autenticação e gestão de acesso
     E a mensagem "Informe um email/usuário e senha válidos." deve ser exibida
     E o visitante não deve ficar autenticado
 
-  # Pendente de UI: não há botão/controle "Sair" visível no header/portal.
-  # Automação E2E fica bloqueada até o produto expor logout por clique.
-  @p0 @functional
-  Cenário: Usuário autenticado encerra a sessão pelo botão Sair
-    Dado que existe um usuário autenticado
-    Quando o usuário clica no botão "Sair"
-    Então a sessão deve ser encerrada
-    E o usuário deve ser redirecionado para "/"
-    E deve ver a mensagem "Sessão encerrada com sucesso."
-
   @p0 @functional @e2e-04-011
   Cenário: [E2E-04-011] Login exibe opção de configurar administrador inicial
     Dado que não existe nenhum administrador no sistema

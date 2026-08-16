@@ -28,6 +28,7 @@ from tests.e2e.db.seeds import (
     seed_home_news,
     seed_published_events,
     seed_published_news,
+    seed_search_content,
     seed_signup_forms,
 )
 
@@ -39,6 +40,7 @@ SEED_REGISTRY: dict[str, SeedFn] = {
     "home_news": seed_home_news,
     "published_events": seed_published_events,
     "published_news": seed_published_news,
+    "search_content": seed_search_content,
     "signup_forms": seed_signup_forms,
 }
 
