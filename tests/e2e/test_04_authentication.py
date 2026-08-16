@@ -1,8 +1,9 @@
 """
-Automation for: docs/e2e/04_autenticacao.feature — registration, login and password reset (@p0)
+Automation for: docs/e2e/04_autenticacao.feature — registration, login,
+password reset and initial admin (@p0)
 
 Shared IDs with the spec:
-  [E2E-04-001] … [E2E-04-007], [E2E-04-009], [E2E-04-010]
+  [E2E-04-001] … [E2E-04-007], [E2E-04-009] … [E2E-04-013]
   tag @e2e-04-XXX  ↔  pytest.mark.e2e_04_XXX  ↔  test_e2e_04_XXX_*
 
 Logout via UI (former E2E-04-008) is not automated: the app has no visible
@@ -18,6 +19,7 @@ from playwright.sync_api import Page, expect
 
 from tests.e2e.helpers.auth import (
     fill_registration_form,
+    submit_initial_admin_form,
     submit_login_form,
     submit_new_password,
     submit_password_reset_request,
@@ -38,6 +40,20 @@ def _user_role_by_email(db, email: str) -> str | None:
         )
         row = cursor.fetchone()
     return row[0] if row else None
+
+
+def _user_access_flags_by_email(db, email: str) -> tuple[str, bool, bool] | None:
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT role, is_staff, is_superuser
+            FROM core_user
+            WHERE lower(email) = lower(%s)
+            """,
+            (email,),
+        )
+        row = cursor.fetchone()
+    return (row[0], bool(row[1]), bool(row[2])) if row else None
 
 
 @pytest.mark.e2e
@@ -212,3 +228,73 @@ def test_e2e_04_010_user_resets_password_with_valid_link(
 
     expect(page).to_have_url(f"{app_url}/senha/redefinir/concluido/")
     expect(spotlight(page.get_by_role("heading", name="Senha redefinida"))).to_be_visible()
+
+
+@pytest.mark.e2e
+@pytest.mark.e2e_04_011
+def test_e2e_04_011_login_shows_initial_admin_option_when_no_admin_exists(
+    page: Page, app_url: str, db
+):
+    """[E2E-04-011] Login exibe opção de configurar administrador inicial"""
+    page.goto(f"{app_url}/login/")
+
+    expect(
+        spotlight(page.get_by_role("link", name="Cadastrar primeiro admin"))
+    ).to_be_visible()
+
+
+@pytest.mark.e2e
+@pytest.mark.e2e_04_012
+def test_e2e_04_012_visitor_creates_initial_master_admin_and_reaches_panel(
+    page: Page, app_url: str, db
+):
+    """[E2E-04-012] Visitante cria o administrador master inicial e acessa o painel"""
+    email = "admin.inicial@teste.com"
+    assert _user_access_flags_by_email(db, email) is None
+
+    page.goto(f"{app_url}/configurar-admin/")
+    expect(
+        spotlight(page.get_by_role("heading", name="Cadastrar primeiro administrador"))
+    ).to_be_visible()
+
+    fill_registration_form(
+        page,
+        full_name="Admin Inicial E2E",
+        email=email,
+        phone="21988880000",
+        password=CLIENT_PASSWORD,
+    )
+    submit_initial_admin_form(page)
+
+    expect(page).to_have_url(f"{app_url}/painel-admin/")
+    expect(spotlight(page.get_by_role("heading", name="Painel de admin"))).to_be_visible()
+    expect(
+        spotlight(page.get_by_text("Administrador inicial criado com sucesso."))
+    ).to_be_visible()
+
+    assert _user_access_flags_by_email(db, email) == (
+        "administrador_master",
+        True,
+        True,
+    )
+
+
+@pytest.mark.e2e
+@pytest.mark.e2e_04_013
+@seed("auth_users")
+def test_e2e_04_013_initial_admin_setup_is_blocked_when_admin_exists(
+    page: Page, app_url: str, db
+):
+    """[E2E-04-013] Configuração de admin inicial fica bloqueada depois que já existe admin"""
+    page.goto(f"{app_url}/configurar-admin/")
+
+    expect(page).to_have_url(f"{app_url}/login/")
+    expect(
+        spotlight(
+            page.get_by_text(
+                "O administrador inicial ja foi configurado. "
+                "Use a recuperacao de senha se precisar."
+            )
+        )
+    ).to_be_visible()
+    expect(page.get_by_role("link", name="Cadastrar primeiro admin")).to_have_count(0)

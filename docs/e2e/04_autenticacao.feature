@@ -84,14 +84,14 @@ Funcionalidade: Autenticação e gestão de acesso
     E o usuário deve ser redirecionado para "/"
     E deve ver a mensagem "Sessão encerrada com sucesso."
 
-  @p0 @functional
-  Cenário: Quando não existe admin o login exibe opção de configurar administrador inicial
+  @p0 @functional @e2e-04-011
+  Cenário: [E2E-04-011] Login exibe opção de configurar administrador inicial
     Dado que não existe nenhum administrador no sistema
     Quando o visitante acessa "/login/"
     Então deve existir a opção de configurar o administrador inicial
 
-  @p0 @functional
-  Cenário: Visitante cria o administrador master inicial e acessa o painel
+  @p0 @functional @e2e-04-012
+  Cenário: [E2E-04-012] Visitante cria o administrador master inicial e acessa o painel
     Dado que não existe nenhum administrador no sistema
     Quando o visitante acessa "/configurar-admin/"
     E preenche um cadastro válido de administrador inicial
@@ -99,8 +99,8 @@ Funcionalidade: Autenticação e gestão de acesso
     E o visitante deve ficar autenticado
     E deve ser redirecionado para "/painel-admin/"
 
-  @p0 @functional
-  Cenário: Configuração de admin inicial fica bloqueada depois que já existe admin
+  @p0 @functional @e2e-04-013
+  Cenário: [E2E-04-013] Configuração de admin inicial fica bloqueada depois que já existe admin
     Dado que já existe um administrador no sistema
     Quando o visitante acessa "/configurar-admin/"
     Então o visitante deve ser redirecionado para "/login/"

@@ -39,3 +39,7 @@ def submit_new_password(page: Page, *, password: str) -> None:
     page.locator("#id_new_password1").fill(password)
     page.locator("#id_new_password2").fill(password)
     page.get_by_role("button", name="Salvar nova senha").click()
+
+
+def submit_initial_admin_form(page: Page) -> None:
+    page.get_by_role("button", name="Criar admin").click()
