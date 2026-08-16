@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import html
 import os
 import re
+import shutil
 import tempfile
 from datetime import datetime
 from pathlib import Path
@@ -19,6 +19,13 @@ from tests.e2e.helpers.artifacts import (
     scenario_id_from_item,
 )
 from tests.e2e.helpers.seed import apply_marked_seeds
+from tests.e2e.helpers.video import (
+    INTRO_FILE,
+    RESULT_FILE,
+    VIDEO_FILE,
+    attach_cards,
+    render_card,
+)
 
 TITLE_BACKGROUND = "#0b132b"
 SCENARIO_MARK_RE = re.compile(r"^e2e_(\d+)_(\d+)$")
@@ -52,14 +59,17 @@ def pytest_configure(config):
 
 def pytest_sessionfinish(session, exitstatus):
     quiet_dir = getattr(session.config, "_e2e_quiet_dir", None)
-    if quiet_dir is None:
-        return
-    try:
-        import shutil
-
+    if quiet_dir is not None:
         shutil.rmtree(quiet_dir, ignore_errors=True)
-    except OSError:
-        pass
+        return
+
+    run_dir = getattr(session.config, "_e2e_run_dir", None)
+    if run_dir is None:
+        return
+
+    # Videos are only on disk after each context closed, so join cards here.
+    for video in sorted(Path(run_dir).glob(f"*/{VIDEO_FILE}")):
+        attach_cards(video.parent)
 
 
 def pytest_collection_modifyitems(items):
@@ -112,84 +122,35 @@ def output_path(pytestconfig, request) -> str:
     return str(scenario_dir)
 
 
-@pytest.fixture
-def page(context, pytestconfig):
-    """Create each page; stabilize background only when recording video."""
-    if evidence_enabled(pytestconfig):
-        context.add_init_script(
-            script=f"""
-                document.documentElement.style.background = "{TITLE_BACKGROUND}";
-                document.documentElement.style.transition = "none";
-                document.documentElement.style.animation = "none";
-            """
+def _portuguese_heading(item) -> str:
+    scenario_id = scenario_id_from_item(item)
+    title = portuguese_title_from_item(item)
+    return re.sub(rf"^\[{re.escape(scenario_id)}\]\s*", "", title, flags=re.IGNORECASE).strip() or title
+
+
+def _result_card(item) -> tuple[str, str, str]:
+    report = getattr(item, "report_call", None)
+    if report is not None and report.passed:
+        return "APROVADO", "Todas as verificações deste teste passaram.", "#146c43"
+    if report is not None and getattr(report, "wasxfail", None):
+        return (
+            "REPROVADO",
+            "Falha conhecida e esperada: funcionalidade ainda pendente.",
+            "#b02a37",
         )
-    return context.new_page()
-
-
-def _status_card_html(
-    scenario_id: str,
-    heading: str,
-    detail: str,
-    background: str,
-) -> str:
-    return f"""<!doctype html>
-<html lang="pt" style="width:100%;height:100%;background:{background};">
-  <head>
-    <meta charset="utf-8">
-    <title>{html.escape(scenario_id)}</title>
-    <style>
-      *, *::before, *::after {{ box-sizing: border-box; }}
-      html, body {{
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        overflow: hidden;
-        background: {background};
-      }}
-      body {{
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #ffffff;
-        font-family: Arial, Helvetica, sans-serif;
-        text-align: center;
-        padding: 2rem;
-      }}
-      .id {{
-        opacity: .8;
-        letter-spacing: .12em;
-        text-transform: uppercase;
-        margin: 0 0 1rem;
-      }}
-      h1 {{
-        font-size: clamp(1.8rem, 4vw, 3rem);
-        line-height: 1.25;
-        max-width: 48rem;
-        margin: 0;
-      }}
-      .detail {{
-        font-size: 1.15rem;
-        line-height: 1.5;
-        max-width: 46rem;
-        margin: 1rem auto 0;
-        opacity: .9;
-      }}
-    </style>
-  </head>
-  <body>
-    <main>
-      <p class="id">{html.escape(scenario_id)}</p>
-      <h1>{html.escape(heading)}</h1>
-      <p class="detail">{html.escape(detail)}</p>
-    </main>
-  </body>
-</html>"""
+    if report is not None and report.skipped:
+        return "NÃO EXECUTADO", "O teste foi ignorado durante esta execução.", "#5c636a"
+    return "REPROVADO", "Uma ou mais verificações deste teste falharam.", "#b02a37"
 
 
 @pytest.fixture(autouse=True)
-def portuguese_title_card(page, request, pytestconfig):
+def portuguese_title_card(page, browser, request, pytestconfig):
     """
-    Show the Portuguese scenario name first and the real test result last.
+    Prepare the Portuguese intro card and the result card for the video.
+
+    Cards are rendered in a separate, non-recorded context and joined around
+    the recording by ffmpeg at the end of the session. The test footage itself
+    is never covered or trimmed.
 
     Only runs when `--video on` was requested (make e2e-video / e2e-demo).
     """
@@ -198,43 +159,22 @@ def portuguese_title_card(page, request, pytestconfig):
         return
 
     scenario_id = scenario_id_from_item(request.node)
-    title = portuguese_title_from_item(request.node)
-    page.set_content(
-        _status_card_html(
-            scenario_id,
-            title,
-            "Iniciando teste automatizado",
-            TITLE_BACKGROUND,
-        )
+    scenario_dir = Path(request.getfixturevalue("output_path"))
+    render_card(
+        browser,
+        scenario_dir / INTRO_FILE,
+        scenario_id,
+        _portuguese_heading(request.node),
+        "Iniciando teste automatizado",
+        TITLE_BACKGROUND,
     )
-    page.wait_for_timeout(700)
     yield
 
-    if page.is_closed():
-        return
+    if not page.is_closed():
+        page.screenshot(path=str(scenario_dir / "pagina-final.png"), type="png")
 
-    report = getattr(request.node, "report_call", None)
-    if report is not None and report.passed:
-        heading = "APROVADO"
-        detail = "Todas as verificações deste teste passaram."
-        background = "#146c43"
-    elif report is not None and getattr(report, "wasxfail", None):
-        heading = "REPROVADO"
-        detail = "Falha conhecida e esperada: funcionalidade ainda pendente."
-        background = "#b02a37"
-    elif report is not None and report.skipped:
-        heading = "NÃO EXECUTADO"
-        detail = "O teste foi ignorado durante esta execução."
-        background = "#5c636a"
-    else:
-        heading = "REPROVADO"
-        detail = "Uma ou mais verificações deste teste falharam."
-        background = "#b02a37"
-
-    page.set_content(
-        _status_card_html(scenario_id, heading, detail, background),
-    )
-    page.wait_for_timeout(800)
+    heading, detail, background = _result_card(request.node)
+    render_card(browser, scenario_dir / RESULT_FILE, scenario_id, heading, detail, background)
 
 
 @pytest.fixture(scope="session")

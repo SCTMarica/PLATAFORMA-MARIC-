@@ -160,7 +160,7 @@ test-results/
   2026-08-15_21-58-00/          ← horário desta execução (grupo/laço)
     E2E-01-001_visitante-acessa-a-pagina-inicial/
       video.webm
-      test-finished-1.png
+      pagina-final.png
       trace.zip
     E2E-01-002_pagina-inicial-exibe-banners-ativos-do-carrossel/
       ...
@@ -170,10 +170,27 @@ O nome da pasta combina o ID com o título em português. Espaços, acentos e
 símbolos são convertidos para um formato seguro, evitando problemas em scripts,
 terminais, links e outros sistemas operacionais.
 
-No **início de cada vídeo** aparece um cartão com o ID + nome do cenário em português
-(via `page.set_content` antes da navegação real).
+O arquivo `pagina-final.png` é um print da **última tela do aplicativo** (depois
+dos asserts e destaques). O screenshot automático do Playwright fica desligado
+nesse modo para não capturar cartão nenhum.
 
-No **final do vídeo**, um segundo cartão informa o resultado obtido pelo pytest:
+### Cartões de abertura e resultado
+
+O vídeo final é montado em três partes:
+
+```text
+[ cartão de abertura ]  +  [ gravação do teste ]  +  [ cartão de resultado ]
+        1,5 s                  íntegra, sem cortes            1,0 s
+```
+
+Os cartões **não são exibidos dentro do navegador do teste**. Eles são
+renderizados em um contexto separado (que não é gravado), salvos como PNG e
+unidos ao vídeo pelo `ffmpeg` no fim da execução. Duas consequências:
+
+- a gravação do teste continua completa, sem nada por cima nem segundos perdidos;
+- o fundo dos cartões é uma imagem estática, então não existe piscada.
+
+Abertura: ID + nome do cenário em português. Resultado, conforme o pytest:
 
 - `APROVADO` em verde quando todas as verificações passaram;
 - `REPROVADO` em vermelho quando o teste falhou;
@@ -182,8 +199,10 @@ No **final do vídeo**, um segundo cartão informa o resultado obtido pelo pytes
 
 Esses cartões não precisam ser adicionados em cada teste. A fixture automática
 `portuguese_title_card`, em `tests/e2e/conftest.py`, só entra quando `--video on`
-foi pedido. O hook `pytest_runtest_makereport` captura o resultado real, e o
-pytest-playwright salva tudo no vídeo ao fechar o contexto isolado.
+foi pedido; o hook `pytest_runtest_makereport` captura o resultado real e
+`tests/e2e/helpers/video.py` faz a junção. O `ffmpeg` completo vem instalado na
+imagem em `tests/e2e/Dockerfile` (o que o Playwright embute não tem `concat`).
+Se o `ffmpeg` não estiver disponível, o vídeo original é preservado como está.
 
 Para testes novos, basta manter:
 
@@ -199,7 +218,7 @@ genéricos em inglês não chegam aos vídeos por acidente.
 | Artefato | Para quê |
 | --- | --- |
 | `*.webm` | Vídeo completo do teste (anexar na doc / Trello) |
-| `*.png` | Screenshot ao final do teste |
+| `pagina-final.png` | Print da última tela do app (antes do cartão de resultado) |
 | `trace.zip` | Passo a passo clicável (melhor que print solto) |
 
 Fluxo típico para revisar/documentar:

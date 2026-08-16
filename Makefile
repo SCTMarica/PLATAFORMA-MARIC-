@@ -21,7 +21,7 @@ EVIDENCE ?= 0
 
 # Default run: terminal only. Evidence (video/png/trace) is opt-in.
 E2E_QUIET := --video off --screenshot off --tracing off
-E2E_EVIDENCE := --video on --screenshot on --tracing on
+E2E_EVIDENCE := --video on --screenshot off --tracing on
 
 ifeq ($(EVIDENCE),1)
 E2E_OPTS := $(E2E_EVIDENCE)
