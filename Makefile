@@ -6,7 +6,8 @@
 
 COMPOSE ?= docker compose
 E2E_COMPOSE := $(COMPOSE) --profile e2e
-E2E_RUN := $(E2E_COMPOSE) run --rm playwright
+# -T: no TTY (required on GitHub Actions; fine for local pytest too)
+E2E_RUN := $(E2E_COMPOSE) run --rm -T playwright
 
 # Optional overrides:
 #   make e2e-file FILE=tests/e2e/test_01_public_pages.py
@@ -178,7 +179,7 @@ e2e-show-trace:
 
 e2e-clean:
 	# Artefatos são criados como root pelo container Playwright.
-	$(E2E_COMPOSE) run --rm --entrypoint sh playwright -c 'rm -rf /app/test-results/*'
+	$(E2E_COMPOSE) run --rm -T --entrypoint sh playwright -c 'rm -rf /app/test-results/*'
 	@echo "test-results/ limpo"
 
 test: e2e
