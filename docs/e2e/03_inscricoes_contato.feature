@@ -7,29 +7,31 @@ Funcionalidade: Inscrições e contato
   Contexto:
     Dado que o site possui configurações institucionais básicas
 
-  @p0 @functional
-  Cenário: Visitante lista formulários de inscrição ativos
+  # IDs: E2E-03-<seq>  →  espelhado em tests/e2e/test_03_signups.py
+
+  @p0 @functional @e2e-03-001
+  Cenário: [E2E-03-001] Visitante lista formulários de inscrição ativos
     Dado que existem formulários de inscrição ativos
     Quando o visitante acessa "/inscreva-se/"
     Então a lista deve exibir apenas os formulários ativos
 
-  @p0 @functional
-  Cenário: Visitante abre um formulário de inscrição ativo
+  @p0 @functional @e2e-03-002
+  Cenário: [E2E-03-002] Visitante abre um formulário de inscrição ativo
     Dado que existe o formulário ativo "Cadastro geral" com slug "cadastro-geral"
     Quando o visitante acessa "/inscreva-se/cadastro-geral/"
     Então a página deve carregar o formulário "Cadastro geral"
     E os campos definidos no formulário devem estar visíveis
 
-  @p0 @functional
-  Cenário: Visitante envia inscrição válida e recebe ID de cadastro
+  @p0 @functional @e2e-03-003
+  Cenário: [E2E-03-003] Visitante envia inscrição válida e recebe ID de cadastro
     Dado que existe o formulário ativo "Cadastro geral" com slug "cadastro-geral"
     Quando o visitante preenche os campos obrigatórios válidos
     E envia o formulário em "/inscreva-se/cadastro-geral/"
     Então o visitante deve ser redirecionado para "/inscreva-se/"
     E deve ver uma mensagem de sucesso contendo um ID de cadastro no formato "MARICA-ANO-XXXXX"
 
-  @p0 @functional
-  Cenário: Inscrição enviada é persistida no banco
+  @p0 @functional @e2e-03-004
+  Cenário: [E2E-03-004] Inscrição enviada é persistida no banco
     Dado que existe o formulário ativo "Cadastro geral" com slug "cadastro-geral"
     Quando o visitante envia uma inscrição válida
     Então deve existir um registro de inscrição associado ao formulário

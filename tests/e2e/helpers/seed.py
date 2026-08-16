@@ -22,7 +22,14 @@ from typing import Any
 
 import pytest
 
-from tests.e2e.db.seeds import seed_auth_users, seed_home_banners, seed_home_news
+from tests.e2e.db.seeds import (
+    seed_auth_users,
+    seed_home_banners,
+    seed_home_news,
+    seed_published_events,
+    seed_published_news,
+    seed_signup_forms,
+)
 
 SeedFn = Callable[[Any], None]
 
@@ -30,6 +37,9 @@ SEED_REGISTRY: dict[str, SeedFn] = {
     "auth_users": seed_auth_users,
     "home_banners": seed_home_banners,
     "home_news": seed_home_news,
+    "published_events": seed_published_events,
+    "published_news": seed_published_news,
+    "signup_forms": seed_signup_forms,
 }
 
 

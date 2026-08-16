@@ -7,15 +7,17 @@ Funcionalidade: Notícias, eventos e mídia
   Contexto:
     Dado que o site possui configurações institucionais básicas
 
-  @p0 @functional
-  Cenário: Visitante lista notícias publicadas
+  # IDs: E2E-02-<seq>  →  espelhado em tests/e2e/test_02_news.py
+
+  @p0 @functional @e2e-02-001
+  Cenário: [E2E-02-001] Visitante lista notícias publicadas
     Dado que existem notícias publicadas
     Quando o visitante acessa "/noticias/"
     Então a lista deve exibir as notícias publicadas
     E cada item deve permitir abrir o detalhe
 
-  @p0 @functional
-  Cenário: Visitante abre o detalhe de uma notícia publicada
+  @p0 @functional @e2e-02-002
+  Cenário: [E2E-02-002] Visitante abre o detalhe de uma notícia publicada
     Dado que existe a notícia publicada "Abertura do portal" com slug "abertura-do-portal"
     Quando o visitante acessa "/noticias/abertura-do-portal/"
     Então a página deve exibir o título "Abertura do portal"
@@ -44,21 +46,21 @@ Funcionalidade: Notícias, eventos e mídia
     Então a primeira página deve listar no máximo 9 notícias
     E a paginação deve permitir ir para a página seguinte
 
-  @p0 @functional
-  Cenário: Visitante lista eventos publicados
+  @p0 @functional @e2e-02-003
+  Cenário: [E2E-02-003] Visitante lista eventos publicados
     Dado que existem eventos publicados
     Quando o visitante acessa "/eventos/"
     Então a lista deve exibir os eventos publicados
 
-  @p0 @functional
-  Cenário: Visitante abre o detalhe de um evento publicado
+  @p0 @functional @e2e-02-004
+  Cenário: [E2E-02-004] Visitante abre o detalhe de um evento publicado
     Dado que existe o evento publicado "Feira cultural" com slug "feira-cultural"
     Quando o visitante acessa "/eventos/feira-cultural/"
     Então a página deve exibir o título "Feira cultural"
     E a data e a descrição do evento devem estar visíveis
 
-  @p0 @functional
-  Cenário: Visitante acessa o calendário de eventos
+  @p0 @functional @e2e-02-005
+  Cenário: [E2E-02-005] Visitante acessa o calendário de eventos
     Quando o visitante acessa "/eventos/calendario/"
     Então a página deve carregar com status 200
     E o calendário do mês atual deve estar visível
