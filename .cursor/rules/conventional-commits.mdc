@@ -1,0 +1,67 @@
+---
+description: Use Conventional Commits (Angular/conventionalcommits.org) for all git commits
+alwaysApply: true
+---
+
+# Conventional Commits
+
+All commit messages in this repository MUST follow [Conventional Commits](https://www.conventionalcommits.org/) (market standard used by Angular, many OSS projects, and semantic-release).
+
+## Format
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+- Use the imperative mood in the description (`add`, `fix`, not `added` / `fixes`)
+- Keep the subject line around 72 characters
+- Do not end the subject with a period
+- Prefer English for `type` and `scope` (standard); description may be English or Portuguese, but stay consistent within the branch
+
+## Allowed types
+
+| Type | When to use |
+| --- | --- |
+| `feat` | New user-facing feature |
+| `fix` | Bug fix |
+| `docs` | Documentation only |
+| `style` | Formatting / whitespace (no logic change) |
+| `refactor` | Code change that is neither fix nor feat |
+| `perf` | Performance improvement |
+| `test` | Add or update tests |
+| `build` | Build system or dependencies |
+| `ci` | CI configuration |
+| `chore` | Maintenance that does not affect src/test meaningfully |
+| `revert` | Revert a previous commit |
+
+## Examples
+
+```text
+feat(auth): add password reset flow
+fix(portal): block client access to admin panel
+docs(e2e): add gherkin scenarios for public pages
+test(contact): cover email destination fallback
+refactor(admin): extract site settings form helpers
+chore(docker): map postgres host port to 5433
+```
+
+## Breaking changes
+
+```text
+feat(api)!: rename signup submission payload
+
+BREAKING CHANGE: field `idCadastro` is now `id_cadastro`.
+```
+
+Or use a footer `BREAKING CHANGE: ...` without `!` in the subject.
+
+## AI / agent behavior
+
+- When asked to commit, draft the message in Conventional Commits form
+- Choose `type` from the real change (docs-only → `docs`, tests-only → `test`)
+- Add a scope when it clarifies the area (`auth`, `admin`, `e2e`, `docker`)
+- Never invent a commit style outside this convention
