@@ -25,6 +25,24 @@ A automação Playwright fica em [`tests/e2e/`](../../tests/e2e/) — como rodar
 
 **Total:** 107 cenários (`@p0` 48 · `@p1` 48 · `@p2` 11)
 
+## Status da automação
+
+- **`@p0`:** 48/48 cenários com ID `@e2e-…` estão automatizados em `tests/e2e/`.
+- **`@p1` / `@p2`:** ainda **não** automatizados (~59 cenários). Continuam como inventário / checklist manual até a próxima leva.
+- Logout por botão “Sair” foi **removido** do inventário: a UI atual não expõe esse controle.
+
+### Lacunas e cheiros conhecidos (não bloqueiam o `@p0`)
+
+| Tema | Nota |
+| --- | --- |
+| Cobertura do produto | A suite `@p0` cobre o núcleo crítico (home, conteúdo público, inscrição/contato, auth, portal/perms, painel branding+conteúdo, busca/idioma). Não cobre o app inteiro: links/arquivos, menu mobile, paginação, conteúdo não publicado, e-mail de contato, VLibras, preview iframe, caminhos negativos, etc. |
+| Drawer do painel | `tests/e2e/helpers/admin.py` abre seções do editor via `page.evaluate` (força o drawer no DOM). Se o clique/JS real quebrar, o teste pode continuar verde. Preferível: abrir pelo fluxo de UI real. |
+| Spec vs UI (cores) | O Gherkin ainda fala em “modal” de cores; a UI é um **drawer**. Alinhar o texto do cenário quando for conveniente. |
+| Duplicação admin | Pares 06-005/006, 007/008 e 009/010 refazem o cadastro inteiro no segundo cenário. Isolamento ok, mas caro; extrair helper/fixture de create reduziria ruído. |
+| Sobreposição 04 × 05 | Login admin/supervisor (04) e acesso ao painel (05) exercitam caminhos muito parecidos. |
+| Seletores | Alguns asserts usam CSS de layout (ex.: `.col-12` na busca) ou botão genérico; frágeis a refactor de markup. |
+| Idioma | `E2E-07-004` já navega para `/sobre/`; `E2E-07-005` reforça persistência com pouco valor incremental. |
+
 ## Convenções
 
 - `@p0` — fluxo crítico (bloqueia release; automatizar primeiro)
