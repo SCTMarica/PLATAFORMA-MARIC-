@@ -4,24 +4,22 @@ Funcionalidade: Autenticação e gestão de acesso
   Quero me cadastrar, entrar e recuperar acesso
   Para utilizar o portal conforme meu perfil
 
-  @p0 @functional
-  Cenário: Visitante acessa a tela de cadastro
+  # IDs: E2E-04-<seq>  →  espelhado em tests/e2e/test_04_autenticacao.py
+
+  @p0 @functional @e2e-04-001
+  Cenário: [E2E-04-001] Visitante acessa a tela de cadastro
     Quando o visitante acessa "/cadastro/"
     Então a página deve carregar com status 200
     E o formulário de cadastro deve estar visível
 
-  @p0 @functional
-  Cenário: Visitante se cadastra como cliente final e fica autenticado
+  @p0 @functional @e2e-04-002
+  Cenário: [E2E-04-002] Visitante se cadastra como cliente final e acessa o portal
     Dado que não existe usuário com o e-mail "cliente@teste.com"
     Quando o visitante preenche nome, e-mail "cliente@teste.com", telefone e senhas coincidentes
     E envia o formulário em "/cadastro/"
     Então um usuário com papel "cliente_final" deve ser criado
     E o visitante deve ficar autenticado
-
-  @p0 @functional
-  Cenário: Após cadastro o cliente é redirecionado ao portal
-    Quando o visitante conclui um cadastro válido de cliente
-    Então o visitante deve ser redirecionado para "/portal/"
+    E o visitante deve ser redirecionado para "/portal/"
     E deve ver a mensagem "Cadastro concluído. Seu acesso já está ativo."
 
   @p1 @functional
