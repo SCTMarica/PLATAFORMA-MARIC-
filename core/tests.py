@@ -1,9 +1,11 @@
+from django.conf import settings
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 from django.core import mail
 
-from .models import Event, MediaItem, NewsArticle, SignupForm, SignupSubmission, SiteSettings, User
+from .models import Event, MediaItem, NewsArticle, NewsArticleImage, SignupForm, SignupSubmission, SiteSettings, User
 
 
 class PublicPagesTests(TestCase):
@@ -149,6 +151,20 @@ class AuthenticationFlowTests(TestCase):
 
         self.assertRedirects(response, reverse("core:admin-panel"))
 
+    def test_admin_can_logout_with_visible_post_action(self):
+        self.client.force_login(self.admin_user)
+
+        panel_response = self.client.get(reverse("core:admin-panel"))
+        self.assertContains(panel_response, reverse("core:logout"))
+        self.assertContains(panel_response, ">Sair<")
+
+        logout_response = self.client.post(reverse("core:logout"))
+        self.assertRedirects(logout_response, reverse("core:home"))
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_admin_session_expires_when_browser_closes(self):
+        self.assertTrue(settings.SESSION_EXPIRE_AT_BROWSER_CLOSE)
+
     def test_login_hides_initial_admin_button_when_admin_exists(self):
         response = self.client.get(reverse("core:login"))
 
@@ -270,6 +286,83 @@ class AuthenticationFlowTests(TestCase):
         )
         self.assertRedirects(form_response, reverse("core:admin-panel"))
         self.assertTrue(SignupForm.objects.filter(slug="oficina").exists())
+
+    def test_admin_news_editor_uploads_image_and_sanitizes_content(self):
+        self.client.force_login(self.admin_user)
+        image = SimpleUploadedFile(
+            "foto.jpg",
+            b"\xff\xd8\xff\xe0" + b"fake-image-content",
+            content_type="image/jpeg",
+        )
+
+        upload_response = self.client.post(
+            reverse("core:admin-news-image-upload"),
+            {"image": image},
+        )
+
+        self.assertEqual(upload_response.status_code, 200)
+        upload_data = upload_response.json()
+        self.assertTrue(upload_data["url"].startswith("/media/"))
+
+        news_response = self.client.post(
+            reverse("core:admin-news-create"),
+            {
+                "title": "Notícia formatada",
+                "slug": "noticia-formatada",
+                "summary": "Resumo",
+                "content": f'<p>Texto <strong>formatado</strong></p><script>alert(1)</script><img src="{upload_data["url"]}" alt="Foto">',
+                "image_upload_tokens": upload_data["token"],
+                "cover_image_url": "",
+                "is_published": "on",
+                "published_at": timezone.now().strftime("%Y-%m-%dT%H:%M"),
+            },
+        )
+
+        self.assertRedirects(news_response, reverse("core:admin-panel"))
+        article = NewsArticle.objects.get(slug="noticia-formatada")
+        self.assertNotIn("script", article.content.lower())
+        self.assertIn("<strong>", article.content)
+        self.assertTrue(NewsArticleImage.objects.filter(article=article).exists())
+
+    def test_admin_can_list_and_edit_news(self):
+        self.client.force_login(self.admin_user)
+        article = NewsArticle.objects.create(
+            title="Notícia para editar",
+            slug="noticia-para-editar",
+            summary="Resumo antigo",
+            content="Conteúdo antigo",
+        )
+
+        list_response = self.client.get(reverse("core:admin-news-list"))
+        self.assertEqual(list_response.status_code, 200)
+        self.assertContains(list_response, "Notícia para editar")
+        self.assertContains(list_response, reverse("core:admin-news-update", args=[article.slug]))
+
+        update_response = self.client.post(
+            reverse("core:admin-news-update", args=[article.slug]),
+            {
+                "title": article.title,
+                "slug": article.slug,
+                "summary": "Resumo novo",
+                "content": "Conteúdo novo",
+                "image_upload_tokens": "",
+                "cover_image_url": "",
+                "is_published": "on",
+                "published_at": timezone.now().strftime("%Y-%m-%dT%H:%M"),
+            },
+        )
+
+        self.assertRedirects(update_response, reverse("core:admin-news-list"))
+        article.refresh_from_db()
+        self.assertIn("Conteúdo novo", article.content)
+
+    def test_client_cannot_upload_news_image(self):
+        self.client.force_login(self.client_user)
+        image = SimpleUploadedFile("foto.png", b"\x89PNG\r\n\x1a\n", content_type="image/png")
+
+        response = self.client.post(reverse("core:admin-news-image-upload"), {"image": image})
+
+        self.assertEqual(response.status_code, 403)
 
     def test_signup_form_submission_is_saved(self):
         signup_form = SignupForm.objects.create(

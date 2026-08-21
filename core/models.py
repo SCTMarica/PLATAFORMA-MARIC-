@@ -1,4 +1,7 @@
 from django.contrib.auth.models import AbstractUser
+import uuid
+from pathlib import Path
+
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -125,6 +128,39 @@ class NewsArticle(TimeStampedModel):
 
     def get_absolute_url(self):
         return reverse("core:news-detail", args=[self.slug])
+
+
+def news_image_upload_to(instance, filename):
+    suffix = Path(filename).suffix.lower()
+    return f"news/body/{timezone.now():%Y/%m}/{uuid.uuid4().hex}{suffix}"
+
+
+class NewsArticleImage(TimeStampedModel):
+    article = models.ForeignKey(
+        NewsArticle,
+        on_delete=models.CASCADE,
+        related_name="body_images",
+        blank=True,
+        null=True,
+    )
+    uploaded_by = models.ForeignKey(
+        "core.User",
+        on_delete=models.SET_NULL,
+        related_name="uploaded_news_images",
+        blank=True,
+        null=True,
+    )
+    upload_token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    image = models.FileField(upload_to=news_image_upload_to)
+    alt_text = models.CharField(max_length=200, blank=True)
+
+    class Meta:
+        ordering = ["created_at"]
+        verbose_name = "Imagem de notícia"
+        verbose_name_plural = "Imagens de notícias"
+
+    def __str__(self):
+        return self.alt_text or self.image.name
 
 
 class Event(TimeStampedModel):

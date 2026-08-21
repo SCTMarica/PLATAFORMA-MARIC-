@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Notícias | Painel de admin{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <div class="admin-panel">
+      <div class="admin-panel__header">
+        <div>
+          <p class="section-eyebrow mb-2">Administração</p>
+          <h1 class="h3 mb-2">Notícias</h1>
+          <p class="text-secondary mb-0">Escreva, formate e publique as notícias do portal.</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <a class="btn btn-outline-primary" href="{% url 'core:admin-panel' %}">Voltar ao painel</a>
+          <a class="btn btn-primary" href="{% url 'core:admin-news-create' %}">Nova notícia</a>
+        </div>
+      </div>
+
+      <div class="admin-panel__tabs">
+        <a href="{% url 'core:admin-panel' %}">Conteúdo geral</a>
+        <a class="is-active" href="{% url 'core:admin-news-list' %}">Notícias</a>
+        <a href="{% url 'core:admin-banner-create' %}">Carrossel</a>
+        <a href="{% url 'core:admin-signup-form-create' %}">Formulários</a>
+      </div>
+
+      {% if news_list %}
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead><tr><th>Título</th><th>Status</th><th>Publicação</th><th></th></tr></thead>
+            <tbody>
+              {% for article in news_list %}
+                <tr>
+                  <td><strong>{{ article.title }}</strong><br><small class="text-secondary">{{ article.summary|truncatewords:16 }}</small></td>
+                  <td>{% if article.is_published %}<span class="badge text-bg-success">Publicada</span>{% else %}<span class="badge text-bg-secondary">Rascunho</span>{% endif %}</td>
+                  <td>{{ article.published_at|date:"d/m/Y H:i" }}</td>
+                  <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{% url 'core:admin-news-update' article.slug %}">Editar</a></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="empty-state py-5 text-center">
+          <h2 class="h5">Nenhuma notícia cadastrada</h2>
+          <p class="text-secondary">Comece criando a primeira notícia do portal.</p>
+          <a class="btn btn-primary" href="{% url 'core:admin-news-create' %}">Criar notícia</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

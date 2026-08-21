@@ -1,3 +1,5 @@
+import uuid
+
 from django import forms
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm
@@ -5,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.utils.text import slugify
 
+from .content_safety import sanitize_news_content
 from .models import ContactMessage, MediaItem, NewsArticle, SignupForm, SiteSettings
 
 User = get_user_model()
@@ -238,6 +241,8 @@ class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
 
 
 class NewsArticleForm(StyledFormMixin, forms.ModelForm):
+    image_upload_tokens = forms.CharField(required=False, widget=forms.HiddenInput())
+
     class Meta:
         model = NewsArticle
         fields = ("title", "slug", "summary", "content", "cover_image_url", "is_featured", "is_published", "published_at")
@@ -255,6 +260,21 @@ class NewsArticleForm(StyledFormMixin, forms.ModelForm):
             "content": forms.Textarea(attrs={"rows": 6}),
             "published_at": forms.DateTimeInput(attrs={"type": "datetime-local"}),
         }
+
+    def clean_content(self):
+        return sanitize_news_content(self.cleaned_data.get("content", ""))
+
+    def clean_image_upload_tokens(self):
+        tokens = []
+        for raw_token in (self.cleaned_data.get("image_upload_tokens") or "").split(","):
+            raw_token = raw_token.strip()
+            if not raw_token:
+                continue
+            try:
+                tokens.append(str(uuid.UUID(raw_token)))
+            except ValueError:
+                raise ValidationError("Uma das imagens anexadas é inválida.")
+        return tokens
 
     def clean_slug(self):
         slug = self.cleaned_data.get("slug") or slugify(self.cleaned_data.get("title", ""))

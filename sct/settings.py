@@ -62,6 +62,9 @@ AUTH_USER_MODEL = "core.User"
 LOGIN_URL = "core:login"
 LOGIN_REDIRECT_URL = "core:portal"
 LOGOUT_REDIRECT_URL = "core:home"
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
 
 DATABASE_URL = env("DATABASE_URL")
 
@@ -111,6 +114,9 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

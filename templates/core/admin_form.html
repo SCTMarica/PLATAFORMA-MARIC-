@@ -12,13 +12,16 @@
           <h1 class="h3 mb-2">{{ admin_title }}</h1>
           <p class="text-secondary mb-0">{{ admin_description }}</p>
         </div>
-        <a class="btn btn-outline-primary" href="{% url 'core:admin-panel' %}">Voltar ao painel</a>
+        <div class="d-flex flex-wrap gap-2">
+          <a class="btn btn-outline-primary" href="{% url 'core:admin-panel' %}">Voltar ao painel</a>
+          {% if is_news_form %}<a class="btn btn-outline-secondary" href="{% url 'core:admin-news-list' %}">Lista de notícias</a>{% endif %}
+        </div>
       </div>
 
       <div class="admin-panel__tabs">
         <a href="{% url 'core:admin-panel' %}">Conteudo geral</a>
         <a class="{% if active_admin_tab == 'banner' %}is-active{% endif %}" href="{% url 'core:admin-banner-create' %}">Carrossel</a>
-        <a class="{% if active_admin_tab == 'news' %}is-active{% endif %}" href="{% url 'core:admin-news-create' %}">Noticias</a>
+        <a class="{% if active_admin_tab == 'news' %}is-active{% endif %}" href="{% url 'core:admin-news-list' %}">Noticias</a>
         <a class="{% if active_admin_tab == 'forms' %}is-active{% endif %}" href="{% url 'core:admin-signup-form-create' %}">Formularios</a>
       </div>
 
@@ -28,7 +31,31 @@
         <div class="admin-panel__section">
           <div class="row g-3">
             {% for field in form %}
-              {% include "core/partials/admin_field.html" with field=field cols="col-12" %}
+              {% if is_news_form and field.name == "content" %}
+                <div class="col-12">
+                  <label class="form-label" for="news-content-editor">{{ field.label }}</label>
+                  <div class="news-editor" data-news-editor-wrapper>
+                    <div class="news-editor__toolbar" role="toolbar" aria-label="Formatação do conteúdo">
+                      <button type="button" class="btn btn-sm btn-light" data-news-command="bold"><strong>B</strong></button>
+                      <button type="button" class="btn btn-sm btn-light" data-news-command="italic"><em>I</em></button>
+                      <button type="button" class="btn btn-sm btn-light" data-news-command="underline"><u>U</u></button>
+                      <button type="button" class="btn btn-sm btn-light" data-news-command="insertUnorderedList">Lista</button>
+                      <button type="button" class="btn btn-sm btn-light" data-news-command="insertOrderedList">1. Lista</button>
+                      <button type="button" class="btn btn-sm btn-light" data-news-link>Link</button>
+                      <button type="button" class="btn btn-sm btn-outline-primary" data-news-image>Adicionar imagem</button>
+                      <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" data-news-image-input hidden>
+                    </div>
+                    <div id="news-content-editor" class="news-editor__surface" contenteditable="true" role="textbox" aria-multiline="true"></div>
+                    <textarea id="id_content" name="content" hidden>{{ field.value|default_if_none:"" }}</textarea>
+                  </div>
+                  {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                  <div class="form-text">Escreva o conteúdo, formate o texto e adicione imagens ao corpo da notícia.</div>
+                </div>
+              {% elif is_news_form and field.name == "image_upload_tokens" %}
+                {{ field }}
+              {% else %}
+                {% include "core/partials/admin_field.html" with field=field cols="col-12" %}
+              {% endif %}
             {% endfor %}
           </div>
         </div>
@@ -39,4 +66,80 @@
     </div>
   </div>
 </section>
+{% endblock %}
+
+{% block extra_scripts %}
+{% if is_news_form %}
+<script>
+  (function () {
+    const wrapper = document.querySelector("[data-news-editor-wrapper]");
+    if (!wrapper) return;
+    const editor = wrapper.querySelector("[contenteditable]");
+    const source = document.getElementById("id_content");
+    const tokenField = document.getElementById("id_image_upload_tokens");
+    const imageInput = wrapper.querySelector("[data-news-image-input]");
+    const csrfToken = document.querySelector("input[name=csrfmiddlewaretoken]").value;
+    const uploadUrl = "{% url 'core:admin-news-image-upload' %}";
+
+    editor.innerHTML = source.value || "<p><br></p>";
+
+    function focusEditor() {
+      editor.focus();
+    }
+
+    wrapper.querySelectorAll("[data-news-command]").forEach((button) => {
+      button.addEventListener("click", function () {
+        focusEditor();
+        document.execCommand(button.dataset.newsCommand, false, null);
+      });
+    });
+
+    wrapper.querySelector("[data-news-link]").addEventListener("click", function () {
+      const url = window.prompt("Cole a URL do link:");
+      if (!url) return;
+      focusEditor();
+      document.execCommand("createLink", false, url);
+    });
+
+    wrapper.querySelector("[data-news-image]").addEventListener("click", function () {
+      imageInput.click();
+    });
+
+    imageInput.addEventListener("change", async function () {
+      const file = imageInput.files[0];
+      if (!file) return;
+      const data = new FormData();
+      data.append("image", file);
+      const button = wrapper.querySelector("[data-news-image]");
+      button.disabled = true;
+      button.textContent = "Enviando...";
+      try {
+        const response = await fetch(uploadUrl, {
+          method: "POST",
+          body: data,
+          headers: {"X-CSRFToken": csrfToken},
+          credentials: "same-origin"
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Não foi possível enviar a imagem.");
+        focusEditor();
+        document.execCommand("insertHTML", false, `<p><img src="${result.url}" alt="Imagem da notícia" class="news-content-image"></p>`);
+        const tokens = tokenField.value ? tokenField.value.split(",") : [];
+        tokens.push(result.token);
+        tokenField.value = tokens.filter(Boolean).join(",");
+      } catch (error) {
+        window.alert(error.message);
+      } finally {
+        button.disabled = false;
+        button.textContent = "Adicionar imagem";
+        imageInput.value = "";
+      }
+    });
+
+    wrapper.closest("form").addEventListener("submit", function () {
+      source.value = editor.innerHTML;
+    });
+  }());
+</script>
+{% endif %}
 {% endblock %}

@@ -12,7 +12,13 @@
           <h1 class="h3 mb-2">Painel de admin</h1>
           <p class="text-secondary mb-0">Gerencie o conteudo publicado, os destaques da pagina inicial e os formularios de inscricao.</p>
         </div>
-        <a class="btn btn-outline-primary" href="{% url 'core:home' %}">Ver site</a>
+        <div class="d-flex flex-wrap gap-2">
+          <a class="btn btn-outline-primary" href="{% url 'core:home' %}">Ver site</a>
+          <form method="post" action="{% url 'core:logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger">Sair</button>
+          </form>
+        </div>
       </div>
 
       <div class="admin-panel__quick-actions" aria-label="Acoes do painel">
@@ -42,7 +48,7 @@
       <div class="admin-panel__tabs">
         <a class="is-active" href="{% url 'core:admin-panel' %}">Conteudo geral</a>
         <a href="{% url 'core:admin-banner-create' %}">Carrossel</a>
-        <a href="{% url 'core:admin-news-create' %}">Noticias</a>
+        <a href="{% url 'core:admin-news-list' %}">Noticias</a>
         <a href="{% url 'core:admin-signup-form-create' %}">Formularios</a>
       </div>
 
@@ -142,7 +148,7 @@
                 {% include "core/partials/admin_field.html" with field=form.news_eyebrow cols="col-12" %}
                 {% include "core/partials/admin_field.html" with field=form.news_title cols="col-12" %}
                 {% include "core/partials/admin_field.html" with field=form.news_button_label cols="col-12" %}
-                <a class="btn btn-outline-primary w-100" href="{% url 'core:admin-news-create' %}">Gerenciar notícias</a>
+                <a class="btn btn-outline-primary w-100" href="{% url 'core:admin-news-list' %}">Gerenciar notícias</a>
               </div>
               <div data-editor-panel="carousel" hidden>
                 <h3>Carrossel</h3>

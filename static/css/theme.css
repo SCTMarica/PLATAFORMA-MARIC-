@@ -1527,3 +1527,45 @@ div[vw-access-button] .access-button:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--brand-accent) 75%, white) !important;
   outline-offset: 4px !important;
 }
+.site-header__logout-button {
+  border: 1px solid var(--brand-primary);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--brand-primary);
+  padding: .35rem .8rem;
+  font-size: .9rem;
+}
+
+.site-header__logout-button:hover {
+  background: var(--brand-primary);
+  color: #fff;
+}
+
+.news-editor {
+  border: 1px solid var(--border-soft);
+  border-radius: .75rem;
+  overflow: hidden;
+  background: var(--surface, #fff);
+}
+
+.news-editor__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem;
+  padding: .65rem;
+  border-bottom: 1px solid var(--border-soft);
+  background: rgba(13, 110, 253, .04);
+}
+
+.news-editor__surface {
+  min-height: 18rem;
+  padding: 1rem;
+  outline: none;
+}
+
+.news-editor__surface:focus {
+  box-shadow: inset 0 0 0 2px rgba(13, 110, 253, .2);
+}
+
+.news-content p { margin-bottom: 1rem; }
+.news-content img, .news-content-image { max-width: 100%; height: auto; border-radius: .75rem; }

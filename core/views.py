@@ -1,5 +1,6 @@
 import calendar
 import logging
+import uuid
 from datetime import date
 
 import httpx
@@ -15,6 +16,7 @@ from django.contrib.auth.views import (
     PasswordResetDoneView,
     PasswordResetView,
 )
+from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
@@ -25,7 +27,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.db.models import Q
 from django.views.decorators.http import require_POST
-from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView, UpdateView
+from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView, UpdateView, View
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +45,17 @@ from .forms import (
     build_signup_submission_form,
 )
 from .i18n import LANGUAGE_SESSION_KEY, normalize_language
-from .models import ContactMessage, Event, MediaItem, NewsArticle, SignupForm, SignupSubmission, SiteSettings, User
+from .models import (
+    ContactMessage,
+    Event,
+    MediaItem,
+    NewsArticle,
+    NewsArticleImage,
+    SignupForm,
+    SignupSubmission,
+    SiteSettings,
+    User,
+)
 
 
 def get_user_landing_url(user):
@@ -379,6 +391,54 @@ class AdminRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
         return getattr(self.request.user, "can_access_admin", False)
 
 
+def attach_news_images(article, user, upload_tokens):
+    if not upload_tokens:
+        return
+    NewsArticleImage.objects.filter(
+        uploaded_by=user,
+        article__isnull=True,
+        upload_token__in=upload_tokens,
+    ).update(article=article)
+
+
+def validate_news_image(uploaded_file):
+    max_size = 5 * 1024 * 1024
+    if not uploaded_file or uploaded_file.size > max_size:
+        raise ValueError("A imagem deve ter no máximo 5 MB.")
+
+    uploaded_file.seek(0)
+    header = uploaded_file.read(16)
+    uploaded_file.seek(0)
+    if header.startswith(b"\x89PNG\r\n\x1a\n"):
+        return ".png"
+    if header.startswith(b"\xff\xd8\xff"):
+        return ".jpg"
+    if header.startswith((b"GIF87a", b"GIF89a")):
+        return ".gif"
+    if header[:4] == b"RIFF" and header[8:12] == b"WEBP":
+        return ".webp"
+    raise ValueError("Formato inválido. Use PNG, JPG, GIF ou WEBP.")
+
+
+class AdminNewsImageUploadView(AdminRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        uploaded_file = request.FILES.get("image")
+        try:
+            extension = validate_news_image(uploaded_file)
+        except ValueError as error:
+            return JsonResponse({"error": str(error)}, status=400)
+
+        image = NewsArticleImage(uploaded_by=request.user)
+        image.image.save(f"{uuid.uuid4().hex}{extension}", uploaded_file, save=False)
+        image.save()
+        return JsonResponse(
+            {
+                "url": image.image.url,
+                "token": str(image.upload_token),
+            }
+        )
+
+
 class AdminPanelView(AdminRequiredMixin, UpdateView):
     template_name = "core/admin_panel.html"
     form_class = SiteSettingsForm
@@ -413,8 +473,10 @@ class AdminNewsCreateView(AdminRequiredMixin, CreateView):
     model = NewsArticle
 
     def form_valid(self, form):
-        messages.success(self.request, "Noticia cadastrada com sucesso.")
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        attach_news_images(self.object, self.request.user, form.cleaned_data.get("image_upload_tokens"))
+        messages.success(self.request, "Notícia cadastrada com sucesso.")
+        return response
 
     def get_success_url(self):
         return reverse("core:admin-panel")
@@ -425,6 +487,41 @@ class AdminNewsCreateView(AdminRequiredMixin, CreateView):
         context["admin_description"] = "Publique uma noticia e escolha se ela aparece em destaque na pagina inicial."
         context["submit_label"] = "Salvar noticia"
         context["active_admin_tab"] = "news"
+        context["is_news_form"] = True
+        return context
+
+
+class AdminNewsListView(AdminRequiredMixin, ListView):
+    template_name = "core/admin_news_list.html"
+    context_object_name = "news_list"
+
+    def get_queryset(self):
+        return NewsArticle.objects.all()
+
+
+class AdminNewsUpdateView(AdminRequiredMixin, UpdateView):
+    template_name = "core/admin_form.html"
+    form_class = NewsArticleForm
+    model = NewsArticle
+    slug_field = "slug"
+    slug_url_kwarg = "slug"
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        attach_news_images(self.object, self.request.user, form.cleaned_data.get("image_upload_tokens"))
+        messages.success(self.request, "Notícia atualizada com sucesso.")
+        return response
+
+    def get_success_url(self):
+        return reverse("core:admin-news-list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["admin_title"] = "Editar notícia"
+        context["admin_description"] = "Atualize o conteúdo, as imagens e o status de publicação desta notícia."
+        context["submit_label"] = "Salvar notícia"
+        context["active_admin_tab"] = "news"
+        context["is_news_form"] = True
         return context
 
 

@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
-from .models import ContactMessage, Event, MediaItem, NewsArticle, SiteSettings, SocialLink, User, SignupForm, SignupSubmission
+from .models import ContactMessage, Event, MediaItem, NewsArticle, NewsArticleImage, SiteSettings, SocialLink, User, SignupForm, SignupSubmission
 
 
 admin.site.site_header = "Painel Plataforma Maric"
@@ -89,6 +89,12 @@ class NewsArticleAdmin(admin.ModelAdmin):
             },
         ),
     )
+
+
+@admin.register(NewsArticleImage)
+class NewsArticleImageAdmin(admin.ModelAdmin):
+    list_display = ("image", "article", "uploaded_by", "created_at")
+    search_fields = ("image", "alt_text", "article__title", "uploaded_by__username")
 
 
 @admin.register(Event)
